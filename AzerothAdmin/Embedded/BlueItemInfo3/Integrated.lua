@@ -270,6 +270,8 @@ IDX.seconds["t"] = IDX.seconds["t"] or {}
 -- embedded database, so fishing must use its own non-colliding key.
 IDX.seconds["t"]["t4"] = IDX.seconds["t"]["t4"] or "연금술"
 IDX.seconds["t"]["t7"] = IDX.seconds["t"]["t7"] or "주문각인"
+IDX.seconds["t"]["t9"] = "요리"
+IDX.seconds["t"]["ta"] = "응급치료"
 IDX.seconds["t"]["tf"] = "낚시 도안/교본/학습 아이템"
 
 -- WotLK-only aggregate enhancement branches.  These are intentionally separate
@@ -282,6 +284,12 @@ IDX.seconds["v"]["vr"] = "기계공학 전용 강화"
 IDX.seconds["v"]["vs"] = "재봉술 전용 강화"
 IDX.seconds["v"]["vt"] = "대장기술 관련 강화"
 IDX.seconds["v"]["vu"] = "한손 무기"
+-- These WotLK profession-only slot branches exist in the embedded source data,
+-- but were missing from the generated category index.
+IDX.seconds["v"]["v7"] = "망토(기계공학 전용)"
+IDX.seconds["v"]["vb"] = "손목(대장기술 전용)"
+IDX.seconds["v"]["vd"] = "장갑(대장기술 전용)"
+IDX.seconds["v"]["vl"] = "장화(기계공학 전용)"
 
 local ROOT_LABEL = {
     ["7"] = "공격대 · 리치 왕의 분노",
@@ -466,7 +474,7 @@ end
 
 local function looksLikeRecipe(name)
     name = tostring(name or "")
-    local pats = {"도안","디자인","설계도","조제법","제조법","기법","문양","주문식","조리법","도면","책:"}
+    local pats = {"도안","디자인","설계도","조제법","제조법","기법","문양","주문식","조리법","처방전","도면","책:"}
     local i
     for i=1,table.getn(pats) do if string.find(name,pats[i],1,true) then return true end end
     return false
@@ -648,6 +656,7 @@ local function buildSpecial335Items()
         local professionDefs = {
             {"t0",7411}, {"t1",2018}, {"t2",2108}, {"t3",3908},
             {"t4",2259}, {"t5",4036}, {"t6",25229}, {"t7",45363},
+            {"t9",2550}, {"ta",3273},
         }
         local pi
         for pi=1,table.getn(professionDefs) do
@@ -674,7 +683,8 @@ local function buildSpecial335Items()
                     elseif string.find(rname,"조제법:",1,true) then pkey="t4"
                     elseif string.find(rname,"설계도:",1,true) then pkey="t5"
                     elseif string.find(rname,"디자인:",1,true) then pkey="t6"
-                    elseif string.find(rname,"기법:",1,true) then pkey="t7" end
+                    elseif string.find(rname,"기법:",1,true) then pkey="t7"
+                    elseif string.find(rname,"조리법:",1,true) then pkey="t9" end
                 end
                 if pkey then specialAdd(special335Items.t,pkey,rid) end
             end
@@ -704,9 +714,14 @@ local function buildSpecial335Items()
     addItem("ve", 41091); addItem("ve", 41093); addSpell("ve", 54998); addSpell("ve", 54999); addSpell("ve", 63770)
     -- Engineering belt tinker.
     addSpell("vg", 54793)
-    -- Engineering cloak / boot modifications also belong in their normal slot lists.
+    -- Engineering cloak / boot modifications belong in both the normal slot
+    -- lists and their profession-only branches.
     addItem("v5", 41111); addSpell("v5", 55002)
+    addItem("v7", 41111); addSpell("v7", 55002)
     addItem("vk", 41118); addSpell("vk", 55016)
+    addItem("vl", 41118); addSpell("vl", 55016)
+    -- Blacksmith-only extra sockets.
+    addSpell("vb", 55628); addSpell("vd", 55641)
     -- Leatherworking leg armor kits (profession-made WotLK enhancements).
     local legKits = {38371,38372,38373,38374,38375,38376,38377,38378}
     for i=1,table.getn(legKits) do addItem("vi", legKits[i]) end
@@ -723,8 +738,9 @@ local function buildSpecial335Items()
     copyBucket("v4", "vp")
     copyBucket("vo", "vp")
     copyBucket("va", "vq"); copyBucket("vi", "vq")
-    copyBucket("ve", "vr"); copyBucket("vg", "vr")
+    copyBucket("v7", "vr"); copyBucket("ve", "vr"); copyBucket("vg", "vr"); copyBucket("vl", "vr")
     copyBucket("v6", "vs")
+    copyBucket("vb", "vt"); copyBucket("vd", "vt")
 
     -- WotLK has very few off-hand-only enchants; expose the shield/off-hand set in
     -- the 보조장비 branch instead of leaving the branch empty.
