@@ -25,6 +25,8 @@ Claude Code 또는 다른 개발 도구로 작업하기 전에 다음 문서를 
 - `AGENTS.md`: ChatGPT/Codex 작업 지침
 - `CONTRIBUTING.md`: 공동 브랜치·PR 규칙
 - `COLLABORATION.md`: ChatGPT/Codex + Claude 연결 방법
+- `CHATGPT_PROJECT_INSTRUCTIONS.md`: ChatGPT 프로젝트에 복사할 전용 지시서
+- `WORKSPACE_AND_HANDOFF.md`: 공용 원본, 로컬 폴더 및 AI 인수인계 절차
 
 ## 호환성 원칙
 
