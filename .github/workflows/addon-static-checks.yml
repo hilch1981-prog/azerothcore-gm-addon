@@ -76,6 +76,7 @@ jobs:
           tools/test_build_release_zip.py
           tools/test_craft_frame_lifecycle.py
           tools/test_generate_quest_reward_335.py
+          tools/test_party_bot_quest_sync.py
           tools/test_popup_layer_lifecycle.py
           tools/test_profession_enhancement_categories.py
           tools/test_quest_drop_source_cycle.py

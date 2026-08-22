@@ -103,6 +103,27 @@ local function qSetEnabled(button, enabled)
     end
 end
 
+local function qCheck(parent, width, text)
+    local button = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
+    button:SetWidth(width or 150)
+    button:SetHeight(20)
+    local label = qText(button, text, "small")
+    label:SetPoint("LEFT", button, "LEFT", 24, 0)
+    label:SetPoint("RIGHT", button, "RIGHT", 0, 0)
+    label:SetJustifyH("LEFT")
+    label:SetTextColor(0.82, 0.9, 0.92)
+    button.aaeLabel = label
+    button:SetScript("OnEnter", function(self)
+        if not self.aaeHint then return end
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GameTooltip:SetText(self.aaeTitle or self.aaeLabel:GetText() or "", 1, 0.82, 0.18)
+        GameTooltip:AddLine(self.aaeHint, 1, 1, 1, true)
+        GameTooltip:Show()
+    end)
+    button:SetScript("OnLeave", function() GameTooltip:Hide() end)
+    return button
+end
+
 local function trim(text)
     if not text then return "" end
     return string.gsub(text, "^%s*(.-)%s*$", "%1")
@@ -126,6 +147,127 @@ local function questIDFromIndex(index)
         end
     end
     return nil
+end
+
+local function questLinkForSync(quest)
+    if not quest then return nil end
+    if GetQuestLink and quest.logIndex then
+        local ok, link = pcall(GetQuestLink, quest.logIndex)
+        if ok and link then return link end
+    end
+    local id = tonumber(quest.id)
+    if not id then return nil end
+    return "|cffffff00|Hquest:" .. id .. ":" .. (tonumber(quest.level) or 0)
+        .. "|h[" .. tostring(quest.title or ("Quest " .. id)) .. "]|h|r"
+end
+
+function addon:GetPartyBotQuestSyncOptions()
+    AzerothAdminEasyDB = AzerothAdminEasyDB or {}
+    return AzerothAdminEasyDB.partyBotQuestAddMissing == true,
+        AzerothAdminEasyDB.partyBotQuestComplete == true
+end
+
+function addon:GetPartyBotQuestChannel()
+    if GetNumRaidMembers and (GetNumRaidMembers() or 0) > 0 then return "RAID" end
+    if GetNumPartyMembers and (GetNumPartyMembers() or 0) > 0 then return "PARTY" end
+    return nil
+end
+
+function addon:FindActiveQuestForBotSync(questID)
+    local data = self.questHelperData or {}
+    local i
+    for i = 1, table.getn(data) do
+        if tonumber(data[i].id) == tonumber(questID) then return data[i] end
+    end
+    return nil
+end
+
+function addon:QueuePartyBotQuestSync(action, quest)
+    if not quest or not quest.id then return false end
+    self.partyBotQuestQueue = self.partyBotQuestQueue or {}
+    self.partyBotQuestQueueKeys = self.partyBotQuestQueueKeys or {}
+    local key = tostring(action) .. ":" .. tostring(quest.id)
+    if self.partyBotQuestQueueKeys[key] then return false end
+    self.partyBotQuestQueueKeys[key] = true
+    table.insert(self.partyBotQuestQueue, {
+        action = action,
+        key = key,
+        questID = quest.id,
+        logIndex = quest.logIndex,
+        link = questLinkForSync(quest),
+    })
+
+    if not self.partyBotQuestQueueFrame then
+        local queueFrame = CreateFrame("Frame")
+        queueFrame:Hide()
+        queueFrame.elapsed = 0
+        queueFrame:SetScript("OnUpdate", function(self, elapsed)
+            self.elapsed = self.elapsed + (elapsed or 0)
+            if self.elapsed < 0.35 then return end
+            self.elapsed = 0
+            local entry = table.remove(addon.partyBotQuestQueue, 1)
+            if not entry then self:Hide(); return end
+            addon.partyBotQuestQueueKeys[entry.key] = nil
+            local channel = addon:GetPartyBotQuestChannel()
+            if channel then
+                local current = addon:FindActiveQuestForBotSync(entry.questID)
+                if entry.action == "share" then
+                    local index = current and current.logIndex or entry.logIndex
+                    if index and QuestLogPushQuest then pcall(QuestLogPushQuest, index) end
+                elseif entry.action == "complete" then
+                    local link = (current and questLinkForSync(current)) or entry.link
+                    if link then SendChatMessage("quest complete " .. link, channel) end
+                end
+            end
+            if table.getn(addon.partyBotQuestQueue) == 0 then self:Hide() end
+        end)
+        self.partyBotQuestQueueFrame = queueFrame
+    end
+    self.partyBotQuestQueueFrame:Show()
+    return true
+end
+
+function addon:UpdatePartyBotQuestSnapshot(syncChanges)
+    local previous = self.partyBotQuestSnapshot
+    local current = {}
+    local addMissing, completeWithPlayer = self:GetPartyBotQuestSyncOptions()
+    local data = self.questHelperData or {}
+    local i
+    for i = 1, table.getn(data) do
+        local quest = data[i]
+        local id = tonumber(quest.id)
+        if id then
+            local isComplete = quest.complete == 1
+            current[id] = isComplete
+            if syncChanges and previous then
+                if addMissing and previous[id] == nil then self:QueuePartyBotQuestSync("share", quest) end
+                if completeWithPlayer and isComplete and previous[id] ~= true then
+                    self:QueuePartyBotQuestSync("complete", quest)
+                end
+            end
+        end
+    end
+    self.partyBotQuestSnapshot = current
+end
+
+function addon:SyncAllPartyBotQuests(syncMissing, syncComplete)
+    if not self:GetPartyBotQuestChannel() then
+        self:Print("파티 또는 공격대에 참가한 뒤 봇 퀘스트 동기화를 사용하세요.", true)
+        return false
+    end
+    local data = self:BuildQuestHelperData()
+    local shared, completed = 0, 0
+    local i
+    for i = 1, table.getn(data) do
+        local quest = data[i]
+        if syncMissing and self:QueuePartyBotQuestSync("share", quest) then shared = shared + 1 end
+        if syncComplete and quest.complete == 1 and self:QueuePartyBotQuestSync("complete", quest) then
+            completed = completed + 1
+        end
+    end
+    self:UpdatePartyBotQuestSnapshot(false)
+    self:Print("파티 봇 퀘스트 동기화 예약: 공유 " .. shared .. "개, 조건완료 " .. completed .. "개")
+    return true
 end
 
 local function expandAllQuestHeaders()
@@ -707,8 +849,36 @@ function addon:CreateQuestHelperWindow()
     self.questRefreshButton = refresh
 
     local help = qText(frame, "완료 = 조건 완료 후 종료 위치 이동 · 보상 선택은 종료 NPC/오브젝트에서 직접 진행", "small")
+    help:SetWidth(440); help:SetJustifyH("LEFT")
     help:SetPoint("TOPLEFT", frame, "TOPLEFT", 18, -48)
     help:SetTextColor(0.55, 0.88, 0.92)
+
+    local syncLabel = qText(frame, "파티 봇 동기화", "small")
+    syncLabel:SetPoint("TOPLEFT", frame, "TOPLEFT", 462, -48)
+    syncLabel:SetTextColor(1, 0.78, 0.25)
+    local syncMissing = qCheck(frame, 150, "없는 퀘스트 자동 추가")
+    syncMissing:SetPoint("TOPLEFT", frame, "TOPLEFT", 560, -43)
+    syncMissing.aaeTitle = "없는 퀘스트 자동 추가"
+    syncMissing.aaeHint = "현재 퀘스트를 WotLK 기본 공유 기능으로 파티원과 봇에게 순차 공유합니다. 새 파티원/봇 합류와 새 퀘스트 등록도 감지합니다. 수락 조건과 퀘스트 로그 제한은 서버가 검사합니다."
+    local syncComplete = qCheck(frame, 160, "본캐 조건완료 시 봇 완료")
+    syncComplete:SetPoint("TOPLEFT", frame, "TOPLEFT", 712, -43)
+    syncComplete.aaeTitle = "본캐 조건완료 시 봇 완료"
+    syncComplete.aaeHint = "본캐 퀘스트가 조건완료로 바뀌면 파티/공격대에 'quest complete [퀘스트]'를 전송합니다. 이 강제 명령을 지원하는 Playerbots 빌드에서만 동작하며 보상 수령은 하지 않습니다."
+    local savedMissing, savedComplete = self:GetPartyBotQuestSyncOptions()
+    syncMissing:SetChecked(savedMissing)
+    syncComplete:SetChecked(savedComplete)
+    syncMissing:SetScript("OnClick", function(self)
+        AzerothAdminEasyDB = AzerothAdminEasyDB or {}
+        AzerothAdminEasyDB.partyBotQuestAddMissing = self:GetChecked() and true or false
+        if AzerothAdminEasyDB.partyBotQuestAddMissing then addon:SyncAllPartyBotQuests(true, false) end
+    end)
+    syncComplete:SetScript("OnClick", function(self)
+        AzerothAdminEasyDB = AzerothAdminEasyDB or {}
+        AzerothAdminEasyDB.partyBotQuestComplete = self:GetChecked() and true or false
+        if AzerothAdminEasyDB.partyBotQuestComplete then addon:SyncAllPartyBotQuests(false, true) end
+    end)
+    self.partyBotQuestMissingCheck = syncMissing
+    self.partyBotQuestCompleteCheck = syncComplete
 
     local searchLabel = qText(frame, "퀘스트 추가", "small")
     searchLabel:SetPoint("TOPLEFT", frame, "TOPLEFT", 18, -72)
@@ -1137,8 +1307,30 @@ end
 
 local questEvent = CreateFrame("Frame")
 questEvent:RegisterEvent("QUEST_LOG_UPDATE")
-questEvent:SetScript("OnEvent", function()
-    if addon.questHelperFrame and addon.questHelperFrame:IsShown() then
-        addon:RefreshQuestHelper(true)
+questEvent:RegisterEvent("PARTY_MEMBERS_CHANGED")
+questEvent:RegisterEvent("RAID_ROSTER_UPDATE")
+questEvent:RegisterEvent("PLAYER_ENTERING_WORLD")
+questEvent:SetScript("OnEvent", function(self, event)
+    if event == "QUEST_LOG_UPDATE" then
+        if addon.questHelperFrame and addon.questHelperFrame:IsShown() then
+            addon:RefreshQuestHelper(true)
+        else
+            addon:BuildQuestHelperData()
+        end
+        addon:UpdatePartyBotQuestSnapshot(true)
+        return
     end
+
+    addon._partyBotRosterGeneration = (addon._partyBotRosterGeneration or 0) + 1
+    local generation = addon._partyBotRosterGeneration
+    addon:RunAfter(event == "PLAYER_ENTERING_WORLD" and 1.5 or 0.8, function()
+        if generation ~= addon._partyBotRosterGeneration then return end
+        local addMissing, completeWithPlayer = addon:GetPartyBotQuestSyncOptions()
+        if addon:GetPartyBotQuestChannel() and (addMissing or completeWithPlayer) then
+            addon:SyncAllPartyBotQuests(addMissing, completeWithPlayer)
+        else
+            addon:BuildQuestHelperData()
+            addon:UpdatePartyBotQuestSnapshot(false)
+        end
+    end)
 end)
