@@ -444,15 +444,14 @@ function addon:GetQuestItemDropSources(obj)
         table.insert(sources, { type = kind, id = id })
     end
 
-    -- Questie exposes the raw WotLK item adapter with separate npcDrops and
-    -- objectDrops lists.  Prefer those so vendors are never mistaken for drops.
-    if type(qdb.QueryItem) == "function" and type(qdb.itemKeys) == "table" then
-        local ok, raw = pcall(qdb.QueryItem, itemID, qdb._itemAdapterQueryOrder)
+    -- Query only Questie's public drop fields. QueryItem returns values in the
+    -- requested order, so vendors can never be mistaken for loot sources and no
+    -- private adapter table is required.
+    if type(qdb.QueryItem) == "function" then
+        local ok, raw = pcall(qdb.QueryItem, itemID, {"npcDrops", "objectDrops"})
         if ok and type(raw) == "table" then
-            local npcKey = qdb.itemKeys.npcDrops
-            local objectKey = qdb.itemKeys.objectDrops
-            local npcs = npcKey and raw[npcKey] or nil
-            local objects = objectKey and raw[objectKey] or nil
+            local npcs = raw[1]
+            local objects = raw[2]
             if type(npcs) == "table" then
                 for _, id in pairs(npcs) do addSource("monster", id) end
             end
@@ -478,6 +477,15 @@ function addon:GetQuestItemDropSources(obj)
             end
         end
     end
+    -- pairs() iteration order is undefined in Lua 5.1. Keep repeated clicks
+    -- predictable: NPC entries first, then game objects, each by ascending ID.
+    local sourceOrder = { monster = 1, object = 2 }
+    table.sort(sources, function(a, b)
+        local aOrder = sourceOrder[a.type] or 99
+        local bOrder = sourceOrder[b.type] or 99
+        if aOrder ~= bOrder then return aOrder < bOrder end
+        return a.id < b.id
+    end)
     return sources
 end
 
