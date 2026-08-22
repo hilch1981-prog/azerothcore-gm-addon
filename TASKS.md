@@ -30,7 +30,7 @@
 - [x] 3.3.5a 기본 Frame/ScrollFrame 사용 및 Retail 전용 API 부재 정적검증(게임 내 회귀 테스트 대기)
 - [x] Lua/TOC/XML 정적 검사(Lua 5.1, TOC 경로·대소문자·로드 순서, XML 구문 GitHub Actions 검증)
 - [x] 게임 내 기능별 테스트 절차와 현재 결과 기록(`GAME_TEST_MATRIX.md`; 미실행 항목은 대기 유지)
-- [ ] 전체 애드온 ZIP 재생성 및 무결성 검사
+- [x] 전체 애드온 ZIP 재생성 및 무결성 검사(71개 파일, SHA-256과 재현 가능한 생성기 검증)
 - [x] 변경 내역과 알려진 제한 문서화(`RELEASE_NOTES_3.2.8.md`)
 
 각 항목은 분석과 검증 없이 완료 처리하지 않는다.

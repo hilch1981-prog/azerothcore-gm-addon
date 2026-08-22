@@ -30,6 +30,7 @@ Claude Code 또는 다른 개발 도구로 작업하기 전에 다음 문서를 
 - `FEATURE_MAP.md`: 기능별 실제 구현 위치와 진입점
 - `GAME_TEST_MATRIX.md`: 실제 3.3.5a 게임 검증 절차와 결과
 - `RELEASE_NOTES_3.2.8.md`: 변경 내역과 알려진 제한
+- `RELEASE_ARTIFACT.md`: 최종 ZIP 파일명, 해시와 재생성 방법
 
 ## 호환성 원칙
 

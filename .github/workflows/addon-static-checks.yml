@@ -65,11 +65,15 @@ jobs:
       - name: Validate addon structure and XML
         run: python tools/validate_addon_structure.py
 
+      - name: Build and verify release ZIP
+        run: python tools/build_release_zip.py --output "${RUNNER_TEMP}/AzerothAdmin.zip"
+
       - name: Test Python audit tools
         run: >-
           python -m unittest
           tools/test_addon_structure.py
           tools/test_audit_command_meta.py
+          tools/test_build_release_zip.py
           tools/test_craft_frame_lifecycle.py
           tools/test_generate_quest_reward_335.py
           tools/test_popup_layer_lifecycle.py
