@@ -245,6 +245,7 @@ local function sortedKeys(tbl)
 end
 
 local IDX = BlueItemInfo3CategoryIndex or { roots = {}, seconds = {}, thirds = {}, items = {} }
+local QUEST_REWARDS_335 = BlueItemInfo3QuestRewards335 or {}
 local ROWS_PER_PAGE = 14
 local results, page, maxPage = {}, 1, 1
 local selectedCategory = nil
@@ -755,8 +756,22 @@ local function addLegacyRegionQuestRewards(out, seen, secondKey)
     return table.getn(out) > before
 end
 
+local function addOfficialQuestRewards(out, seen, secondKey)
+    local bucket = QUEST_REWARDS_335[secondKey]
+    if not bucket then return false end
+    local before = table.getn(out)
+    local kinds = { "fixed", "choice" }
+    local ki,ii
+    for ki=1,table.getn(kinds) do
+        local list = bucket[kinds[ki]] or {}
+        for ii=1,table.getn(list) do addUniqueResult(out, seen, list[ii], "z") end
+    end
+    return table.getn(out) > before
+end
+
 local function collectSecond(out, seen, secondKey, root)
     if BLOCKED_SECOND[secondKey] then return end
+    if root == "z" then addOfficialQuestRewards(out, seen, secondKey) end
     if root == "z" and (secondKey == "z3" or secondKey == "z4") then
         addLegacyRegionQuestRewards(out, seen, secondKey)
         -- Also merge any surviving direct 3.3.5a entries from the original branch.

@@ -41,6 +41,7 @@ Embedded\InvenCraftInfoData\RecipeDB.lua
 # Integrated item information data/browser
 Embedded\BlueItemInfo3\Data.lua
 Embedded\BlueItemInfo3\CategoryIndex.lua
+Embedded\BlueItemInfo3\QuestRewards335.lua
 Embedded\BlueItemInfo3\Integrated.lua
 
 # Profession information UI
