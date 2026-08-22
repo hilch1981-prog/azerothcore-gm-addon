@@ -362,12 +362,37 @@ end
 
 function addon:RaisePopup(frame)
     if not frame then return end
+    -- StaticPopup frames are shared by every addon. Preserve their original
+    -- layer before temporarily raising one above our FULLSCREEN_DIALOG windows.
+    if not frame._aaePopupLayerRaised then
+        frame._aaePopupLayerRaised = true
+        if frame.GetFrameStrata then frame._aaePopupOriginalStrata = frame:GetFrameStrata() end
+        if frame.GetFrameLevel then frame._aaePopupOriginalLevel = frame:GetFrameLevel() end
+        if frame.IsToplevel then frame._aaePopupOriginalToplevel = frame:IsToplevel() and true or false end
+    end
     -- Managed windows (quest/item/craft) use FULLSCREEN_DIALOG. StaticPopup's
     -- default strata can therefore end up behind them on the 3.3.5a client.
     -- TOOLTIP is the top UI strata and is safe for short modal dialogs.
     if frame.SetFrameStrata then frame:SetFrameStrata("TOOLTIP") end
     if frame.SetFrameLevel then frame:SetFrameLevel(1000) end
     if frame.SetToplevel then frame:SetToplevel(true) end
+end
+
+function addon:RestorePopupLayer(frame)
+    if not frame or not frame._aaePopupLayerRaised then return end
+    if frame.SetFrameStrata and frame._aaePopupOriginalStrata then
+        frame:SetFrameStrata(frame._aaePopupOriginalStrata)
+    end
+    if frame.SetFrameLevel and frame._aaePopupOriginalLevel ~= nil then
+        frame:SetFrameLevel(frame._aaePopupOriginalLevel)
+    end
+    if frame.SetToplevel and frame._aaePopupOriginalToplevel ~= nil then
+        frame:SetToplevel(frame._aaePopupOriginalToplevel)
+    end
+    frame._aaePopupLayerRaised = nil
+    frame._aaePopupOriginalStrata = nil
+    frame._aaePopupOriginalLevel = nil
+    frame._aaePopupOriginalToplevel = nil
 end
 
 function addon:SuspendManagedEscapeForPopup(frame)
@@ -380,6 +405,7 @@ end
 function addon:ResumeManagedEscapeForPopup(frame)
     if frame and not frame._aaeEscapeSuspended then return end
     if frame then frame._aaeEscapeSuspended = nil end
+    self:RestorePopupLayer(frame)
     self.popupEscapeDepth = math.max(0, (self.popupEscapeDepth or 1) - 1)
     self:RunAfter(0.02, function() addon:UpdateEscapeProxy() end)
 end
