@@ -96,11 +96,11 @@ AzerothAdminEasy.Categories = {
     } },
 
     { name = "크리쳐", short = "크리쳐", commands = {
-        { label = "주요 크리처 / 한글·ID 검색", action = "kr_creature_search", hint = "주요 보스·던전 최종 보스·월드 보스·지도자를 분류 탐색하고 전체 koKR/Entry 검색으로 전환할 수 있습니다." },
-        { label = "NPC 정보", command = ".npc info", requires = "creature", hint = "선택 크리쳐의 Entry/Spawn 등 상세 정보를 표시합니다." },
-        { label = "NPC GUID", command = ".npc guid", requires = "creature", hint = "선택 크리쳐의 DB Spawn GUID를 표시합니다. 일반 .guid 대신 AzerothCore .npc guid를 사용합니다." },
-        { label = "NPC 근처 검색", command = ".npc near {args}", hint = "인수: 거리(선택). 빈 값 대신 거리를 입력하세요.", example = "예: 20" },
-        { label = "거리 확인", command = ".distance", requires = "creature", hint = "선택 크리쳐와의 거리를 표시합니다." },
+        { label = "주요 크리처 / 한글·ID 검색", action = "kr_creature_search", hint = "레이드·던전·월드 보스, 희귀·이벤트·훈련 NPC·지도자를 분류 탐색하고 전체 koKR/Entry 검색으로 전환할 수 있습니다." },
+        { label = "NPC 정보", command = ".npc info", requires = "creature", hint = "실제 크리쳐/NPC를 선택한 뒤 Entry·Spawn·AI 정보를 표시합니다. 전송 문구가 아니라 서버 시스템 메시지에서 결과를 확인하세요." },
+        { label = "NPC GUID", command = ".npc guid", requires = "creature", hint = "실제 크리쳐/NPC를 선택한 뒤 DB Spawn GUID를 표시합니다. 플레이어 대상에는 동작하지 않습니다." },
+        { label = "NPC 근처 20m", command = ".npc near 20", hint = "현재 위치 20m 안의 DB 크리쳐 Spawn을 조회합니다. 서버 버전별 기본 거리 차이를 피하기 위해 거리값을 명시합니다." },
+        { label = "거리 확인", command = ".distance", requires = "creature", hint = "실제 크리쳐/NPC를 선택한 뒤 현재 캐릭터와 대상 사이의 거리를 표시합니다." },
         { label = "NPC 생성", command = ".npc add {args}", hint = "인수: Creature Entry", example = "예: 68" },
         { label = "NPC 삭제", command = ".npc delete", requires = "creature", hint = "선택 크리쳐의 Spawn을 DB에서 삭제합니다.", confirm = true, danger = true },
         { label = "NPC 현재 위치로 이동", command = ".npc move", requires = "creature", hint = "선택 크리쳐 Spawn 위치를 현재 GM 위치로 이동합니다." },

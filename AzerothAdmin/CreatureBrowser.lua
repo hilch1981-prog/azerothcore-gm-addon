@@ -1,7 +1,7 @@
 AzerothAdminEasy = AzerothAdminEasy or {}
 local addon = AzerothAdminEasy
 
-local ROWS_PER_PAGE = 8
+local CREATURE_ROW_HEIGHT = 44
 local CREATURE_ICON = "Interface\\Icons\\INV_Misc_Head_Dragon_01"
 
 local function makeText(parent, text, fontObject)
@@ -70,17 +70,6 @@ local function normalized(value)
     return string.lower(value)
 end
 
-local function setButtonEnabled(button, enabled)
-    if not button then return end
-    if enabled then
-        button:Enable()
-        button:SetAlpha(1)
-    else
-        button:Disable()
-        button:SetAlpha(0.45)
-    end
-end
-
 local function setCategoryActive(button, active)
     if not button then return end
     if active then
@@ -121,6 +110,9 @@ function addon:FeaturedCreatureMatchesCategory(record)
     if key == "raid_classic" then return group == "raid" and expansion == "classic" end
     if key == "raid_tbc" then return group == "raid" and expansion == "tbc" end
     if key == "raid_wotlk" then return group == "raid" and expansion == "wotlk" end
+    if key == "dungeon_classic" then return group == "dungeon" and expansion == "classic" end
+    if key == "dungeon_tbc" then return group == "dungeon" and expansion == "tbc" end
+    if key == "dungeon_wotlk" then return group == "dungeon" and expansion == "wotlk" end
     return group == key
 end
 
@@ -150,7 +142,6 @@ end
 
 function addon:SetCreatureBrowserCategory(key, label)
     self.creatureBrowserCategory = key or "all"
-    self.creatureBrowserPage = 1
     local i
     for i = 1, table.getn(self.creatureBrowserCategoryButtons or {}) do
         local button = self.creatureBrowserCategoryButtons[i]
@@ -168,6 +159,8 @@ function addon:SelectFeaturedCreature(record)
         if self.creatureBrowserSelectedText then self.creatureBrowserSelectedText:SetText("크리처를 선택하세요.") end
         if self.creatureBrowserWarning then self.creatureBrowserWarning:SetText("") end
         if self.creatureBrowserFavoriteButton then self.creatureBrowserFavoriteButton:SetText("☆ 즐겨찾기") end
+        if self.creatureBrowserModel then self.creatureBrowserModel:Hide() end
+        if self.creatureBrowserModelFallback then self.creatureBrowserModelFallback:Show() end
         self:RefreshCreatureBrowserRows()
         return
     end
@@ -185,6 +178,19 @@ function addon:SelectFeaturedCreature(record)
     end
     if self.creatureBrowserFavoriteButton then
         self.creatureBrowserFavoriteButton:SetText(self:IsFeaturedCreatureFavorite(entry) and "★ 해제" or "☆ 즐겨찾기")
+    end
+    if self.creatureBrowserModel then
+        local ok = pcall(self.creatureBrowserModel.SetCreature, self.creatureBrowserModel, tonumber(entry))
+        if ok then
+            self.creatureBrowserModel:Show()
+            if self.creatureBrowserModelFallback then self.creatureBrowserModelFallback:Hide() end
+            if self.creatureBrowserModel.SetRotation then
+                pcall(self.creatureBrowserModel.SetRotation, self.creatureBrowserModel, self.creatureBrowserModelRotation or 0)
+            end
+        else
+            self.creatureBrowserModel:Hide()
+            if self.creatureBrowserModelFallback then self.creatureBrowserModelFallback:Show() end
+        end
     end
     self:RefreshCreatureBrowserRows()
 end
@@ -237,15 +243,11 @@ function addon:RefreshCreatureBrowserRows()
     if not self.creatureBrowserRows then return end
     local results = self.creatureBrowserResults or {}
     local count = table.getn(results)
-    self.creatureBrowserPageCount = math.max(1, math.ceil(count / ROWS_PER_PAGE))
-    if not self.creatureBrowserPage or self.creatureBrowserPage < 1 then self.creatureBrowserPage = 1 end
-    if self.creatureBrowserPage > self.creatureBrowserPageCount then self.creatureBrowserPage = self.creatureBrowserPageCount end
-    local first = (self.creatureBrowserPage - 1) * ROWS_PER_PAGE + 1
     local groupLabels = self.FeaturedCreatureGroupLabels or {}
     local expansionLabels = self.FeaturedCreatureExpansionLabels or {}
     local i
-    for i = 1, ROWS_PER_PAGE do
-        local record = results[first + i - 1]
+    for i = 1, table.getn(self.creatureBrowserRows) do
+        local record = results[i]
         local row = self.creatureBrowserRows[i]
         row.aaeCreature = record
         if record then
@@ -267,16 +269,17 @@ function addon:RefreshCreatureBrowserRows()
             row:Hide()
         end
     end
-    if self.creatureBrowserPageText then
-        self.creatureBrowserPageText:SetText("주요 목록 " .. tostring(count) .. "개 · "
-            .. tostring(self.creatureBrowserPage) .. " / " .. tostring(self.creatureBrowserPageCount))
+    if self.creatureBrowserResultChild then
+        self.creatureBrowserResultChild:SetHeight(math.max(270, count * CREATURE_ROW_HEIGHT + 4))
     end
-    setButtonEnabled(self.creatureBrowserPrevious, self.creatureBrowserPage > 1)
-    setButtonEnabled(self.creatureBrowserNext, self.creatureBrowserPage < self.creatureBrowserPageCount)
+    if self.creatureBrowserCountText then
+        self.creatureBrowserCountText:SetText("주요 목록 " .. tostring(count) .. "개 · 마우스 휠/스크롤바로 이동")
+    end
 end
 
 function addon:RefreshCreatureBrowser()
     self.creatureBrowserResults = self:GetFilteredFeaturedCreatures()
+    if self.creatureBrowserResultScroll then self.creatureBrowserResultScroll:SetVerticalScroll(0) end
     local selectedFound = false
     local i
     for i = 1, table.getn(self.creatureBrowserResults) do
@@ -374,7 +377,6 @@ function addon:CreateCreatureBrowser()
     for i = 1, table.getn(expansionDefs) do
         local def = expansionDefs[i]
         self.creatureBrowserExpansionChecks[def[1]] = makeCheck(frame, filterX + def[3], -68, def[2], true, function()
-            addon.creatureBrowserPage = 1
             addon:RefreshCreatureBrowser()
         end)
     end
@@ -383,11 +385,9 @@ function addon:CreateCreatureBrowser()
     safetyTitle:SetPoint("TOPLEFT", frame, "TOPLEFT", filterX, -101)
     safetyTitle:SetTextColor(1, 0.82, 0.18)
     self.creatureBrowserRestrictedCheck = makeCheck(frame, filterX + 72, -97, "지역 제한 가능", true, function()
-        addon.creatureBrowserPage = 1
         addon:RefreshCreatureBrowser()
     end)
     self.creatureBrowserOpenCheck = makeCheck(frame, filterX + 205, -97, "일반 지역 NPC", true, function()
-        addon.creatureBrowserPage = 1
         addon:RefreshCreatureBrowser()
     end)
 
@@ -400,7 +400,6 @@ function addon:CreateCreatureBrowser()
     local searchButton = makeButton(frame, 60, 24, "검색")
     searchButton:SetPoint("LEFT", searchEdit, "RIGHT", 7, 0)
     searchButton:SetScript("OnClick", function()
-        addon.creatureBrowserPage = 1
         addon:RefreshCreatureBrowser()
     end)
     local fullSearchButton = makeButton(frame, 96, 24, "전체 DB 검색")
@@ -409,7 +408,6 @@ function addon:CreateCreatureBrowser()
         addon:OpenLocaleSearch("creature", searchEdit:GetText() or "")
     end)
     searchEdit:SetScript("OnEnterPressed", function(self)
-        addon.creatureBrowserPage = 1
         addon:RefreshCreatureBrowser()
         self:ClearFocus()
     end)
@@ -420,14 +418,29 @@ function addon:CreateCreatureBrowser()
     current:SetTextColor(0.45, 0.9, 1)
     self.creatureBrowserCurrent = current
 
+    local resultScroll = CreateFrame("ScrollFrame", "AzerothAdminCreatureResultScroll", frame, "UIPanelScrollFrameTemplate")
+    resultScroll:SetPoint("TOPLEFT", frame, "TOPLEFT", filterX, -184)
+    resultScroll:SetWidth(416)
+    resultScroll:SetHeight(270)
+    resultScroll:EnableMouseWheel(true)
+    resultScroll:SetScript("OnMouseWheel", function(self, delta)
+        local currentScroll = self:GetVerticalScroll() or 0
+        local maxScroll = math.max(0, (self:GetVerticalScrollRange() or 0))
+        self:SetVerticalScroll(math.max(0, math.min(maxScroll, currentScroll - delta * (CREATURE_ROW_HEIGHT * 3))))
+    end)
+    local resultChild = CreateFrame("Frame", nil, resultScroll)
+    resultChild:SetWidth(388)
+    resultChild:SetHeight(270)
+    resultScroll:SetScrollChild(resultChild)
+    self.creatureBrowserResultScroll = resultScroll
+    self.creatureBrowserResultChild = resultChild
+
     self.creatureBrowserRows = {}
-    for i = 1, ROWS_PER_PAGE do
-        local row = CreateFrame("Button", nil, frame)
-        row:SetWidth(316)
-        row:SetHeight(44)
-        local column = (i - 1) % 2
-        local rowIndex = math.floor((i - 1) / 2)
-        row:SetPoint("TOPLEFT", frame, "TOPLEFT", filterX + column * 326, -184 - rowIndex * 48)
+    for i = 1, table.getn(self.FeaturedCreatures or {}) do
+        local row = CreateFrame("Button", nil, resultChild)
+        row:SetWidth(384)
+        row:SetHeight(40)
+        row:SetPoint("TOPLEFT", resultChild, "TOPLEFT", 2, -((i - 1) * CREATURE_ROW_HEIGHT))
         row:SetBackdrop({
             bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
             edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
@@ -443,12 +456,12 @@ function addon:CreateCreatureBrowser()
         rowIcon:SetHeight(34)
         rowIcon:SetPoint("LEFT", row, "LEFT", 6, 0)
         local name = makeText(row, "", GameFontHighlightSmall)
-        name:SetWidth(262)
+        name:SetWidth(328)
         name:SetJustifyH("LEFT")
         name:SetPoint("TOPLEFT", row, "TOPLEFT", 46, -6)
         row.name = name
         local meta = makeText(row, "", GameFontHighlightSmall)
-        meta:SetWidth(262)
+        meta:SetWidth(328)
         meta:SetJustifyH("LEFT")
         meta:SetPoint("BOTTOMLEFT", row, "BOTTOMLEFT", 46, 6)
         meta:SetTextColor(0.65, 0.82, 0.90)
@@ -477,15 +490,59 @@ function addon:CreateCreatureBrowser()
         self.creatureBrowserRows[i] = row
     end
 
+    local modelPanel = CreateFrame("Frame", nil, frame)
+    modelPanel:SetWidth(196)
+    modelPanel:SetHeight(270)
+    modelPanel:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -18, -184)
+    modelPanel:SetBackdrop({
+        bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+        tile = true, tileSize = 12, edgeSize = 8,
+        insets = { left = 2, right = 2, top = 2, bottom = 2 },
+    })
+    modelPanel:SetBackdropColor(0.01, 0.02, 0.025, 1)
+    modelPanel:SetBackdropBorderColor(0.48, 0.43, 0.31, 1)
+    local modelTitle = makeText(modelPanel, "클라이언트 3D 외형", GameFontHighlightSmall)
+    modelTitle:SetPoint("TOP", modelPanel, "TOP", 0, -8)
+    modelTitle:SetTextColor(1, 0.82, 0.18)
+    local model = CreateFrame("PlayerModel", "AzerothAdminCreatureModelPreview", modelPanel)
+    model:SetPoint("TOPLEFT", modelPanel, "TOPLEFT", 8, -25)
+    model:SetPoint("BOTTOMRIGHT", modelPanel, "BOTTOMRIGHT", -8, 34)
+    if model.SetCamDistanceScale then pcall(model.SetCamDistanceScale, model, 1.05) end
+    self.creatureBrowserModel = model
+    self.creatureBrowserModelRotation = 0
+    local fallback = modelPanel:CreateTexture(nil, "ARTWORK")
+    fallback:SetTexture(CREATURE_ICON)
+    fallback:SetWidth(64)
+    fallback:SetHeight(64)
+    fallback:SetPoint("CENTER", modelPanel, "CENTER", 0, 2)
+    self.creatureBrowserModelFallback = fallback
+    local rotateLeft = makeButton(modelPanel, 76, 22, "◀ 회전")
+    rotateLeft:SetPoint("BOTTOMLEFT", modelPanel, "BOTTOMLEFT", 10, 8)
+    rotateLeft:SetScript("OnClick", function()
+        addon.creatureBrowserModelRotation = (addon.creatureBrowserModelRotation or 0) - 0.35
+        if addon.creatureBrowserModel and addon.creatureBrowserModel.SetRotation then
+            pcall(addon.creatureBrowserModel.SetRotation, addon.creatureBrowserModel, addon.creatureBrowserModelRotation)
+        end
+    end)
+    local rotateRight = makeButton(modelPanel, 76, 22, "회전 ▶")
+    rotateRight:SetPoint("BOTTOMRIGHT", modelPanel, "BOTTOMRIGHT", -10, 8)
+    rotateRight:SetScript("OnClick", function()
+        addon.creatureBrowserModelRotation = (addon.creatureBrowserModelRotation or 0) + 0.35
+        if addon.creatureBrowserModel and addon.creatureBrowserModel.SetRotation then
+            pcall(addon.creatureBrowserModel.SetRotation, addon.creatureBrowserModel, addon.creatureBrowserModelRotation)
+        end
+    end)
+
     local selectedText = makeText(frame, "크리처를 선택하세요.", GameFontNormal)
-    selectedText:SetWidth(640)
+    selectedText:SetWidth(636)
     selectedText:SetJustifyH("LEFT")
-    selectedText:SetPoint("TOPLEFT", frame, "TOPLEFT", filterX, -386)
+    selectedText:SetPoint("TOPLEFT", frame, "TOPLEFT", filterX, -466)
     selectedText:SetTextColor(1, 0.82, 0.18)
     self.creatureBrowserSelectedText = selectedText
 
     local goButton = makeButton(frame, 88, 24, "위치 이동")
-    goButton:SetPoint("TOPLEFT", frame, "TOPLEFT", filterX, -410)
+    goButton:SetPoint("TOPLEFT", frame, "TOPLEFT", filterX, -490)
     goButton:SetScript("OnClick", function() addon:RunFeaturedCreatureAction("go") end)
     local tempButton = makeButton(frame, 92, 24, "임시 소환")
     tempButton:SetPoint("LEFT", goButton, "RIGHT", 7, 0)
@@ -509,34 +566,15 @@ function addon:CreateCreatureBrowser()
     warning:SetHeight(42)
     warning:SetJustifyH("LEFT")
     warning:SetJustifyV("TOP")
-    warning:SetPoint("TOPLEFT", frame, "TOPLEFT", filterX, -446)
+    warning:SetPoint("TOPLEFT", frame, "TOPLEFT", filterX, -526)
     self.creatureBrowserWarning = warning
 
-    local previous = makeButton(frame, 82, 22, "◀ 이전")
-    previous:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", filterX, 22)
-    previous:SetScript("OnClick", function()
-        if addon.creatureBrowserPage > 1 then
-            addon.creatureBrowserPage = addon.creatureBrowserPage - 1
-            addon:RefreshCreatureBrowserRows()
-        end
-    end)
-    local pageText = makeText(frame, "", GameFontHighlightSmall)
-    pageText:SetWidth(420)
-    pageText:SetJustifyH("CENTER")
-    pageText:SetPoint("LEFT", previous, "RIGHT", 14, 0)
-    local nextButton = makeButton(frame, 82, 22, "다음 ▶")
-    nextButton:SetPoint("LEFT", pageText, "RIGHT", 14, 0)
-    nextButton:SetScript("OnClick", function()
-        if addon.creatureBrowserPage < addon.creatureBrowserPageCount then
-            addon.creatureBrowserPage = addon.creatureBrowserPage + 1
-            addon:RefreshCreatureBrowserRows()
-        end
-    end)
-    self.creatureBrowserPrevious = previous
-    self.creatureBrowserPageText = pageText
-    self.creatureBrowserNext = nextButton
+    local countText = makeText(frame, "", GameFontHighlightSmall)
+    countText:SetWidth(636)
+    countText:SetJustifyH("CENTER")
+    countText:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", filterX, 22)
+    self.creatureBrowserCountText = countText
     self.creatureBrowserCategory = "all"
-    self.creatureBrowserPage = 1
     self:SetCreatureBrowserCategory("all", "주요 크리처 전체")
     self:SelectFeaturedCreature(self.FeaturedCreatures and self.FeaturedCreatures[1] or nil)
 end
@@ -548,7 +586,6 @@ function addon:ToggleCreatureBrowser()
         return
     end
     self:HideAddonPopups(nil)
-    self.creatureBrowserPage = 1
     self:RefreshCreatureBrowser()
     self:OpenManagedFrame(self.creatureBrowserFrame)
 end
