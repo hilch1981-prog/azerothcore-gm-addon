@@ -179,6 +179,15 @@ AzerothAdminEasy.Categories = {
         { label = "리콜 위치로 이동", command = ".recall", requires = "player", hint = "선택 플레이어를 Recall 위치로 이동합니다." },
     } },
 
+    { name = "그룹", short = "그룹", commands = {
+        { label = "그룹 구성원 목록", command = ".group list", hint = "선택 플레이어의 그룹을 표시합니다. 플레이어 대상이 없으면 자신의 그룹을 표시합니다." },
+        { label = "플레이어 그룹 참가", command = ".group join {args}", hint = "인수: 기존 그룹 구성원 이름 참가시킬 플레이어 이름", example = "예: GroupMember NewMember" },
+        { label = "그룹장 변경", command = ".group leader", requires = "player", hint = "선택 플레이어를 현재 그룹의 그룹장으로 변경합니다.", confirm = true },
+        { label = "그룹에서 제거", command = ".group remove", requires = "player", hint = "선택 플레이어를 현재 그룹에서 제거합니다.", confirm = true, danger = true },
+        { label = "그룹 전체 부활", command = ".group revive", hint = "선택 플레이어의 그룹을 부활시킵니다. 플레이어 대상이 없으면 자신의 그룹을 부활시킵니다." },
+        { label = "그룹 해산", command = ".group disband", requires = "player", hint = "선택 플레이어가 속한 그룹을 완전히 해산합니다.", confirm = true, danger = true },
+    } },
+
     { name = "티켓", short = "티켓", commands = {
         { label = "티켓 목록", command = ".ticket list", hint = "열린 GM 티켓 목록을 표시합니다." },
         { label = "온라인 티켓", command = ".ticket onlinelist", hint = "온라인 플레이어의 티켓을 표시합니다." },
