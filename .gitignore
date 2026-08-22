@@ -11,6 +11,7 @@ __pycache__/
 
 # Local archives and runtime data
 *.zip
+dist/
 WTF/
 Cache/
 Logs/
