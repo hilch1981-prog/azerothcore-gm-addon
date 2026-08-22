@@ -55,7 +55,7 @@
 - 퀘스트 아이템 드랍처는 Questie의 공개 `QueryItem` API에서 NPC와 게임 오브젝트 원천만 조회한다. 중복을 제거하고 NPC 우선·Entry ID 오름차순으로 정렬해 반복 클릭 순환 순서를 안정화하며, 데이터가 없으면 퀘스트 POI로 이동한다.
 - 퀘스트 완료·아이템 수량·퀘스트 추가·전문기술 습득·명령 확인 팝업은 `TOOLTIP` 레이어로 올리고, 닫을 때 공유 `StaticPopup` 프레임의 원래 strata/level/toplevel 값을 복원한다.
 - `FEATURE_MAP.md`에 기능별 실제 구현 위치를, `GAME_TEST_MATRIX.md`에 실제 게임 검증 결과를 기록한다. TOC 경로·대소문자·핵심 로드 순서, XML 구문, 아이템/전문기술 프레임 분리, 퀘스트 선택 수명주기는 CI에서 검사한다.
-- 최종 배포 ZIP은 `tools/build_release_zip.py`로 재현 가능하게 생성하며 71개 파일, TOC 포함 여부, ZIP 손상 및 SHA-256을 검증한다. 실제 산출물 정보는 `RELEASE_ARTIFACT.md`에 기록한다.
+- 최종 배포 ZIP은 `tools/build_release_zip.py`로 재현 가능하게 생성하며 72개 파일, TOC 포함 여부, ZIP 손상 및 SHA-256을 검증한다. 실제 산출물 정보는 `RELEASE_ARTIFACT.md`에 기록한다.
 - 3.2.9는 파티 합류와 퀘스트 상태 전환을 감지해 기본 퀘스트 공유를 순차 실행한다. 조건완료 강제 동기화는 `quest complete [퀘스트 링크]` 채팅 명령을 지원하는 Playerbots 빌드에서만 사용하며, 최신 upstream은 `AiPlayerbot.SyncQuestWithPlayer = 1`의 반납 시 동기화를 사용한다.
 
 ## 최근 기능 고도화
