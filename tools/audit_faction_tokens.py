@@ -12,7 +12,7 @@ SOURCES = (
     ROOT / "AzerothAdmin/Embedded/BlueItemInfo3/Data.lua",
     ROOT / "AzerothAdmin/Embedded/BlueItemInfo3/CategoryIndex.lua",
 )
-TOKEN_START = re.compile(r"(?:\$|@)f(?=[{(0-9])")
+TOKEN_START = re.compile(r"\$f|@f")
 CANONICAL_TOKEN = re.compile(r"\$f\{[^{}@/]+/[^{}@/]+\}")
 
 
