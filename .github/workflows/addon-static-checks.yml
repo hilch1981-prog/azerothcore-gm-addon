@@ -1,0 +1,53 @@
+name: Addon static checks
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install Lua 5.1
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lua5.1
+
+      - name: Check Lua 5.1 syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          find AzerothAdmin -type f -name '*.lua' -print0 \
+            | while IFS= read -r -d '' file; do
+                luac5.1 -p "$file"
+              done
+
+      - name: Check TOC paths
+        shell: bash
+        run: |
+          missing=0
+          while IFS= read -r entry; do
+            entry="${entry%$'\r'}"
+            [[ -z "$entry" || "$entry" == \#* ]] && continue
+            path="AzerothAdmin/${entry//\\//}"
+            if [[ ! -f "$path" ]]; then
+              echo "Missing TOC file: $entry"
+              missing=1
+            fi
+          done < AzerothAdmin/AzerothAdmin.toc
+          exit "$missing"
+
+      - name: Reject Retail-only APIs
+        shell: bash
+        run: |
+          if grep -RInE --include='*.lua' --include='*.xml' \
+            '\b(C_Container|C_Item|ScrollBox|C_QuestLog)\b' AzerothAdmin; then
+            echo 'Retail-only API detected.'
+            exit 1
+          fi

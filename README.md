@@ -22,6 +22,9 @@ Claude Code 또는 다른 개발 도구로 작업하기 전에 다음 문서를 
 - `DEVELOPMENT_RULES.md`: 호환성 및 검증 규칙
 - `REFERENCES.md`: 공개 참고 자료
 - `CLAUDE_FIRST_PROMPT.txt`: Claude Code 첫 요청문
+- `AGENTS.md`: ChatGPT/Codex 작업 지침
+- `CONTRIBUTING.md`: 공동 브랜치·PR 규칙
+- `COLLABORATION.md`: ChatGPT/Codex + Claude 연결 방법
 
 ## 호환성 원칙
 

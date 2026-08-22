@@ -1,0 +1,37 @@
+name: 버그 보고
+description: WotLK 3.3.5a AzerothAdmin 문제를 기록합니다.
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: symptom
+    attributes:
+      label: 증상
+      description: 실제로 발생한 현상을 적어 주세요.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 재현 방법
+      description: 캐릭터 상태, 메뉴, 버튼과 명령 순서를 적어 주세요.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 기대 결과
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: 환경
+      value: "WoW 3.3.5a Build 12340 / AzerothCore"
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: 로그 및 화면 자료
+      description: 비밀번호, 토큰, 접속 정보는 제거해 주세요.
