@@ -14,6 +14,11 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
       - name: Install Lua 5.1
         run: |
           sudo apt-get update
@@ -56,3 +61,9 @@ jobs:
             echo 'Retail-only API detected.'
             exit 1
           fi
+
+      - name: Test command metadata audit
+        run: python -m unittest tools/test_audit_command_meta.py
+
+      - name: Audit AzerothCore command metadata
+        run: python tools/audit_command_meta.py

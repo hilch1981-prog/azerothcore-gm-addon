@@ -5,6 +5,16 @@
 - WOW Legends GM Addon: https://github.com/WOWLegendsHQ/wow-legends-gm-addon
 - AzerothCore WotLK: https://github.com/azerothcore/azerothcore-wotlk
 
+## GM 명령 메타데이터 기준
+
+- 기준 커밋: `c143cdaa7cb877d6481a5c941da76b77b9b99165` (2026-08-21 UTC)
+- 기준 파일: `data/sql/base/db_world/command.sql`
+- 고정 원문 URL과 SHA-256은 `tools/command_metadata_source.json`에 기록한다.
+- `tools/audit_command_meta.py`는 공식 기본 명령의 누락과 보안 등급 차이, 승인되지 않은 모듈 명령 혼입을 검사한다.
+- `required_module_commands` 41개는 현재 사용자 기준본에 포함된 필수 메타데이터이며, 실제 서버별 모듈 설치 여부와는 별도로 보존한다.
+- CI는 고정된 커밋의 원문을 내려받아 검사하므로 AzerothCore의 이후 변경이 예고 없이 현재 빌드를 깨뜨리지 않는다.
+- 기준 커밋을 갱신할 때는 URL, SHA-256, 예상 명령 수와 차이 보고서를 함께 검토한다.
+
 ## 사용 원칙
 
 - WOW Legends 저장소는 기존 GM 애드온의 구조와 기능을 이해하기 위한 공개 참고 자료로 사용한다.
