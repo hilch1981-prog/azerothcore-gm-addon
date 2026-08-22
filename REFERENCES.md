@@ -32,6 +32,15 @@
 - UI 참고: https://github.com/Macx-Lio/MultiBot
 - 확인 기준 커밋: mod-playerbots `5397110cba484a9b7209bc9f632652e9d4bd6a70`, MultiBot `ecee413dacfa93ee705ede83f308f3a0396e6ece`
 
+## 크리처 이동 및 소환 명령
+
+- AzerothCore NPC 명령 구현: https://github.com/azerothcore/azerothcore-wotlk/blob/master/src/server/scripts/Commands/cs_npc.cpp
+- AzerothCore GM 명령 문서: https://github.com/azerothcore/wiki/blob/master/docs/gm-commands.md
+- 명령 메타데이터 원문: https://github.com/azerothcore/database-wotlk/blob/master/sql/base/command.sql
+- `.npc add temp Entry`는 현재 위치에 임시 NPC를 생성하며 DB에 저장하지 않는다.
+- `.npc add Entry`는 현재 위치에 영구 스폰을 생성해 DB에 저장한다.
+- 레이드·던전·월드 보스의 지역 제한 경고는 명령 자체의 실패 여부가 아니라, 해당 크리처 AI가 원래 맵·인스턴스·조우·지역 스크립트에 의존할 가능성을 알리는 안전 표시다.
+
 ## 퀘스트 보상 데이터 기준
 
 - AzerothCore 기준 커밋: `c143cdaa7cb877d6481a5c941da76b77b9b99165`

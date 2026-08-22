@@ -8,6 +8,7 @@
 | 퀘스트 도우미 | 도구 모음 `퀘스트` | `AzerothAdmin/QuestHelper.lua` | 퀘스트 로그 API, `.quest complete`, `.go creature`, `.go object` | 선택·상세·하이라이트 수명주기 자동검사 |
 | 파티·봇 퀘스트 동기화 | 퀘스트 도우미 상단 선택 항목 | `AzerothAdmin/QuestHelper.lua` | `QuestLogPushQuest`, Playerbots `quest complete [quest]` | 큐·상태 전환·파티 합류 자동검사; 게임 검사 대기 |
 | 한글 아이템/퀘스트 검색 | 검색 UI와 명령 인수 창 | `AzerothAdmin/KoKRSearch.lua`, `KoKRSearchData.lua` | `.additem`, `.quest add` | 팝업·수량 처리 자동검사 |
+| 주요 크리처 정보 | 명령 메뉴 `주요 크리처 / 한글·ID 검색` | `AzerothAdmin/FeaturedCreatures.lua`, `CreatureBrowser.lua`, `KoKRSearch.lua` | `.go creature id`, `.list creature`, `.npc add temp`, `.npc add` | 56개 선별 데이터·koKR 일치·UI·소환 분리 자동검사; 게임 검사 대기 |
 | 아이템 정보 | 도구 모음 `아이템 정보` | `Embedded/BlueItemInfo3/Integrated.lua` | `.additem` | `BlueItemInfo3` 독립 프레임 자동검사 |
 | 전문기술 정보 | 도구 모음 `전문기술` | `Embedded/InvenCraftInfoUI/Rebuilt.lua`, `Embedded/InvenCraftInfo*` | `.learn`, `.setskill` | `AzerothAdminCraftInfoFrame` 독립 프레임·초기화 자동검사 |
 | 퀘스트 보상 분류 | 아이템 정보의 퀘스트 보상 분류 | `Embedded/BlueItemInfo3/QuestRewards335.lua` | 공식 `quest_template` 생성 데이터 | 생성기 회귀 검사 |
@@ -20,6 +21,7 @@
 ## 로드 순서 핵심
 
 - 공통 로컬라이징과 명령 데이터가 `Core.lua`보다 먼저 로드된다.
+- 전체 koKR 검색 데이터와 주요 크리처 선별 데이터가 크리처 브라우저보다 먼저 로드되고, 브라우저는 `Core.lua`의 실행 시점에 공통 명령 함수를 사용한다.
 - `Core.lua`가 관리 창 공통 함수를 만든 뒤 `QuestHelper.lua`와 `UI.lua`가 로드된다.
 - InvenCraftInfo 라이브러리와 데이터가 전문기술 재구성 UI보다 먼저 로드된다.
 - BlueItemInfo3 데이터·분류·퀘스트 보상이 통합 아이템 창보다 먼저 로드된다.

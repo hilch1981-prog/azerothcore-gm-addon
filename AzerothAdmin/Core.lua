@@ -319,6 +319,7 @@ function addon:GetManagedFrames()
     end
     add(self.argumentFrame)
     add(self.localeSearchFrame)
+    add(self.creatureBrowserFrame)
     add(self.questHelperFrame)
     add(self.teleportFrame)
     add(self.favoriteFrame)
@@ -773,7 +774,7 @@ function addon:ExecuteDefinition(definition)
         self:OpenLocaleSearch("quest")
         return
     elseif definition.action == "kr_creature_search" then
-        self:OpenLocaleSearch("creature")
+        self:ToggleCreatureBrowser()
         return
     elseif definition.action == "bankToggle" then
         self:ToggleBankWindow()

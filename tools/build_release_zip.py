@@ -17,7 +17,7 @@ except ModuleNotFoundError:  # Direct execution: python tools/build_release_zip.
 
 ROOT = Path(__file__).resolve().parents[1]
 ADDON = ROOT / "AzerothAdmin"
-DEFAULT_OUTPUT = ROOT / "dist/AzerothAdmin_3.2.9-335a_20260822.zip"
+DEFAULT_OUTPUT = ROOT / "dist/AzerothAdmin_3.3.0-335a_20260822.zip"
 ZIP_TIMESTAMP = (2026, 8, 22, 0, 0, 0)
 EXCLUDED_DIRS = {"__pycache__", "Cache", "Logs", "Screenshots", "WTF"}
 EXCLUDED_FILES = {".DS_Store", "Thumbs.db", "desktop.ini"}
