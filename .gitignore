@@ -6,6 +6,8 @@ desktop.ini
 .vscode/
 *.swp
 *~
+__pycache__/
+*.py[cod]
 
 # Local archives and runtime data
 *.zip
