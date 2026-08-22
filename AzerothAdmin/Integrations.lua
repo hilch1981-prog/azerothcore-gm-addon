@@ -279,26 +279,28 @@ end
 
 function addon:ToggleCraftInfo()
     if AzerothAdminCraftInfoFrame and AzerothAdminCraftInfoFrame:IsShown() then
-        AzerothAdminCraftInfoFrame.aaeReturnFrame = nil
-        self._closingManagedWindows = true
         AzerothAdminCraftInfoFrame:Hide()
         if TradeSkillFrame and TradeSkillFrame:IsShown() then pcall(TradeSkillFrame.Hide, TradeSkillFrame) end
-        self._closingManagedWindows = nil
-        if self.currentManagedFrame == AzerothAdminCraftInfoFrame then self.currentManagedFrame = nil end
-        self:UpdateEscapeProxy()
         return
     end
     self:HideAddonPopups(nil)
     if not AzerothAdminCraftInfoFrame then self:Print("전문기술 정보 UI를 찾지 못했습니다.", true); return end
     if not AzerothAdminCraftInfoFrame.enable and AzerothAdminCraftInfoFrame.ADDON_LOADED then pcall(AzerothAdminCraftInfoFrame.ADDON_LOADED, AzerothAdminCraftInfoFrame) end
-    self:HideAddonWindows(AzerothAdminCraftInfoFrame)
-    AzerothAdminCraftInfoFrame.aaeReturnFrame = nil
     if AzerothAdminCraftInfoFrame.ResetGMProfessionView then AzerothAdminCraftInfoFrame:ResetGMProfessionView() end
-    AzerothAdminCraftInfoFrame:Show()
-    self:RegisterEscapeFrame(AzerothAdminCraftInfoFrame)
-    self.currentManagedFrame = AzerothAdminCraftInfoFrame
-    self:ScheduleLegacyCraftSuppression()
-    self:UpdateEscapeProxy()
+    local opened
+    if self.OpenManagedFrame then
+        opened = self:OpenManagedFrame(AzerothAdminCraftInfoFrame)
+    else
+        self:HideAddonWindows(AzerothAdminCraftInfoFrame)
+        AzerothAdminCraftInfoFrame:Show()
+        opened = AzerothAdminCraftInfoFrame:IsShown()
+        if opened then
+            self:RegisterEscapeFrame(AzerothAdminCraftInfoFrame)
+            self.currentManagedFrame = AzerothAdminCraftInfoFrame
+            self:UpdateEscapeProxy()
+        end
+    end
+    if opened then self:ScheduleLegacyCraftSuppression() end
 end
 
 function addon:ToggleItemInfo()
