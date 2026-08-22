@@ -663,8 +663,8 @@ function addon:RefreshCommands()
             if definition.requiredSecurity ~= nil then
                 hint = hint .. "\n|cffaaaaaa필요 GM 레벨: " .. tostring(definition.requiredSecurity) .. "|r"
             end
-            if definition.command then
-                hint = hint .. "\n|cffffff88우클릭: GM 명령 퀵슬롯 등록/해제|r"
+            if addon:GetDefinitionKey(definition) then
+                hint = hint .. "\n|cffffff88우클릭: 기능 퀵슬롯 등록/해제|r"
             end
             if definition._resultMessage and definition._resultMessage ~= "" then
                 hint = hint .. "\n|cffbbbbbb최근 결과:|r " .. definition._resultMessage
@@ -695,6 +695,9 @@ function addon:RefreshCommands()
                 elseif state == "failure" then
                     button.aaeResultText:SetText("실패")
                     button.aaeResultText:SetTextColor(1, 0.30, 0.25)
+                elseif state == "sent" then
+                    button.aaeResultText:SetText("전송")
+                    button.aaeResultText:SetTextColor(0.45, 0.82, 0.95)
                 else
                     button.aaeResultText:SetText("")
                 end
@@ -733,7 +736,7 @@ function addon:RefreshCommandQuickSlots()
             slot.aaeIcon:SetTexture(commandIcon(def))
             local allowed, reason = self:IsDefinitionAllowed(def)
             slot.aaeTitle = "퀵 " .. tostring(i) .. ": " .. tostring(def.label or key)
-            slot.aaeHint = (def.hint or "") .. "\n" .. tostring(def.command or "") .. "\n우클릭: 퀵슬롯 해제"
+            slot.aaeHint = (def.hint or "") .. "\n" .. tostring(def.command or def.action or "") .. "\n우클릭: 퀵슬롯 해제"
             if allowed then
                 slot:Enable()
                 slot.aaeIcon:SetVertexColor(1, 1, 1)
@@ -748,8 +751,8 @@ function addon:RefreshCommandQuickSlots()
             slot:Enable()
             slot.aaeIcon:SetTexture("Interface\\Icons\\INV_Misc_QuestionMark")
             slot.aaeIcon:SetVertexColor(0.45, 0.45, 0.45)
-            slot.aaeTitle = "GM 명령 퀵슬롯 " .. tostring(i)
-            slot.aaeHint = "메인 GM 명령 버튼을 우클릭하면 최대 2개까지 등록됩니다."
+            slot.aaeTitle = "기능 퀵슬롯 " .. tostring(i)
+            slot.aaeHint = "메인 메뉴의 명령·검색·창 열기·토글 기능을 우클릭하면 최대 2개까지 등록됩니다."
             slot:SetBackdropBorderColor(0.35, 0.35, 0.35, 1)
         end
     end

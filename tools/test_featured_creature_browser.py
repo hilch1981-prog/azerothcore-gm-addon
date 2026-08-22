@@ -12,7 +12,7 @@ BROWSER_PATH = ADDON / "CreatureBrowser.lua"
 def parse_featured_records():
     text = DATA_PATH.read_text(encoding="utf-8-sig")
     pattern = re.compile(
-        r'\{\s*(\d+),\s*"([^"]+)",\s*"(raid|dungeon|world|leader)",\s*'
+        r'\{\s*(\d+),\s*"([^"]+)",\s*"(raid|dungeon|world|rare|event|utility|leader)",\s*'
         r'"(classic|tbc|wotlk)",\s*"([^"]+)",\s*(true|false)\s*\}'
     )
     return [
@@ -33,8 +33,8 @@ def parse_kokr_creatures():
 class FeaturedCreatureBrowserTests(unittest.TestCase):
     def test_curated_data_is_bounded_and_unique(self):
         records = parse_featured_records()
-        self.assertGreaterEqual(len(records), 50)
-        self.assertLessEqual(len(records), 80)
+        self.assertGreaterEqual(len(records), 180)
+        self.assertLessEqual(len(records), 220)
         entries = [record[0] for record in records]
         self.assertEqual(len(entries), len(set(entries)))
 
@@ -47,9 +47,9 @@ class FeaturedCreatureBrowserTests(unittest.TestCase):
     def test_restricted_warning_policy_is_explicit(self):
         records = parse_featured_records()
         for _, _, group, _, _, restricted in records:
-            if group in {"raid", "dungeon", "world"}:
+            if group in {"raid", "dungeon", "world", "rare", "event"}:
                 self.assertTrue(restricted)
-            elif group == "leader":
+            elif group in {"leader", "utility"}:
                 self.assertFalse(restricted)
 
         browser = BROWSER_PATH.read_text(encoding="utf-8-sig")
@@ -63,13 +63,22 @@ class FeaturedCreatureBrowserTests(unittest.TestCase):
             'frame:SetWidth(900)',
             'frame:SetHeight(610)',
             '"UIPanelScrollFrameTemplate"',
-            'ROWS_PER_PAGE = 8',
+            'AzerothAdminCreatureResultScroll',
+            'resultScroll:EnableMouseWheel(true)',
+            'table.getn(self.FeaturedCreatures or {})',
             'creatureBrowserExpansionChecks',
             'creatureBrowserRestrictedCheck',
             'creatureBrowserOpenCheck',
         ]
         for marker in required:
             self.assertIn(marker, browser)
+
+    def test_selected_creature_uses_native_335_model_preview(self):
+        browser = BROWSER_PATH.read_text(encoding="utf-8-sig")
+        self.assertIn('CreateFrame("PlayerModel", "AzerothAdminCreatureModelPreview"', browser)
+        self.assertIn("self.creatureBrowserModel.SetCreature", browser)
+        self.assertIn("self.creatureBrowserModel.SetRotation", browser)
+        self.assertNotIn("SetPortraitTextureFromCreatureDisplayID", browser)
 
     def test_temp_and_permanent_spawn_are_separate_confirmed_actions(self):
         browser = BROWSER_PATH.read_text(encoding="utf-8-sig")

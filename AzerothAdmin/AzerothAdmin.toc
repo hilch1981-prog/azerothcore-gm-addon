@@ -3,7 +3,7 @@
 ## Notes: AzerothCore 3.3.5a exclusive GM addon - Creator: Hobby Researcher
 ## Notes-koKR: 아제로스코어 전용버전 · WoW WotLK 3.3.5a GM 관리 애드온 · 제작자: 취미연구가
 ## Author: 취미연구가
-## Version: 3.3.0-335a
+## Version: 3.4.0-335a
 ## X-Client: WoW 3.3.5a (12340)
 ## X-Core: AzerothCore
 ## SavedVariables: AzerothAdminEasyDB, InvenCraftInfoDB, InvenCraftInfoDataDB, InvenCraftInfoUIDB, BlueItemInfo3DB

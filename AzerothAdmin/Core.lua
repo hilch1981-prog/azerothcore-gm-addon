@@ -66,7 +66,7 @@ function addon:AttachCommandMetadata()
             for di = 1, table.getn(category.commands) do
                 local def = category.commands[di]
                 if def then
-                    local permissionCommand = def.command or actionPermissionCommands[def.action]
+                    local permissionCommand = def.permissionCommand or def.command or actionPermissionCommands[def.action]
                     def.permissionCommand = permissionCommand
                     if permissionCommand then
                         local name = self:GetCommandName(permissionCommand)
@@ -110,8 +110,14 @@ function addon:IsDefinitionAllowed(definition)
 end
 
 function addon:GetDefinitionKey(definition)
-    if not definition or not definition.command then return nil end
-    return definition.command
+    if not definition then return nil end
+    if definition.command then return "cmd:" .. tostring(definition.command) end
+    if definition.action then
+        local key = "action:" .. tostring(definition.action)
+        if definition.lookupKind then key = key .. ":" .. tostring(definition.lookupKind) end
+        return key
+    end
+    return nil
 end
 
 function addon:GetCommandFavorites()
@@ -127,7 +133,9 @@ function addon:FindDefinitionByKey(key)
         local commands = self.Categories[ci].commands or {}
         for di = 1, table.getn(commands) do
             local def = commands[di]
-            if self:GetDefinitionKey(def) == key then return def end
+            -- Raw command keys were used through 3.3.0.  Keep resolving them so
+            -- existing SavedVariables quick slots survive the typed-key format.
+            if self:GetDefinitionKey(def) == key or (def.command and def.command == key) then return def end
         end
     end
     return nil
@@ -139,7 +147,7 @@ function addon:IsCommandFavorite(definition)
     local favs = self:GetCommandFavorites()
     local i
     for i = 1, table.getn(favs) do
-        if favs[i] == key then return i end
+        if favs[i] == key or (definition.command and favs[i] == definition.command) then return i end
     end
     return nil
 end
@@ -147,18 +155,18 @@ end
 function addon:ToggleCommandFavorite(definition)
     local key = self:GetDefinitionKey(definition)
     if not key then
-        self:Print("GM 명령 버튼만 퀵슬롯에 등록할 수 있습니다.", true)
+        self:Print("실행 가능한 명령 또는 기능만 퀵슬롯에 등록할 수 있습니다.", true)
         return
     end
     local favs = self:GetCommandFavorites()
     local found = self:IsCommandFavorite(definition)
     if found then
         table.remove(favs, found)
-        self:Print("명령 퀵슬롯 해제: " .. tostring(definition.label or key))
+        self:Print("기능 퀵슬롯 해제: " .. tostring(definition.label or key))
     else
         table.insert(favs, 1, key)
         while table.getn(favs) > 2 do table.remove(favs) end
-        self:Print("명령 퀵슬롯 등록: " .. tostring(definition.label or key))
+        self:Print("기능 퀵슬롯 등록: " .. tostring(definition.label or key))
     end
     if self.RefreshCommandQuickSlots then self:RefreshCommandQuickSlots() end
     if self.RefreshCommands then self:RefreshCommands() end
@@ -219,8 +227,13 @@ function addon:StartExecutionTracking(command, definition)
         local pending = addon.pendingExecution
         if not pending or pending.serial ~= serial then return end
         if pending.failed then return end
-        local msg = pending.gotResponse and (pending.lastMessage or "서버 응답 확인") or "명령 전송 완료"
-        addon:SetDefinitionResult(pending.definition, "success", msg)
+        if pending.gotResponse then
+            addon:SetDefinitionResult(pending.definition, "success", pending.lastMessage or "서버 응답 확인")
+        else
+            -- A chat packet being sent is not proof that the command succeeded.
+            -- Some cores return no line, while others report only in SYSTEM chat.
+            addon:SetDefinitionResult(pending.definition, "sent", "서버 응답 미확인 · 시스템 채팅 확인")
+        end
         addon.pendingExecution = nil
     end)
 end
