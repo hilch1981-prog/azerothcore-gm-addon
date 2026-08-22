@@ -23,7 +23,20 @@ Claude Code 또는 다른 개발 도구로 작업하기 전에 다음 문서를 
 - `REFERENCES.md`: 공개 참고 자료
 - `CLAUDE_FIRST_PROMPT.txt`: Claude Code 첫 요청문
 - `AGENTS.md`: ChatGPT/Codex 작업 지침
-- `CONTRIBUTING.md`: 공동 브랜치·PR 규칙
+- `CONTRIBUTING.md`: 공동 브랜치·PR 규칙주요 기능
+
+- AzerothAdmin GM 애드온은 WoW WotLK 게임 마스터를 위한 다음과 같은 강력한 기능을 제공합니다:
+
+- - **크리처 브라우저**: 고급 검색 및 필터링으로 NPC와 크리처 효율적으로 관리
+  - - **NPC 스폰**: 안전하고 정밀한 NPC 생성, 배치, 템플릿 관리
+    - - **퀵슬롯**: 자주 사용하는 기능을 빠르게 접근할 수 있는 단축 기능
+      - - **파티 및 봇 관리**: 파티원과 봇의 동기화 및 원격 제어
+        - - **데이터 검증**: 게임 무결성을 보장하는 자동 검증 및 안전 장치
+          - - **명령줄 인터페이스**: /aa 명령으로 모든 기능 편리하게 제어
+            - - **완전한 한국어 지원**: 인터페이스, 메뉴, 도움말 완전 한국어화
+              - - **실시간 로깅**: 관리 활동의 상세한 기록 및 감사 추적
+                - - **다중 프로필 지원**: 설정 프로필 저장 및 전환
+                  - 
 - `COLLABORATION.md`: ChatGPT/Codex + Claude 연결 방법
 - `CHATGPT_PROJECT_INSTRUCTIONS.md`: ChatGPT 프로젝트에 복사할 전용 지시서
 - `WORKSPACE_AND_HANDOFF.md`: 공용 원본, 로컬 폴더 및 AI 인수인계 절차
