@@ -66,6 +66,7 @@ jobs:
         run: >-
           python -m unittest
           tools/test_audit_command_meta.py
+          tools/test_craft_frame_lifecycle.py
           tools/test_generate_quest_reward_335.py
           tools/test_profession_enhancement_categories.py
 

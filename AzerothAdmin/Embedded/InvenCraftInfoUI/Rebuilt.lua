@@ -7,6 +7,7 @@ AzerothAdminCraftData = CraftData
 
 local UI = CreateFrame("Frame", "AzerothAdminCraftInfoFrame", UIParent)
 addon.craftInfoFrame = UI
+UI.aaeIntegratedCraftFrame = true
 UI:SetWidth(850)
 UI:SetHeight(570)
 UI:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
@@ -1314,18 +1315,25 @@ function UI:ADDON_LOADED()
 end
 
 function UI:ResetGMProfessionView()
+    if not self.enable then self:ADDON_LOADED() end
     searchBox:SetText("")
+    searchBox:ClearFocus()
+    sortMode = "skill"
+    sortButton:SetText("숙련↓")
     page = 1
     clearDetail()
-    if not self.enable then self:ADDON_LOADED() end
+    self._loadingLive = nil
+    self._liveCaptureScheduled = nil
+    restoreTradeSkillFrame()
     if selectedProfession then
         allRecipes = selectedProfession.recipes or {}
         filteredRecipes = {}
         local i
         for i = 1, table.getn(allRecipes) do filteredRecipes[i] = allRecipes[i] end
         sortRecipeList(filteredRecipes)
-        refreshRows()
     end
+    updateProfessionButtons()
+    refreshRows()
 end
 
 function UI:ClearGMTradeSkillDetail()
