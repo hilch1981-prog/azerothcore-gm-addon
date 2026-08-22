@@ -62,8 +62,11 @@ jobs:
             exit 1
           fi
 
-      - name: Test command metadata audit
-        run: python -m unittest tools/test_audit_command_meta.py
+      - name: Test Python audit tools
+        run: python -m unittest tools/test_audit_command_meta.py tools/test_generate_quest_reward_335.py
 
       - name: Audit AzerothCore command metadata
         run: python tools/audit_command_meta.py
+
+      - name: Audit faction formatter tokens
+        run: python tools/audit_faction_tokens.py

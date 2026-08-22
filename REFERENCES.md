@@ -23,6 +23,15 @@
 - 사용자 최신 소스와 충돌하면 사용자 소스를 기준으로 차이를 분석하되, 검증되지 않은 동작을 추측하지 않는다.
 - 라이선스와 저작권 고지를 확인하고 원문 코드를 가져올 때 해당 조건을 준수한다.
 
+## 퀘스트 보상 데이터 기준
+
+- AzerothCore 기준 커밋: `c143cdaa7cb877d6481a5c941da76b77b9b99165`
+- 기준 파일: `data/sql/base/db_world/quest_template.sql`
+- `quest_template.sql` SHA-256: `5dc7e6c92ea6875a5fc68cf5d3e33150e86cda5819a11af0c59217b24c63a37f`
+- WotLK 3.3.5a Build 12340 `AreaTable.dbc` SHA-256: `eb4bcfa77b03aed853c4783ac260a4259970effaad5b8a74d868783b4dbdc44e`
+- `tools/generate_quest_reward_335.py`가 `RewardItem1..4`와 `RewardChoiceItemID1..6`을 분리 수집하고, AreaTable의 MapID 571/530/1/0을 노스렌드/아웃랜드/칼림도어/동부 왕국으로 매핑한다.
+- 생성물 `QuestRewards335.lua`에는 원본 커밋과 두 입력 파일의 해시를 기록하며, 실행 시 기존 분류와 중복 없이 병합한다.
+
 ## 현재 제공 자료 주의사항
 
 - `WOW_Legends_KR_FULL_ALL_20260813.zip`: 한국어 DB 패치 SQL이며 GM 애드온 소스가 아님
