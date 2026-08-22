@@ -69,6 +69,7 @@ jobs:
           tools/test_craft_frame_lifecycle.py
           tools/test_generate_quest_reward_335.py
           tools/test_profession_enhancement_categories.py
+          tools/test_remote_bank_flow.py
 
       - name: Audit AzerothCore command metadata
         run: python tools/audit_command_meta.py

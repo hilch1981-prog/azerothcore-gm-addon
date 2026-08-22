@@ -50,6 +50,7 @@
 - 전문기술/강화 분기의 필수 키와 내장 데이터 최소 수량을 검증하는 자동 테스트를 GitHub Actions에 추가했다.
 - InvenCraftInfo는 `AzerothAdminCraftInfoFrame` 하나만 표시하고 공통 관리 프레임 경로로 열리도록 정리해, 닫을 때 이전 AzerothAdmin 창으로 돌아갈 수 있게 했다.
 - 전문기술 창을 일반 경로로 다시 열면 검색어와 입력 포커스, 정렬 방식, 페이지, 상세 선택 및 임시 로딩 상태를 초기화하도록 보강했다.
+- 원격 은행은 확인 목록창 없이 `.character check bank`로 서버 세션을 요청하고 `BANKFRAME_OPENED` 이후 기본 `BankFrame`을 표시한다. 2026-08-22 사용자 게임 내 실사용으로 정상 동작을 확인했다.
 
 ## 최근 기능 고도화
 
