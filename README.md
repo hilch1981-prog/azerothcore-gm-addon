@@ -27,6 +27,9 @@ Claude Code 또는 다른 개발 도구로 작업하기 전에 다음 문서를 
 - `COLLABORATION.md`: ChatGPT/Codex + Claude 연결 방법
 - `CHATGPT_PROJECT_INSTRUCTIONS.md`: ChatGPT 프로젝트에 복사할 전용 지시서
 - `WORKSPACE_AND_HANDOFF.md`: 공용 원본, 로컬 폴더 및 AI 인수인계 절차
+- `FEATURE_MAP.md`: 기능별 실제 구현 위치와 진입점
+- `GAME_TEST_MATRIX.md`: 실제 3.3.5a 게임 검증 절차와 결과
+- `RELEASE_NOTES_3.2.8.md`: 변경 내역과 알려진 제한
 
 ## 호환성 원칙
 
