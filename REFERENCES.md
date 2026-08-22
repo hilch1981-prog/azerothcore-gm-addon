@@ -23,6 +23,15 @@
 - 사용자 최신 소스와 충돌하면 사용자 소스를 기준으로 차이를 분석하되, 검증되지 않은 동작을 추측하지 않는다.
 - 라이선스와 저작권 고지를 확인하고 원문 코드를 가져올 때 해당 조건을 준수한다.
 
+## Playerbots 퀘스트 동기화
+
+- 모듈 및 최신 소스: https://github.com/mod-playerbots/mod-playerbots
+- 최신 명령 문서: https://github.com/mod-playerbots/mod-playerbots/wiki/Playerbot-Commands
+- 퀘스트 공유 패킷 처리: https://github.com/mod-playerbots/mod-playerbots/blob/master/src/Bot/PlayerbotAI.cpp
+- 동기화 설정: https://github.com/mod-playerbots/mod-playerbots/blob/master/conf/playerbots.conf.dist
+- UI 참고: https://github.com/Macx-Lio/MultiBot
+- 확인 기준 커밋: mod-playerbots `5397110cba484a9b7209bc9f632652e9d4bd6a70`, MultiBot `ecee413dacfa93ee705ede83f308f3a0396e6ece`
+
 ## 퀘스트 보상 데이터 기준
 
 - AzerothCore 기준 커밋: `c143cdaa7cb877d6481a5c941da76b77b9b99165`
