@@ -69,6 +69,7 @@ jobs:
           tools/test_craft_frame_lifecycle.py
           tools/test_generate_quest_reward_335.py
           tools/test_profession_enhancement_categories.py
+          tools/test_quest_drop_source_cycle.py
           tools/test_remote_bank_flow.py
           tools/test_self_revive_flow.py
 
