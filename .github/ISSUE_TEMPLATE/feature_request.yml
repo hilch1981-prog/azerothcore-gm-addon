@@ -1,0 +1,38 @@
+name: 기능 요청
+description: 기존 구조를 유지하는 기능 개선을 제안합니다.
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: 목표
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: 현재 동작
+    validations:
+      required: true
+  - type: textarea
+    id: desired
+    attributes:
+      label: 원하는 동작
+    validations:
+      required: true
+  - type: dropdown
+    id: assignee_type
+    attributes:
+      label: 우선 담당
+      options:
+        - ChatGPT/Codex
+        - Claude Code
+        - 미정
+    validations:
+      required: true
+  - type: textarea
+    id: constraints
+    attributes:
+      label: 호환성 및 주의사항
+      value: "WotLK 3.3.5a / AzerothCore / Lua 5.1 / Retail API 금지"
