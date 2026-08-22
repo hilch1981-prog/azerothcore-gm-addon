@@ -31,6 +31,10 @@ def parse_kokr_creatures():
 
 
 class FeaturedCreatureBrowserTests(unittest.TestCase):
+    def test_featured_table_is_closed_at_end_of_file(self):
+        text = DATA_PATH.read_text(encoding="utf-8-sig")
+        self.assertRegex(text, r"addon\.FeaturedCreatures\s*=\s*\{[\s\S]*\}\s*$")
+
     def test_curated_data_is_bounded_and_unique(self):
         records = parse_featured_records()
         self.assertGreaterEqual(len(records), 180)
