@@ -23,10 +23,15 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          find AzerothAdmin -type f -name '*.lua' -print0 \
-            | while IFS= read -r -d '' file; do
-                luac5.1 -p "$file"
-              done
+          temp_file="$(mktemp --suffix=.lua)"
+          trap 'rm -f "$temp_file"' EXIT
+          while IFS= read -r -d '' file; do
+            sed $'1s/^\xEF\xBB\xBF//' "$file" > "$temp_file"
+            if ! luac5.1 -p "$temp_file"; then
+              echo "Lua 5.1 syntax failure: $file"
+              exit 1
+            fi
+          done < <(find AzerothAdmin -type f -name '*.lua' -print0)
 
       - name: Check TOC paths
         shell: bash
