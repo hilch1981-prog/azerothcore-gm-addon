@@ -369,8 +369,17 @@ function addon:ShowSearchContextMenu(kind, result)
     elseif kind == "creature" then
         table.insert(menu, commandEntry("Entry 위치로 이동", ".go creature id " .. tostring(id), function() addon:SendNow(".go creature id " .. tostring(id)) end))
         table.insert(menu, commandEntry("스폰 목록 조회", ".list creature " .. tostring(id) .. " 20", function() addon:SendNow(".list creature " .. tostring(id) .. " 20") end))
-        table.insert(menu, commandEntry("현재 위치에 크리쳐 생성", ".npc add " .. tostring(id), function()
-            addon:ExecuteDefinition({ label = "크리쳐 생성: " .. name, command = ".npc add " .. tostring(id), permissionCommand = ".npc add " .. tostring(id), confirm = true, danger = true, commandName = "npc add", requiredSecurity = addon.CommandSecurity and addon.CommandSecurity["npc add"], officialSyntax = addon.CommandSyntax and addon.CommandSyntax["npc add"] })
+        table.insert(menu, commandEntry("현재 위치에 임시 소환 (DB 미저장)", ".npc add temp " .. tostring(id), function()
+            local warning = result[3] and result[3][6]
+                and ("\n|cffff6633경고: " .. tostring(result[3][5]) .. " 전용 스크립트가 다른 지역에서 오류를 일으킬 수 있습니다.|r")
+                or (not result[3] and "\n|cffffaa33주의: 전체 DB 검색 항목은 지역·인스턴스 스크립트 여부가 분류되지 않았습니다.|r" or "")
+            addon:ExecuteDefinition({ label = "임시 소환: " .. name .. "\nDB에는 저장되지 않습니다." .. warning, command = ".npc add temp " .. tostring(id), permissionCommand = ".npc add temp " .. tostring(id), confirm = true, commandName = "npc add temp", requiredSecurity = addon.CommandSecurity and addon.CommandSecurity["npc add temp"], officialSyntax = addon.CommandSyntax and addon.CommandSyntax["npc add temp"] })
+        end))
+        table.insert(menu, commandEntry("현재 위치에 영구 생성 (DB 저장)", ".npc add " .. tostring(id), function()
+            local warning = result[3] and result[3][6]
+                and ("\n|cffff6633추가 경고: " .. tostring(result[3][5]) .. " 전용 스크립트가 다른 지역에서 오류를 일으킬 수 있습니다.|r")
+                or (not result[3] and "\n|cffffaa33주의: 전체 DB 검색 항목은 지역·인스턴스 스크립트 여부가 분류되지 않았습니다.|r" or "")
+            addon:ExecuteDefinition({ label = "영구 생성(DB 저장): " .. name .. "\n|cffff6633재시작 후에도 남습니다. 잘못 생성하면 직접 삭제해야 합니다.|r" .. warning, command = ".npc add " .. tostring(id), permissionCommand = ".npc add " .. tostring(id), confirm = true, danger = true, commandName = "npc add", requiredSecurity = addon.CommandSecurity and addon.CommandSecurity["npc add"], officialSyntax = addon.CommandSyntax and addon.CommandSyntax["npc add"] })
         end))
     end
     table.insert(menu, { text = "닫기", notCheckable = true, func = function() CloseDropDownMenus() end })

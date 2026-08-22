@@ -96,7 +96,7 @@ AzerothAdminEasy.Categories = {
     } },
 
     { name = "크리쳐", short = "크리쳐", commands = {
-        { label = "크리쳐 한글/ID 검색", action = "kr_creature_search", hint = "koKR 한글명 또는 Entry ID로 크리쳐를 검색합니다." },
+        { label = "주요 크리처 / 한글·ID 검색", action = "kr_creature_search", hint = "주요 보스·던전 최종 보스·월드 보스·지도자를 분류 탐색하고 전체 koKR/Entry 검색으로 전환할 수 있습니다." },
         { label = "NPC 정보", command = ".npc info", requires = "creature", hint = "선택 크리쳐의 Entry/Spawn 등 상세 정보를 표시합니다." },
         { label = "NPC GUID", command = ".npc guid", requires = "creature", hint = "선택 크리쳐의 DB Spawn GUID를 표시합니다. 일반 .guid 대신 AzerothCore .npc guid를 사용합니다." },
         { label = "NPC 근처 검색", command = ".npc near {args}", hint = "인수: 거리(선택). 빈 값 대신 거리를 입력하세요.", example = "예: 20" },

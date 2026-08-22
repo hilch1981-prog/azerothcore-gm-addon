@@ -75,6 +75,7 @@ jobs:
           tools/test_audit_command_meta.py
           tools/test_build_release_zip.py
           tools/test_craft_frame_lifecycle.py
+          tools/test_featured_creature_browser.py
           tools/test_generate_quest_reward_335.py
           tools/test_party_bot_quest_sync.py
           tools/test_popup_layer_lifecycle.py

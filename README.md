@@ -1,4 +1,4 @@
-# AzerothAdmin GM Addon 3.2.9-335a
+# AzerothAdmin GM Addon 3.3.0-335a
 
 WoW WotLK 3.3.5a Build 12340과 AzerothCore용 한국어 GM 관리 애드온입니다.
 
@@ -31,6 +31,7 @@ Claude Code 또는 다른 개발 도구로 작업하기 전에 다음 문서를 
 - `GAME_TEST_MATRIX.md`: 실제 3.3.5a 게임 검증 절차와 결과
 - `RELEASE_NOTES_3.2.8.md`: 변경 내역과 알려진 제한
 - `RELEASE_NOTES_3.2.9.md`: 파티·봇 퀘스트 동기화 변경 내역과 호환 제한
+- `RELEASE_NOTES_3.3.0.md`: 주요 크리처 분류·검색·소환 기능과 안전 제한
 - `RELEASE_ARTIFACT.md`: 최종 ZIP 파일명, 해시와 재생성 방법
 
 ## 호환성 원칙
