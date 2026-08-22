@@ -1,5 +1,13 @@
 # ChatGPT/Codex + Claude 공동 작업 설정
 
+## 공용 원본과 로컬 작업공간
+
+- 공용 원본은 `https://github.com/hilch1981-prog/azerothcore-gm-addon`이다.
+- ChatGPT 프로젝트에 업로드되거나 동기화된 파일은 참고 자료로만 취급한다.
+- 실제 개발은 최신 Git 저장소 복제본에서 수행하고, 변경은 브랜치와 PR로 공유한다.
+- 로컬 절대 경로는 컴퓨터마다 다르므로 저장소 문서에 기록하지 않는다.
+- 자세한 작업공간 연결과 인수인계 절차는 `WORKSPACE_AND_HANDOFF.md`를 따른다.
+
 ## 현재 저장소 구성
 
 - Codex 지침: `AGENTS.md`
@@ -8,19 +16,24 @@
 - PR 템플릿과 Issue 템플릿
 - Lua 5.1, TOC 경로, Retail API 자동 정적 검사
 - Claude Code GitHub Action 워크플로
+- ChatGPT 프로젝트용 지시서: `CHATGPT_PROJECT_INSTRUCTIONS.md`
 
-## Claude GitHub Action 활성화
+## Claude GitHub Action 현재 상태
 
-워크플로는 인증 준비 전 오작동하지 않도록 기본 비활성 상태다.
+- Claude GitHub App이 이 저장소에 설치되어 있다.
+- 워크플로는 GitHub Actions Secret `CLAUDE_CODE_OAUTH_TOKEN`을 사용한다.
+- 새 PR에는 Claude 자동 코드 리뷰가 실행된다.
+- Issue 또는 PR 댓글에 `@claude`를 포함하면 Claude 작업 워크플로가 실행된다.
+- 토큰 값은 저장소 파일, Issue, PR 또는 댓글에 절대 붙여넣지 않는다.
 
-1. 저장소 관리자 계정으로 Claude Code에서 `/install-github-app`을 실행하거나 Claude GitHub App을 저장소에 설치한다.
-2. 저장소 Actions Secret에 `ANTHROPIC_API_KEY`를 추가한다.
-3. 저장소 Actions Variable `CLAUDE_GITHUB_ENABLED`를 `true`로 설정한다.
-4. Issue 또는 PR 댓글에서 `@claude`와 함께 요청한다.
+예시:
 
-비밀값을 파일, Issue, PR 또는 댓글에 붙여넣지 않는다.
+```text
+@claude 이 변경을 WotLK 3.3.5a, Lua 5.1, AzerothCore 호환성 기준으로 검토해 주세요.
+Retail API, TOC 경로, 로드 순서, SavedVariables 회귀를 특히 확인해 주세요.
+```
 
-Claude 구독 OAuth 토큰을 사용하려면 공식 설치 절차로 워크플로를 다시 생성하고 `CLAUDE_CODE_OAUTH_TOKEN` 방식으로 전환한다.
+워크플로 인증을 다시 구성할 때만 Claude Code의 `/install-github-app` 공식 절차를 사용한다.
 
 ## 권장 작업 예
 
@@ -30,6 +43,8 @@ Codex branch: codex/fix-ek-quest-rewards
 Claude review: PR에서 원인 분석과 3.3.5a 호환성 교차 검토
 User: 게임 내 테스트 후 승인 및 병합
 ```
+
+두 AI가 같은 로컬 폴더와 같은 브랜치에서 동시에 구현하지 않는다. 한 AI가 구현하고 다른 AI가 PR을 검토하는 순서를 기본으로 한다.
 
 ## 브랜치 보호 제한
 
