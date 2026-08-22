@@ -1,0 +1,9 @@
+AzerothAdmin 3.2.7-335a
+
+- 전문기술정보를 AzerothAdminCraftInfoFrame 단독 UI로 고정.
+- 원본 InvenCraftInfo SetItemRef 훅/옵션 UI/TradeSkill 링크 강제 열기 제거. 원본 창 플래시 차단.
+- 전문기술 재료는 내장 DB + 주문 툴팁 기반으로 표시하며, 이미 열려 있는 TradeSkill 캐시만 보조 사용.
+- 전문기술 Spell 습득을 .player learn <자기이름> <SpellID> all 단일 경로로 정리하고 상태 확인 보강.
+- 아이템 수량 생성: 비중첩 아이템은 .additem ID 1 단위 큐로 처리, 중첩 아이템은 실제 stackCount 기준 분할.
+- 요청 전/후 GetItemCount를 비교해 실제 증가 수량을 채팅에 표시. 고유/최대소지 제한 실패도 구분.
+- 은행 기능은 수정하지 않음.

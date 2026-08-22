@@ -1,0 +1,56 @@
+AzerothAdmin 3.2.3-335a
+Build date: 2026-08-18
+
+Changes
+1) Item quantity add fix
+- Reworked the 3.3.5 StaticPopup edit-box lookup so both dialog.editBox and StaticPopupXEditBox are supported.
+- OnAccept now falls back to dialog.data on 3.3.5 clients.
+- Quantity is clamped to 1..9999 and the exact value is sent with:
+  .additem <current GM player> <itemID> <count>
+- Enter-key submit also resolves the 3.3.5 named popup button.
+- InvenCraftInfo result/reagent buttons use the same quantity popup.
+
+2) InvenCraftInfo full UI rebuild
+- Removed the loaded legacy InvenCraftInfoUI multi-layer frame implementation.
+- Added one single-frame UI: Embedded/InvenCraftInfoUI/Rebuilt.lua
+- Visual language follows BlueItemInfo3: dark background, gold border/title, cyan hints.
+- Left: profession list.
+- Center: recipe/item list + search + paging.
+- Right: output item + reagents.
+- Result item left-click: quantity popup -> GM bag.
+- Reagent left-click: quantity popup -> GM bag.
+- Right-click on item/reagent: existing item context menu.
+- Profession data falls back to the original InvenCraftInfo 1.8.1 SpellDB/SpellReqDB.
+- For professions with original trade links, the rebuild loads a hidden linked 3.3.5 TradeSkill view, captures the complete recipe/reagent data, and immediately hides the Blizzard TradeSkillFrame.
+- This preserves recipes that do not have a normal inventory output item (notably enchant-style profession entries) while keeping the custom UI as the only visible profession window.
+
+3) Original InvenCraftInfo data
+The following embedded files remain byte-identical to the supplied original InvenCraftInfo.7z:
+- KnownRecipe.lua
+- SpellDB.lua
+- SpellReqDB.lua
+- UseDB.lua
+- DropDB.lua
+- NpcDB.lua
+- RecipeDB.lua
+
+Example verified in the data:
+- Item 42421: 집중의 암흑 비취 렌즈
+- Recipe spell 56208
+- Required skill 370
+- Reagent name resolver contains:
+  item 36926: 암흑 수정
+  item 36932: 암색 비취
+The live TradeSkill capture supplies the exact reagent counts and item links when the profession link is opened.
+
+4) Bank
+- Integrations.lua was intentionally NOT changed.
+- Its SHA-256 is identical to the uploaded v3.2.2 build:
+  b0f85c87ceac5e0ebb7f8ea64047a612f023b1e89ef794858874baad39411add
+
+Validation
+- TOC Interface: 30300
+- TOC registered files: all present
+- Lua files parse successfully with the validation parser (32 files)
+- No C_Container, C_Item, ScrollBox, C_QuestLog, C_TradeSkillUI, C_CraftingOrders, or C_Professions references
+- Legacy InvenCraftInfoUI source files are not shipped/loaded, preventing duplicate frames.

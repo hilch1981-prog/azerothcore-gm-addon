@@ -1,0 +1,19 @@
+AzerothAdmin 3.2.2-335a
+
+- BlueItemInfo3: 칼림도어/동부 왕국 WotLK 3.3.5a 퀘스트 보상 분류 복구
+  - 칼림도어: 오리지널 칼림도어 던전 퀘스트 보상 + 생존 3.3.5 항목 병합
+  - 동부 왕국: 오리지널 동부 왕국 던전 퀘스트 보상 + 생존 3.3.5 항목 병합
+- BlueItemInfo3: 전문기술 분류 재정립
+  - 연금술/주문각인 누락 복구
+  - 낚시를 주문각인(t7)과 분리된 전용 분류로 변경
+  - InvenCraftInfo WotLK RecipeDB/SpellDB를 이용해 전문기술별 도안 목록 재구축
+- BlueItemInfo3: 강화 분류 재정립
+  - 마법부여/가죽세공/기계공학/재봉술/대장기술 관련 강화 추가
+  - 한손무기/보조장비 및 기존 슬롯 분류 복구
+- InvenCraftInfo: 이전 전문기술 선택/상세/재료/검색/스크롤 상태 초기화
+  - openSkill의 isMySkill 상태 오타 수정
+  - Blizzard_TradeSkillUI 로드 보장
+- 은행: 가짜 BankFrame:Show 경로 제거
+  - .character check bank 서버 명령으로 실제 AzerothCore 은행 세션 요청
+  - BANKFRAME_OPENED 이후에만 기본 BankFrame 표시/중앙 정렬
+  - 원격 확인 텍스트 창 미사용

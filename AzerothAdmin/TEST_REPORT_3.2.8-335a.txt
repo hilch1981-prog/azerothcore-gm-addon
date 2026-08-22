@@ -1,0 +1,20 @@
+AzerothAdmin 3.2.8-335a 검증 보고서
+
+대상 환경
+- WoW WotLK 3.3.5a build 12340
+- AzerothCore WotLK
+- Lua 5.1 호환 소스
+
+핵심 수정 확인
+- 전문기술 Spell 습득: 현재 캐릭터 low GUID를 사용한 .player learn 명령
+- 재료 이름 역색인: koKR 이름에서 Item ID/아이콘/링크/보유량 복구
+- 아이템 총수량 생성: .additem <GUID> <ItemID> <총수량> 단일 명령
+- 가방 아이콘 숫자: 수량이 아닌 iLv임을 검색 행/툴팁/수량창에 안내
+- 은행 기능 로직 변경 없음
+
+정적 검증
+- TOC 등록 경로 29개, 누락 0개
+- Lua 파일 32개 구문 컴파일 검사 통과
+- Retail 전용 API(C_Container, C_Item, ScrollBox, C_QuestLog) 사용 0건
+- 아이템/전문기술 경로 보호 대상 조작 함수 사용 0건
+- ZIP 무결성 검사는 배포 ZIP 생성 후 별도 수행

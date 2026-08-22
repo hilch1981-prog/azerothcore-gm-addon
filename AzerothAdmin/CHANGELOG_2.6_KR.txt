@@ -1,0 +1,31 @@
+GM에드온[3.3.5a 아제로스코어] v2.6
+====================================
+
+UI
+- 메인 GM창의 대상 입력, 인수 입력, 직접 명령, 최근 명령 UI 제거
+- 명령 버튼 중심의 520x405 컴팩트 메인창으로 변경
+- {args} 명령: 버튼 클릭 시 전용 인수 입력 팝업
+- {target} 명령: 선택 플레이어를 우선 사용, 없으면 플레이어 이름 입력 팝업
+
+AzerothCore 명령 구문 교정
+- .account lock on/off -> .account lock ip on/off
+- 존재하지 않는 .gear repair 제거 -> .mailbox로 교체
+- .modify arena -> .modify arenapoints
+- .modify morph / .demorph -> .morph target / .morph reset
+- .learn all my spells / all_myspells / all_trainer -> 현재 AzerothCore learn 하위 명령으로 교정
+- .pet tp 제거 -> .pet list
+- .npc del -> .npc delete
+- NPC 따라오기 -> .npc follow
+- .tele* -> .teleport* 정식 명령명 사용
+- 존재하지 않는 .go xy -> .go grid
+- creature/gameobject Entry 이동은 .go creature id / .go gameobject id 사용
+- .lookup taxi / tele -> .lookup taxinode / teleport
+- .ticket delete에 ticketId 입력 요구
+- 존재하지 않는 .reload smart_scripts -> .reload all scripts
+- .notify 설명을 실제 동작(전체 화면 알림)에 맞게 수정
+
+koKR 검색
+- 아이템 클릭: 수량 팝업 후 .additem
+- 퀘스트 클릭: 확인 후 .quest add
+- 크리쳐 클릭: .go creature id 로 스폰 위치 이동
+- 메인 인수 칸을 전제로 하던 검색 결과 동작 제거

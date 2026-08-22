@@ -1,0 +1,45 @@
+GM에드온[3.3.5a 아제로스코어] v2.7
+
+[UI]
+- 메인 검색 탭 삭제
+- NPC 탭 -> 크리쳐 탭으로 변경
+- 아이템 메인 탭 신설
+- 퀘스트 도우미를 메인 탭으로 승격
+- GM메뉴를 정확히 20개 버튼 한 페이지로 정리
+- 인수가 필요한 명령 팝업에 실제 명령과 실행 예 표시
+
+[은행]
+- v2.5 방식의 BankFrame 직접 Show/Hide 방식으로 복구
+- 같은 버튼으로 열기/닫기
+- 화면 중앙 기본 위치, 드래그 이동, 위치 저장
+- /aa resetui로 위치 초기화
+
+[전문기술]
+- InvenCraftInfo 1.8.1 및 Data/UI/Map을 AzerothAdmin 내부 Embedded 폴더로 통합
+- 별도 InvenCraftInfo 애드온 폴더 불필요
+- 재료 좌클릭 -> 수량 입력 -> .additem으로 가방 생성
+- 미습득 도안/기술 좌클릭 -> 습득 확인 -> .player learn
+- 습득한 레시피 및 전문기술은 체크 표시
+
+[아이템 정보]
+- Blue Item Info 3 자료를 AzerothAdmin 내부에 통합
+- 별도 BlueItemInfo3 애드온 폴더 불필요
+- 한글/ID 검색 및 원본 획득 정보 표시
+- 우클릭으로 수량 입력 후 아이템 생성
+
+[퀘스트]
+- 퀘스트 도우미 내부 koKR 퀘스트명/ID 검색 유지
+- 검색 결과 클릭 시 .quest add 후 진행 목록 갱신
+
+[명령 교정]
+- 일반 GUID: .guid + 대상 검증
+- 크리쳐 GUID: .npc guid로 교정
+- 대상이 필요한 명령은 플레이어/크리쳐/유닛 선택 여부를 먼저 검사
+- 웨이포인트 명령을 AzerothCore 실제 문법에 맞게 정리
+- .player learn / .player unlearn 사용
+- GM 레벨 설정 문법 교정: .account set gmlevel 계정명 레벨 RealmID
+
+[GM 레벨 예]
+.account set gmlevel TEST 2 1
+.account set gmlevel TEST 2 -1
+선택 플레이어 사용 시: .account set gmlevel 2 1

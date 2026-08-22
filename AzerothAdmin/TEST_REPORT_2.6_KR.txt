@@ -1,0 +1,14 @@
+GM에드온 v2.6 정적/모의 검증
+============================
+- Interface 30300 / Version 2.6.0-335a 확인
+- AzerothAdmin Lua 파일: Lua parser loadfile 문법 검사 통과
+- 메인창 모의 생성: 10개 카테고리 / 520x405 생성 확인
+- 메인 targetEdit / argsEdit / rawEdit / historyButtons 미생성 확인
+- {args} 버튼 -> 입력 팝업 -> 명령 전송 모의 테스트 통과
+- {target} 버튼 -> 대상 이름 팝업 -> 명령 전송 모의 테스트 통과
+- 기존 알려진 잘못된 명령 문자열 제거 검사 통과
+- koKR 검색 결과가 삭제된 메인 인수 입력칸을 참조하지 않는 것 확인
+- ZIP 생성 후 CRC 무결성 검사를 수행할 예정
+
+참고: InvenCraftInfo 일부 소스는 WoW 3.3.5a/Lua 5.1에서 식별자로 허용되는 'goto'를 사용하므로
+Lua 5.2+ parser로 전체 번들을 검사하면 거짓 오류가 발생합니다. AzerothAdmin 본체는 별도 문법 검사를 통과했습니다.

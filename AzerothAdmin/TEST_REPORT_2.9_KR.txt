@@ -1,0 +1,55 @@
+GM에드온[3.3.5a 아제로스코어] v2.9 정적 검증 보고서
+============================================================
+
+[구조]
+- Interface: 30300 : PASS
+- Version: 2.9.0-335a : PASS
+- TOC 참조 파일: 41
+- TOC 누락 파일: 0
+- Lua 파일: 41
+- 정적 구문 검사: PASS
+  ※ 테스트 환경 Lua가 5.3이라 WoW 3.3.5a Lua 5.1에서 정상인 `.goto` 필드 표현만 테스트 사본에서 ["goto"]로 치환 후 검사함. 원본 소스는 변경하지 않음.
+
+[GM Command]
+- 지엠커멘드.sql command: 740개
+- Commands.lua command 필드: 188개
+- 명령명 매칭: 188개
+- 미매칭: 0개
+
+[은행]
+- BankFrame 직접 Show 경로: PASS
+- ShowUIPanel fallback: PASS
+- 중앙 위치 / 드래그 / 저장 코드: PASS
+- managed ESC 등록: PASS
+
+[전문기술]
+- 재료 ItemID 직접 메타데이터: PASS
+- koKR 이름→ItemID fallback: PASS
+- 현재 GM 이름을 명시한 .additem: PASS
+- 레시피 SpellID RecipeLink + 제작아이템 역조회: PASS
+- .player learn 연동: PASS
+- 미습득 + / 습득 ✓ 표시: PASS
+- 상세 GM 습득 버튼: PASS
+- 숙련/Lv./iLv. 표시 코드: PASS
+
+[Blue Item Info]
+- 별도 아이템 한글/ID 검색 메뉴 제거: PASS
+- 통합 아이템 정보/한글·ID 검색 메뉴: PASS
+- 대분류: 23
+- 세부분류: 1,613
+- 분류 링크: 19,905
+- 보석/전문기술/아이템강화 분류: PASS
+- 아이템 등급색/Lv./iLv.: PASS
+- 주문/도안형 항목 표시: PASS
+
+[창 계층]
+- OpenManagedFrame: PASS
+- parent return frame: PASS
+- ESC deepest-first: PASS
+- 퀘스트 내부 검색 결과 우선 닫기: PASS
+
+[퀘스트 도우미]
+- ID 정렬: PASS
+- 퀘스트명 정렬: PASS
+- 레벨 정렬: PASS
+- 지역 정렬: PASS

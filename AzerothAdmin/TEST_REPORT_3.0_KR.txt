@@ -1,0 +1,10 @@
+﻿GM에드온[3.3.5a 아제로스코어] v3.0 정적 검증 보고서
+
+- TOC refs: 41, missing: 0
+- Lua files: 41
+- Blue categories roots: 23, visible after WotLK filter: 19, Cataclysm visible: 0
+- Command SQL checks: additem / player learn / character check bank found
+- CommandMeta security entries (regex count): 740
+
+오류: 0
+- 없음

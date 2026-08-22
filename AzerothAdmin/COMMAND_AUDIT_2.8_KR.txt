@@ -1,0 +1,197 @@
+﻿GM에드온[3.3.5a 아제로스코어] v2.8 GM 커맨드 재검증 목록
+
+사용자 제공 command SQL: 740개
+애드온 command 버튼: 188개
+명령명 미매칭: 0개
+보안 레벨 분포: Lv0=8, Lv1=27, Lv2=111, Lv3=39, Lv4=3
+
+형식: [카테고리] 버튼명 | 실행문 | SQL 매칭명 | Security | 공식 도움말
+------------------------------------------------------------------------------------------------------------------------
+[GM메뉴] 대상 즉시 처치 | .die | die | 2 | Syntax: .die Kill the selected player. If no player is selected, it will kill you.
+[GM메뉴] 부활 | .revive | revive | 2 | Syntax: .revive Revive the selected player. If no player is selected, it will revive you.
+[GM메뉴] 선택 대상 100골드 | .modify money 1000000 | modify money | 2 | Syntax: .modify money #money .money #money Add or remove money to the selected player. If no player is selected, modify your money. #gold can be negative to remove money.
+[GM메뉴] 선택 대상 레벨 +1 | .levelup 1 | levelup | 2 | Syntax: .levelup [$playername] [#numberoflevels] Increase/decrease the level of character with $playername (or the selected if not name provided) by #numberoflevels Or +1 if no #numberoflevels provided). If #numberofleve
+[GM메뉴] 선택 대상 레벨 -1 | .levelup -1 | levelup | 2 | Syntax: .levelup [$playername] [#numberoflevels] Increase/decrease the level of character with $playername (or the selected if not name provided) by #numberoflevels Or +1 if no #numberoflevels provided). If #numberofleve
+[GM메뉴] 내 직업 주문 전체 | .learn all my class | learn all my class | 2 | Syntax: .learn all my class Learn all spells (trainer, talent, and quest rewards) for your class.
+[GM메뉴] 내 트레이너 주문 전체 | .learn all my trainer | learn all my trainer | 2 | Syntax: .learn all my trainer Learn all spells taught by trainers for your class.
+[GM메뉴] 숙련도 최대 | .maxskill | maxskill | 2 | Syntax: .maxskill Sets all skills of the targeted player to their maximum values for its current level.
+[GM메뉴] 비행 경로 전체 해제 | .cheat taxi on | cheat taxi | 2 | Syntax: .cheat taxi on/off Temporary grant access to all taxi routes for the selected character. If no character is selected, hide or reveal all routes to you. Visited taxi nodes are still accessible after removing acces
+[GM메뉴] GPS | .gps | gps | 1 | Syntax: .gps [$name|$shift-link] Display the position information for a selected character or creature (also if player name $name provided then for named player, or if creature/gameobject shift-link provided then pointed
+[GM] 계정 정보 | .account | account | 0 | Syntax: .account Display the access level of your account and the email adress if you possess the necessary permissions.
+[GM] 온라인 계정 목록 | .account onlinelist | account onlinelist | 4 | Syntax: .account onlinelist Show list of online accounts.
+[GM] 접속 중 GM | .gm ingame | gm ingame | 0 | Syntax: .gm ingame Display a list of available in game Game Masters.
+[GM] GM 계정 목록 | .gm list | gm list | 3 | Syntax: .gm list Display a list of all Game Masters accounts and security levels.
+[GM] GM 채팅 켜기 | .gm chat on | gm chat | 2 | Syntax: .gm chat [on/off] Enable or disable chat GM MODE (show gm badge in messages) or show current state of on/off not provided.
+[GM] GM 채팅 끄기 | .gm chat off | gm chat | 2 | Syntax: .gm chat [on/off] Enable or disable chat GM MODE (show gm badge in messages) or show current state of on/off not provided.
+[GM] 관전 모드 켜기 | .gm spectator on | gm spectator | 2 | Syntax: .gm spectator on|off Requires .gm on. Allows the GM character to follow members of the opposite faction. You may need to change zones for the effect to apply.
+[GM] 관전 모드 끄기 | .gm spectator off | gm spectator | 2 | Syntax: .gm spectator on|off Requires .gm on. Allows the GM character to follow members of the opposite faction. You may need to change zones for the effect to apply.
+[GM] 귓속말 받기 | .whispers on | whispers | 1 | Syntax: .whispers on|off Enable/disable accepting whispers by GM from players. By default use trinityd.conf setting.
+[GM] 귓속말 차단 | .whispers off | whispers | 1 | Syntax: .whispers on|off Enable/disable accepting whispers by GM from players. By default use trinityd.conf setting.
+[GM] GM 전체 알림 | .gmnotify {args} | gmnotify | 2 | Syntax: .gmnotify $notification Displays a notification on the screen of all online GM's.
+[GM] 계정 생성 | .account create {args} | account create | 4 | Syntax: .account create $account $password $email Create account and set password to it. $email is optional, can be left blank.
+[GM] 계정 삭제 | .account delete {args} | account delete | 4 | Syntax: .account delete $account Delete account with all characters.
+[GM] 현재 계정 IP 잠금 | .account lock ip on | account lock ip | 0 | Syntax: .account lock ip [on|off] Allow login from account only from current used IP or remove this requirement.
+[GM] 현재 계정 IP 잠금 해제 | .account lock ip off | account lock ip | 0 | Syntax: .account lock ip [on|off] Allow login from account only from current used IP or remove this requirement.
+[GM] 확장팩 권한 설정 | .account set addon {args} | account set addon | 2 | Syntax: .account set addon [$account] #addon Set user (possible targeted) expansion addon level allowed. Addon values: 0 - normal, 1 - tbc, 2 - wotlk.
+[GM] GM 레벨 설정 | .account set gmlevel {args} | account set gmlevel | 3 | Syntax: .account set gmlevel [$account] #level [#realmid] Set the security level for targeted player (can't be used at self) or for account $name to a level of #level on the realm #realmID. #level may range from 0 to 3. 
+[GM] 비밀번호 설정 | .account set password {args} | account set password | 3 | Syntax: .account set password $account $password $password Set password for account.
+[GM] 캐릭터 계정 이동 | .character changeaccount {args} | character changeaccount | 3 | Syntax: .character changeaccount $NewAccountName $Name. Moves the specified character to the provided account. Kicks the player if the character is online.
+[캐릭터] 플레이어 정보 | .pinfo | pinfo | 2 | Syntax: .pinfo [$player_name/#GUID] Output account information and guild information for selected player or player find by $player_name or #GUID.
+[캐릭터] GUID 표시 | .guid | guid | 2 | Syntax: .guid Display the GUID for the selected character.
+[캐릭터] 거리 확인 | .distance | distance | 3 | Syntax: .distance Display the distance from your character to the selected creature.
+[캐릭터] GPS | .gps | gps | 1 | Syntax: .gps [$name|$shift-link] Display the position information for a selected character or creature (also if player name $name provided then for named player, or if creature/gameobject shift-link provided then pointed
+[캐릭터] 저장 | .save | save | 0 | Syntax: .save Saves your character.
+[캐릭터] 리콜 | .recall | recall | 2 | Syntax: .recall [$playername] Teleport $playername or selected player to the place where he has been before last use of a teleportation command. If no $playername is entered and no player is selected, it will teleport yo
+[캐릭터] 추방 | .kick | kick | 2 | Syntax: .kick [$charactername] [$reason] Kick the given character name from the world with or without reason. If no character name is provided then the selected player (except for yourself) will be kicked. If no reason i
+[캐릭터] 쿨다운 초기화 | .cooldown | cooldown | 2 | Syntax: .cooldown [#spell_id] Remove all (if spell_id not provided) or #spel_id spell cooldown from selected character or you (if no selection).
+[캐릭터] 전투 중지 | .combatstop | combatstop | 2 | Syntax: .combatstop [$playername] Stop combat for selected character. If selected non-player then command applied to self. If $playername provided then attempt applied to online player $playername.
+[캐릭터] 부활 | .revive | revive | 2 | Syntax: .revive Revive the selected player. If no player is selected, it will revive you.
+[캐릭터] 메일함 열기 | .mailbox | mailbox | 1 | Syntax: .mailbox Show your mailbox content.
+[캐릭터] 탈것 내리기 | .dismount | dismount | 0 | Syntax: .dismount Dismount you, if you are mounted.
+[캐릭터] 동결 | .freeze | freeze | 2 | Syntax: .freeze (#player) "Freezes" #player and disables his chat. When using this without #name it will freeze your target.
+[캐릭터] 동결 해제 | .unfreeze | unfreeze | 2 | Syntax: .unfreeze (#player) "Unfreezes" #player and enables his chat again. When using this without #name it will unfreeze your target.
+[캐릭터] 이름 변경 요구 | .character rename | character rename | 2 | Syntax: .character rename [$name] [reserveName] [$newName] Mark selected in game or by $name in command character for rename at next login. If [reserveName] is 1 then the player's current name is added to the list of res
+[캐릭터] 외형 변경 요구 | .character customize | character customize | 2 | Syntax: .character customize [$name] Mark selected in game or by $name in command character for customize at next login.
+[캐릭터] 종족 변경 요구 | .character changerace | character changerace | 2 | Syntax: .character changerace $name Change character race.
+[캐릭터] 진영 변경 요구 | .character changefaction | character changefaction | 2 | Syntax: .character changefaction $name Change character faction.
+[캐릭터] 삭제 캐릭터 목록 | .character deleted list | character deleted list | 3 | Syntax: .character deleted list [#guid|$name] Shows a list with all deleted characters. If $name is supplied, only characters with that string in their name will be selected, if #guid is supplied, only the character with
+[캐릭터] 삭제 캐릭터 복구 | .character deleted restore {args} | character deleted restore | 3 | Syntax: .character deleted restore #guid|$name [$newname] [#new account] Restores deleted characters. If $name is supplied, only characters with that string in their name will be restored, if $guid is supplied, only the 
+[캐릭터] 가방 검사 | .character check bag {args} | character check bag | 2 | Syntax: .character check bag [$target_player] #bagSlot 1 - 4
+[캐릭터] 은행 검사 | .character check bank | character check bank | 2 | Syntax: .character check bank Show your bank inventory.
+[캐릭터] 전문기술 검사 | .character check profession | character check profession | 2 | Syntax: .character check profession [$target_player] Show known professions list for selected player
+[캐릭터] 레벨 변경 | .levelup {args} | levelup | 2 | Syntax: .levelup [$playername] [#numberoflevels] Increase/decrease the level of character with $playername (or the selected if not name provided) by #numberoflevels Or +1 if no #numberoflevels provided). If #numberofleve
+[캐릭터] 돈 변경 | .modify money {args} | modify money | 2 | Syntax: .modify money #money .money #money Add or remove money to the selected player. If no player is selected, modify your money. #gold can be negative to remove money.
+[캐릭터] 생명력 변경 | .modify hp {args} | modify hp | 2 | Syntax: .modify hp #newhp Modify the hp of the selected player. If no player is selected, modify your hp.
+[캐릭터] 마나 변경 | .modify mana {args} | modify mana | 2 | Syntax: .modify mana #newmana Modify the mana of the selected player. If no player is selected, modify your mana.
+[캐릭터] 기력 변경 | .modify energy {args} | modify energy | 2 | Syntax: .modify energy #energy Modify the energy of the selected player. If no player is selected, modify your energy.
+[캐릭터] 분노 변경 | .modify rage {args} | modify rage | 2 | Syntax: .modify rage #newrage Modify the rage of the selected player. If no player is selected, modify your rage.
+[캐릭터] 룬마력 변경 | .modify runicpower {args} | modify runicpower | 2 | Syntax: .modify runicpower #newrunicpower Modify the runic power of the selected player. If no player is selected, modify your runic power.
+[캐릭터] 명예 변경 | .modify honor {args} | modify honor | 2 | Syntax: .modify honor $amount Add $amount honor points to the selected player.
+[캐릭터] 투기장 점수 | .modify arenapoints {args} | modify arenapoints | 2 | Syntax: .modify arenapoints #value Add $amount arena points to the selected player.
+[캐릭터] 취기 변경 | .modify drunk {args} | modify drunk | 2 | Syntax: .modify drunk #value Set drunk level to #value (0..100). Value 0 remove drunk state, 100 is max drunked state.
+[캐릭터] 크기 변경 | .modify scale {args} | modify scale | 2 | .modify scale #scale Modify size of the selected player or creature to "normal scale"*rate. If no player or creature is selected, modify your size. #rate may range from 0.1 to 10.
+[캐릭터] 성별 남성 | .modify gender male | modify gender | 2 | Syntax: .modify gender male/female Change gender of selected player.
+[캐릭터] 성별 여성 | .modify gender female | modify gender | 2 | Syntax: .modify gender male/female Change gender of selected player.
+[캐릭터] 모델 변경 | .morph target {args} | morph target | 1 | Syntax: .morph target #displayid - Change the selected target's current model id to #displayid.
+[캐릭터] 모델 초기화 | .morph reset | morph reset | 1 | Syntax: .morph reset - Doesn't use any parameters to reset the selected target's model
+[캐릭터] 속도 전체 변경 | .modify speed all {args} | modify speed all | 2 | Syntax: .modify aspeed #rate Modify all speeds -run,swim,run back,swim back- of the selected player to "normalbase speed for this move type"*rate. If no player is selected, modify your speed. #rate may range from 0.1 to 
+[캐릭터] 페이즈 변경 | .modify phase {args} | modify phase | 2 | Syntax: .modify phase #phasemask Selected character phasemask changed to #phasemask with related world vision update. Change active until in game phase changed, or GM-mode enable/disable, or re-login. Character pts pasem
+[캐릭터] 오라 추가 | .aura {args} | aura | 2 | Syntax: .aura #spellid Add the aura from spell #spellid to the selected Unit.
+[캐릭터] 오라 제거 | .unaura {args} | unaura | 2 | Syntax: .unaura #spellid Remove aura due to spell #spellid from the selected Unit.
+[캐릭터] 주문 습득 | .player learn {args} | player learn | 2 | Syntax: .player learn #playername #spell [all].
+[캐릭터] 주문 삭제 | .player unlearn {args} | player unlearn | 2 | Syntax: .player unlearn #playername #spell [all].
+[크리쳐] NPC 정보 | .npc info | npc info | 2 | Syntax: .npc info [#creature_guid] Display a list of details for the selected creature, or for the creature with the given GUID if no target is selected. When a creature is targeted or found in the current map, the list 
+[크리쳐] NPC GUID | .npc guid | npc guid | 2 | Syntax: .npc guid Displays GUID, faction, NPC flags, Entry ID, Model ID for selected creature.
+[크리쳐] NPC 근처 검색 | .npc near {args} | npc near | 2 | Syntax: .npc near #distance Returns all database creature spawns in a given distance.
+[크리쳐] 거리 확인 | .distance | distance | 3 | Syntax: .distance Display the distance from your character to the selected creature.
+[크리쳐] NPC 생성 | .npc add {args} | npc add | 3 | Syntax: .npc add #creatureid Spawn a creature by the given template id of #creatureid.
+[크리쳐] NPC 삭제 | .npc delete | npc delete | 3 | Syntax: .npc delete [#guid] Delete creature with guid #guid (or the selected if no guid is provided)
+[크리쳐] NPC 현재 위치로 이동 | .npc move | npc move | 2 | Syntax: .npc move [#creature_guid] Move the targeted creature spawn point to your coordinates.
+[크리쳐] NPC 모델 변경 | .npc set model {args} | npc set model | 3 | Syntax: .npc set model #displayid Change the model id of the selected creature to #displayid.
+[크리쳐] NPC 레벨 변경 | .npc set level {args} | npc set level | 3 | Syntax: .npc set level #level Change the level of the selected creature to #level. #level may range from 1 to (CONFIG_MAX_PLAYER_LEVEL) + 3.
+[크리쳐] NPC 페이즈 변경 | .npc set phase {args} | npc set phase | 3 | Syntax: .npc set phase #phasemask Selected unit or pet phasemask changed to #phasemask with related world vision update for players. In creature case state saved to DB and persistent. In pet case change active until in g
+[크리쳐] NPC 이동형태 | .npc set movetype {args} | npc set movetype | 3 | Syntax: .npc set movetype [#creature_guid] stay/random/way [NODEL] Set for creature pointed by #creature_guid (or selected if #creature_guid not provided) movement type and move it to respawn position (if creature alive)
+[크리쳐] NPC 배회거리 | .npc set wanderdistance {args} | npc set wanderdistance | 3 | Syntax: .npc set wanderdistance #dist Adjust wander distance of selected creature to dist.
+[크리쳐] NPC 리스폰시간 | .npc set spawntime {args} | npc set spawntime | 3 | Syntax: .npc set spawntime #time Adjust spawntime of selected creature to #time. #time: use a timestring like "10m30s".
+[크리쳐] NPC 말하기 | .npc say {args} | npc say | 2 | Syntax: .npc say $message Make selected creature say specified message.
+[크리쳐] NPC 외치기 | .npc yell {args} | npc yell | 2 | Syntax: .npc yell $message Make selected creature yell specified message.
+[크리쳐] NPC 에모트 | .npc playemote {args} | npc playemote | 2 | Syntax: .npc playemote #emoteid Make the selected creature emote with an emote of id #emoteid.
+[크리쳐] NPC 따라오기 | .npc follow | npc follow | 2 | Syntax: .npc follow start Selected creature start follow you until death/fight/etc.
+[크리쳐] NPC 따라오기 중지 | .npc follow stop | npc follow stop | 2 | Syntax: .npc follow stop Selected creature (non pet) stop follow you.
+[크리쳐] NPC 길들이기 | .npc tame | npc tame | 2 | Syntax: .npc tame Creates a player pet of the targeted creature.
+[크리쳐] NPC 처치 | .die | die | 2 | Syntax: .die Kill the selected player. If no player is selected, it will kill you.
+[크리쳐] NPC 리스폰 | .respawn | respawn | 2 | Syntax: .respawn Respawn the selected unit without waiting respawn time expiration.
+[크리쳐] 크리쳐 Entry 이동 | .go creature id {args} | go creature id | 1 | Syntax: .go creature id #creature_entry [#spawn] Teleports you to first (if no #spawn provided) spawn the given creature entry.
+[크리쳐] 크리쳐 Spawn 이동 | .go creature {args} | go creature | 1 | Syntax: .go creature $creature.guid Teleports you to the creature using `guid` value of `creature` table.
+[크리쳐] 크리쳐 Spawn 목록 | .list creature {args} | list creature | 1 | Syntax: .list creature #creature_id [#max_count] Output creatures with creature id #creature_id found in world. Output creature guids and coordinates sorted by distance from character. Will be output maximum #max_count c
+[크리쳐] 웨이포인트 새 점 추가 | .wp add | wp add | 3 | Syntax: .wp add Add a waypoint for the selected creature at your current position.
+[크리쳐] 웨이포인트 Path에 추가 | .wp add {args} | wp add | 3 | Syntax: .wp add Add a waypoint for the selected creature at your current position.
+[크리쳐] 웨이포인트 로드 | .wp load {args} | wp load | 3 | Syntax: .wp load $pathid Load pathid number for selected creature. Creature must have no waypoint data.
+[크리쳐] 웨이포인트 언로드 | .wp unload | wp unload | 3 | Syntax: .wp unload Unload path for selected creature.
+[크리쳐] 웨이포인트 리로드 | .wp reload {args} | wp reload | 3 | Syntax: .wp reload $pathid Load path changes ingame - IMPORTANT: must be applied first for new paths before .wp load #pathid
+[오브젝트] 가까운 오브젝트 찾기 | .gobject target | gobject target | 1 | Syntax: .gobject target [#go_id|#go_name_part] Locate and show position nearest gameobject. If #go_id or #go_name_part provide then locate and show position of nearest gameobject with gameobject template id #go_id or nam
+[오브젝트] 주변 오브젝트 목록 | .gobject near {args} | gobject near | 1 | Syntax: .gobject near [#distance] Output gameobjects at distance #distance from player. Output gameobject guids and coordinates sorted by distance from character. If #distance not provided use 10 as default value.
+[오브젝트] 오브젝트 Entry 정보 | .gobject info {args} | gobject info | 1 | Syntax: .gobject info [$object_entry] Query Gameobject information for selected gameobject or given entry.
+[오브젝트] 오브젝트 GUID 정보 | .gobject info guid {args} | gobject info | 1 | Syntax: .gobject info [$object_entry] Query Gameobject information for selected gameobject or given entry.
+[오브젝트] 오브젝트 생성 | .gobject add {args} | gobject add | 3 | Syntax: .gobject add #id <spawntimeSecs> Add a game object from game object templates to the world at your current location using the #id. spawntimesecs sets the spawntime, it is optional. Note: this is a copy of .gameob
+[오브젝트] 임시 오브젝트 생성 | .gobject add temp {args} | gobject add temp | 2 | Adds a temporary gameobject that is not saved to DB.
+[오브젝트] 오브젝트 이동 | .gobject move {args} | gobject move | 3 | Syntax: .gobject move #goguid [#x #y #z] Move gameobject #goguid to character coordinates (or to (#x,#y,#z) coordinates if its provide).
+[오브젝트] 오브젝트 회전 | .gobject turn {args} | gobject turn | 3 | Syntax: .gobject turn #goguid Set for gameobject #goguid orientation same as current character orientation.
+[오브젝트] 오브젝트 삭제 | .gobject delete {args} | gobject delete | 3 | Syntax: .gobject delete #go_guid Delete gameobject with guid #go_guid.
+[오브젝트] 오브젝트 활성화 | .gobject activate {args} | gobject activate | 2 | Syntax: .gobject activate #guid Activates an object like a door or a button.
+[오브젝트] 오브젝트 리스폰 | .gobject respawn {args} | gobject respawn | 2 | Syntax: .gobject respawn #guid./nRespawns the target gameobject.
+[오브젝트] 오브젝트 페이즈 | .gobject set phase {args} | gobject set phase | 3 | Syntax: .gobject set phase #guid #phasemask Gameobject with DB guid #guid phasemask changed to #phasemask with related world vision update for players. Gameobject state saved to DB and persistent.
+[오브젝트] 오브젝트 Entry 이동 | .go gameobject id {args} | go gameobject id | 1 | Syntax: .go gameobject id #gameobject_entry [#spawn] Teleports you to first (if no #spawn provided) spawn the given gameobject entry.
+[오브젝트] 오브젝트 Spawn 이동 | .go gameobject {args} | go gameobject | 1 | Syntax: .go gameobject $gameobject.guid Teleports you to the gameobject using `guid` value of `gameobject` table.
+[오브젝트] 오브젝트 스폰 목록(50) | .gobject near 50 | gobject near | 1 | Syntax: .gobject near [#distance] Output gameobjects at distance #distance from player. Output gameobject guids and coordinates sorted by distance from character. If #distance not provided use 10 as default value.
+[아이템] 아이템 추가 | .additem {args} | additem | 2 | Syntax: .additem Optional(playerName/playerGUID) #itemID/[#itemName]/#itemLink #itemCount Adds the specified item to you, the selected character or the specifed character name/GUID. If #itemCount is negative, you will re
+[아이템] 아이템 세트 추가 | .additem set {args} | additem set | 2 | Syntax: .additemset #itemsetid Add items from itemset of id #itemsetid to your or selected character inventory. Will add by one example each item from itemset.
+[아이템] 아이템 보유 목록 | .list item {args} | list item | 1 | Syntax: .list item #item_id [#max_count] Output items with item id #item_id found in all character inventories, mails, auctions, and guild banks. Output item guids, item owner guid, owner account and owner name (guild na
+[아이템] 아이템 우편 발송 | .send items {args} | send items | 2 | Syntax: .send items #playername "#subject" "#text" itemid1[:count1] itemid2[:count2] ... itemidN[:countN] Send a mail to a player. Subject and mail text must be in "". If for itemid not provided related count values then
+[아이템] 골드 우편 발송 | .send money {args} | send money | 2 | Syntax: .send money #playername "#subject" "#text" #money Send mail with money to a player. Subject and mail text must be in "".
+[아이템] 일반 우편 발송 | .send mail {args} | send mail | 2 | Syntax: .send mail #playername "#subject" "#text" Send a mail to a player. Subject and mail text must be in "".
+[아이템] 아이템 복구 목록 | .item restore list {args} | item restore list | 2 | Syntax: .item restore list [#playername] See restorable items for the specified player.
+[순간이동] 플레이어에게 이동 | .appear {target} | appear | 1 | Syntax: .appear [$charactername] Teleport to the given character. Either specify the character name or click on the character's portrait,e.g. when you are in a group. Character can be offline.
+[순간이동] 플레이어 소환 | .summon {target} | summon | 2 | Syntax: .summon [$charactername] Teleport the given character to you. Character can be offline.
+[순간이동] 파티 소환 | .groupsummon {target} | groupsummon | 2 | Syntax: .groupsummon [$charactername] Teleport the given character and his group to you. Teleported only online characters but original selected group member can be offline.
+[순간이동] 저장 텔레포트 이동 | .teleport {args} | teleport | 2 | Syntax: .teleport #location Teleport player to a given location.
+[순간이동] 저장 텔레포트 추가 | .teleport add {args} | teleport add | 3 | Syntax: .teleport add $name Add current your position to .teleport command target locations list with name $name.
+[순간이동] 저장 텔레포트 삭제 | .teleport del {args} | teleport del | 3 | Syntax: .teleport del $name Remove location with name $name for .teleport command locations list.
+[순간이동] XYZ 이동 | .go xyz {args} | go xyz | 1 | Syntax: .go xyz #x #y [#z [#mapid [#orientation]]]Teleport player to point with (#x,#y,#z) coordinates at map #mapid with orientation #orientation.If #z is not provided, ground/water level will be used. If #mapid is not 
+[순간이동] ZoneXY 이동 | .go zonexy {args} | go zonexy | 1 | Syntax: .go zonexy #x #y [#zone] Teleport player to point with (#x,#y) client coordinates at ground(water) level in zone #zoneid or current zone if #zoneid not provided. You can look up zone using .lookup area $namepart
+[순간이동] Grid 이동 | .go grid {args} | go grid | 1 | Syntax: .go grid #gridX #gridY [#mapId] Teleport the gm to center of grid with provided indexes at map #mapId (or current map if it not provided).
+[순간이동] 퀘스트 시작위치 | .go quest starter {args} | go quest | 1 | Syntax: .go quest <starter/ender> <quest>. Teleports you to the quest starter/ender creature or object.
+[순간이동] 퀘스트 종료위치 | .go quest ender {args} | go quest | 1 | Syntax: .go quest <starter/ender> <quest>. Teleports you to the quest starter/ender creature or object.
+[순간이동] 묘지 이동 | .go graveyard {args} | go graveyard | 1 | Syntax: .go graveyard #graveyardId Teleport to graveyard with the graveyardId specified.
+[순간이동] 택시노드 이동 | .go taxinode {args} | go taxinode | 1 | Syntax: .go taxinode #taxinode Teleport player to taxinode coordinates. You can look up zone using .lookup taxinode $namepart
+[순간이동] 트리거 이동 | .go trigger {args} | go trigger | 1 | Syntax: .go trigger #trigger_id Teleport your character to areatrigger with id #trigger_id. Character will be teleported to trigger target if selected areatrigger is telporting trigger.
+[순간이동] 리콜 위치로 이동 | .recall | recall | 2 | Syntax: .recall [$playername] Teleport $playername or selected player to the place where he has been before last use of a teleportation command. If no $playername is entered and no player is selected, it will teleport yo
+[티켓] 티켓 목록 | .ticket list | ticket list | 2 | Displays a list of open GM tickets.
+[티켓] 온라인 티켓 | .ticket onlinelist | ticket onlinelist | 2 | Displays a list of open GM tickets whose owner is online.
+[티켓] 티켓 보기(ID) | .ticket viewid {args} | ticket viewid | 2 | Usage: .ticket viewid $ticketid. Returns details about specified ticket. Ticket must be open and not deleted.
+[티켓] 티켓 보기(이름) | .ticket viewname {args} | ticket viewname | 2 | Usage: .ticket viewname $creatorname. Returns details about specified ticket. Ticket must be open and not deleted.
+[티켓] 티켓 완료 | .ticket complete {args} | ticket complete | 2 | Syntax: .ticket complete #ticketID Mark a ticket of the given ID as complete.
+[티켓] 티켓 닫기 | .ticket close {args} | ticket close | 2 | Usage: .ticket close $ticketid. Closes the specified ticket. Does not delete permanently.
+[티켓] 티켓 삭제 | .ticket delete {args} | ticket delete | 3 | Usage: .ticket delete $ticketid. Deletes the specified ticket permanently. Ticket must be closed first.
+[티켓] 닫힌 티켓 | .ticket closedlist | ticket closedlist | 2 | Displays a list of closed GM tickets.
+[티켓] 길드 정보 | .guild info {args} | guild info | 2 | Shows information about the target's guild or a given Guild Id or Name.
+[티켓] 길드 생성 | .guild create {args} | guild create | 2 | Syntax: .guild create [$GuildLeaderName] "$GuildName" Create a guild named $GuildName with the player $GuildLeaderName (or selected) as leader. Guild name must in quotes.
+[티켓] 길드 초대 | .guild invite {args} | guild invite | 2 | Syntax: .guild invite [$CharacterName] "$GuildName" Add player $CharacterName (or selected) into a guild $GuildName. Guild name must in quotes.
+[티켓] 길드 탈퇴/추방 | .guild uninvite | guild uninvite | 2 | Syntax: .guild uninvite [$CharacterName] Remove player $CharacterName (or selected) from a guild.
+[티켓] 길드 삭제 | .guild delete {args} | guild delete | 2 | Syntax: .guild delete "$GuildName" Delete guild $GuildName. Guild name must in quotes.
+[기타] 오라 전체 제거 | .unaura all | unaura | 2 | Syntax: .unaura #spellid Remove aura due to spell #spellid from the selected Unit.
+[기타] 주문 시전 | .cast {args} | cast | 2 | Syntax: .cast #spellid [triggered] Cast #spellid to selected target. If no target selected cast to self. If 'triggered' or part provided then spell cast with triggered flag.
+[기타] 자기 자신에게 시전 | .cast self {args} | cast self | 2 | Syntax: .cast self #spellid [triggered] Cast #spellid by target at target itself. If 'triggered' or part provided then spell cast with triggered flag.
+[기타] 펫 생성 | .pet create | pet create | 2 | Syntax: .pet create Creates a pet of the selected creature.
+[기타] 펫 삭제 | .pet delete | pet delete | 3 | Syntax: .pet delete $playerNameOrGUID #petNumber Deletes the pet with the given pet number belonging to the specified player.
+[기타] 전문기술 전체 습득 | .learn all crafts | learn all crafts | 2 | Syntax: .learn crafts Learn all professions and recipes.
+[기타] 모든 언어 습득 | .learn all lang | learn all lang | 2 | Syntax: .learn all lang Learn all languages
+[기타] GM 주문 습득 | .learn all gm | learn all gm | 2 | Syntax: .learn all gm Learn all default spells for Game Masters.
+[기타] 치트 상태 | .cheat status | cheat status | 2 | Syntax: .cheat status Shows the cheats you currently have enabled.
+[기타] 맵 탐험 켜기 | .cheat explore on | cheat explore | 2 | Syntax: .cheat explore #flag Reveal or hide all maps for the selected player. If no player is selected, hide or reveal maps to you. Use a #flag of value 1 to reveal, use a #flag value of 0 to hide all maps.
+[기타] 맵 탐험 끄기 | .cheat explore off | cheat explore | 2 | Syntax: .cheat explore #flag Reveal or hide all maps for the selected player. If no player is selected, hide or reveal maps to you. Use a #flag of value 1 to reveal, use a #flag value of 0 to hide all maps.
+[기타] 물 위 걷기 켜기 | .cheat waterwalk on | cheat waterwalk | 2 | Syntax: .cheat waterwalk on/off Allow to walk on water (self or selected character).
+[기타] 물 위 걷기 끄기 | .cheat waterwalk off | cheat waterwalk | 2 | Syntax: .cheat waterwalk on/off Allow to walk on water (self or selected character).
+[기타] 파워 치트 켜기 | .cheat power on | cheat power | 2 | Syntax: .cheat power [on/off] Remove spells' cost (mana, energy, rage...).
+[기타] 파워 치트 끄기 | .cheat power off | cheat power | 2 | Syntax: .cheat power [on/off] Remove spells' cost (mana, energy, rage...).
+[기타] 시전시간 치트 켜기 | .cheat casttime on | cheat casttime | 2 | Syntax: .cheat casttime [on/off] Remove spells' casting time.
+[기타] 시전시간 치트 끄기 | .cheat casttime off | cheat casttime | 2 | Syntax: .cheat casttime [on/off] Remove spells' casting time.
+[기타] 쿨다운 치트 켜기 | .cheat cooldown on | cheat cooldown | 2 | Syntax: .cheat cooldown [on/off] Disable spells' cooldowns.
+[기타] 쿨다운 치트 끄기 | .cheat cooldown off | cheat cooldown | 2 | Syntax: .cheat cooldown [on/off] Disable spells' cooldowns.
+[서버] 서버 정보 | .server info | server info | 0 | Syntax: .server info Display server version and the number of connected players.
+[서버] 서버 MOTD | .server motd | server motd | 0 | Syntax: .server motd Show server Message of the day.
+[서버] MOTD 설정 | .server set motd {args} | server set motd | 3 | Syntax: .server set motd Optional($realmId) Optional($locale) $MOTD Set server Message of the day for the specified $realmId. If $realmId is not provided it will update for the current realm. Use $realmId -1 to set motd 
+[서버] 전체 공지 | .announce {args} | announce | 2 | Syntax: .announce $MessageToBroadcast Send a global message to all players online in chat log.
+[서버] 화면 알림 | .notify {args} | notify | 2 | Syntax: .notify $MessageToBroadcast Send a global message to all players online in screen.
+[서버] GM 공지 | .gmannounce {args} | gmannounce | 2 | Syntax: .gmannounce $announcement Send an announcement to online Gamemasters.
+[서버] GM 화면 알림 | .gmnotify {args} | gmnotify | 2 | Syntax: .gmnotify $notification Displays a notification on the screen of all online GM's.
+[서버] 스크립트 전체 리로드 | .reload all scripts | reload all scripts | 3 | Syntax: .reload all scripts Reload gameobject_scripts, event_scripts, quest_end_scripts, quest_start_scripts, spell_scripts, db_script_string, waypoint_scripts tables.
+[서버] Locale 전체 리로드 | .reload all locales | reload all locales | 3 | Syntax: .reload all locales Reload all `locales_*` tables with reload support added and that can be _safe_ reloaded.
+[서버] 게임텔레 리로드 | .reload game_tele | reload game_tele | 3 | Syntax: .reload game_tele Reload game_tele table.
+[서버] Config 리로드 | .reload config | reload config | 3 | Syntax: .reload config Reload config settings (by default stored in worldserver.conf). Not all settings can be change at reload: some new setting values will be ignored until restart, some values will applied with delay 
+[서버] 서버 재시작 10초 | .server restart 10 | server restart | 3 | Syntax: .server restart #delay Restart the server after #delay. Use #exist_code or 2 as program exist code. #delay: use a timestring like "1h15m30s".
+[서버] 재시작/종료 취소 | .server restart cancel | server restart cancel | 3 | Syntax: .server restart cancel Cancel the restart/shutdown timer if any.
+[서버] 서버 종료 10초 | .server shutdown 10 | server shutdown | 3 | Syntax: .server shutdown #delay [#exit_code] Shut the server down after #delay. Use #exit_code or 0 as program exit code. #delay: use a timestring like "1h15m30s".
+[서버] 날씨 변경 | .wchange {args} | wchange | 3 | Syntax: .wchange #weathertype #grade Set current weather to #weathertype with an intensity of #grade. #weathertype can be 0 for fine, 1 for rain, 2 for snow, 3 for storm, 86 for thunders, 90 for blackrain. #grade is a fl
+[서버] 전체 저장 | .saveall | saveall | 2 | Syntax: .saveall Save all characters in game.
+[서버] 오래된 시체 정리 | .server corpses | server corpses | 2 | Syntax: .server corpses Triggering corpses expire check in world.

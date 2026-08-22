@@ -1,0 +1,15 @@
+GM에드온 v2.5 정적 검증
+========================
+- AzerothAdmin Interface: 30300
+- BlueItemInfo3 관련 TOC: 30300으로 포팅
+- InvenCraftInfo 관련 TOC: 30300 원본 유지
+- TOC 참조 파일 누락: 0
+- 수정 Lua 파일 문법 검사: PASS
+- GM메뉴: 퀘스트 도우미 / 은행 / 전문기술 / 아이템 정보 포함
+- 검색 메뉴: 아이템 한글/ID / 퀘스트 한글/ID / 크리쳐 한글/ID / 은행 포함
+- 구 은행 확인 명령(.character check bank) UI 버튼에서 제거
+- 은행 BankFrame 중앙 토글 / 드래그 위치 저장 구현
+- 무적 아이콘: Spell_Holy_PowerWordShield 적용
+- 퀘스트 도우미: 제목 [Lv.] 난이도 색상 / 내부 퀘스트 검색·등록 구현
+- 외부 연동창 중첩 방지 구현
+- ZIP CRC 검사: PASS

@@ -1,0 +1,49 @@
+## Interface: 30300
+## Title: |cffffd24aGM에드온[3.3.5a 아제로스코어 전용]|r
+## Notes: AzerothCore 3.3.5a exclusive GM addon - Creator: Hobby Researcher
+## Notes-koKR: 아제로스코어 전용버전 · WoW WotLK 3.3.5a GM 관리 애드온 · 제작자: 취미연구가
+## Author: 취미연구가
+## Version: 3.2.8-335a
+## X-Client: WoW 3.3.5a (12340)
+## X-Core: AzerothCore
+## SavedVariables: AzerothAdminEasyDB, InvenCraftInfoDB, InvenCraftInfoDataDB, InvenCraftInfoUIDB, BlueItemInfo3DB
+## SavedVariablesPerCharacter: InvenCraftInfoCharDB, InvenCraftInfoUICharDB, BlueItemInfo3CharDB
+## DefaultState: Enabled
+## LoadOnDemand: 0
+
+Locale.lua
+CommandMeta.lua
+KoKRSearchData.lua
+KoKRSearch.lua
+Teleports.lua
+FavoriteTeleports.lua
+Commands.lua
+Core.lua
+QuestHelper.lua
+UI.lua
+
+# Embedded profession database (3.3.5a)
+Embedded\InvenCraftInfo\libs\LibStub\LibStub.lua
+Embedded\InvenCraftInfo\libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
+Embedded\InvenCraftInfo\libs\LibItemTooltip-1.0\LibItemTooltip-1.0.lua
+Embedded\InvenCraftInfo\libs\LibRaidComm-1.0\LibRaidComm-1.0.lua
+Embedded\InvenCraftInfo\libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
+Embedded\InvenCraftInfo\libs\LibMapButton-1.1\LibMapButton-1.1.lua
+Embedded\InvenCraftInfo\Core.lua
+Embedded\InvenCraftInfoData\KnownRecipe.lua
+Embedded\InvenCraftInfoData\SpellDB.lua
+Embedded\InvenCraftInfoData\SpellReqDB.lua
+Embedded\InvenCraftInfoData\UseDB.lua
+Embedded\InvenCraftInfoData\DropDB.lua
+Embedded\InvenCraftInfoData\NpcDB.lua
+Embedded\InvenCraftInfoData\RecipeDB.lua
+
+# Integrated item information data/browser
+Embedded\BlueItemInfo3\Data.lua
+Embedded\BlueItemInfo3\CategoryIndex.lua
+Embedded\BlueItemInfo3\Integrated.lua
+
+# Profession information UI
+Embedded\InvenCraftInfoUI\Rebuilt.lua
+
+Integrations.lua

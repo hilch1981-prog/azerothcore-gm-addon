@@ -1,0 +1,21 @@
+GM에드온[3.3.5a 아제로스코어] v2.3.0
+
+- 3.3.5a GetQuestLogTitle 반환값 순서 수정
+  * 진행 중 퀘스트가 0개로 표시되던 원인 수정
+  * 퀘스트 제목 + Quest ID 자동 표시
+- 퀘스트 도우미 테이블 개편
+  * 상태 열 제거
+  * 완료 / 시작NPC / 종료NPC / 시작OBJ / 종료OBJ / 목표 보기
+  * 완료 버튼: .quest complete 후 종료 지점으로 자동 이동
+  * 보상 선택은 실제 종료 NPC/오브젝트에서 직접 처리
+- 새로고침 아이콘 버튼 추가
+- koKR Locale 한글 검색 추가
+  * item_template_locale 46,096개
+  * quest_template_locale 9,464개
+  * 검색 결과 클릭 시 ID를 상단 인수칸에 자동 입력
+- 메인 제목 변경: GM에드온[3.3.5a 아제로스코어]
+
+주의:
+AzerothCore 기본 .go quest starter/ender 명령은 Creature 관계를 먼저 검색한 뒤 GameObject 관계를 검색합니다.
+따라서 NPC와 오브젝트가 동시에 같은 퀘스트에 연결된 특수 케이스에서는 OBJ 버튼도 NPC로 이동할 수 있습니다.
+또한 기본 .go quest ender 명령 자체는 진영을 인수로 받지 않으므로 복수 진영 공용 퀘스트의 종료 NPC를 애드온만으로 100% 진영 고정할 수 없습니다.

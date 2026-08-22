@@ -1,0 +1,22 @@
+# OS and editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp
+*~
+
+# Local archives and runtime data
+*.zip
+WTF/
+Cache/
+Logs/
+Screenshots/
+
+# Secrets and local configuration
+.env
+.env.*
+*.pem
+*.key
+config.local.*

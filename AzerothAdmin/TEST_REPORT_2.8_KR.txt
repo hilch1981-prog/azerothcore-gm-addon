@@ -1,0 +1,48 @@
+﻿GM에드온[3.3.5a 아제로스코어] v2.8 검증 보고서
+
+1. 사용자 제공 command SQL 항목: 740개
+2. 애드온 GM command 정의: 188개
+3. SQL command 이름과 매칭 실패: 0개
+4. command.security 분포(애드온 정의 기준)
+   - Security 0: 8
+   - Security 1: 27
+   - Security 2: 111
+   - Security 3: 39
+   - Security 4: 3
+5. Security 4 자동 잠금 대상
+   - account onlinelist
+   - account create
+   - account delete
+6. CommandMeta.lua 생성
+   - command.security 740개
+   - 공식 Syntax 데이터 740개
+7. 변경 핵심 Lua 파일 Lua parser syntax 검사 PASS
+   - CommandMeta.lua
+   - Commands.lua
+   - Core.lua
+   - UI.lua
+   - KoKRSearch.lua
+   - QuestHelper.lua
+   - Integrations.lua
+8. Core mock test PASS
+   - command 이름 longest-prefix 매칭
+   - GM level metadata 연결
+   - command.security 권한 잠금
+   - GM 명령 퀵슬롯 추가/삭제
+9. 액션 핸들러 대조 PASS
+   - Commands.lua action 전부 Core.lua에서 처리
+10. 검색 우클릭 컨텍스트 메뉴 코드 검사 PASS
+11. 3.3.5a Interface: 30300 유지
+
+주의:
+- 서버 성공/실패 판정은 WoW 클라이언트가 수신하는 CHAT_MSG_SYSTEM 문자열을 기반으로 합니다.
+- command.security 사전 잠금 외에 커스텀 RBAC는 실제 Permission 거부 응답을 받으면 세션 잠금합니다.
+- 인게임 서버/모듈 커스텀 메시지 문구에 따라 일부 성공 결과는 '명령 전송 완료'로 판정될 수 있습니다.
+12. 명령 기반 Toggle 액션 권한 메타데이터 검사 PASS
+   - GM 날기 / 무적 / 투명 / 속도 / 수면걷기
+   - 메인 버튼에서도 command.security 사전 잠금 적용
+13. 미니바/검색 컨텍스트 직접 명령도 Permission 거부 응답 추적 적용
+14. 검색 우클릭 메뉴의 서버 명령 항목도 권한 부족 시 사전 비활성화
+15. 가방 검사 공식 구문 보정: [캐릭터명] 가방슬롯(1~4)
+16. .revive는 선택 플레이어가 없으면 자기 자신 부활 가능하도록 대상 강제 제한 제거
+17. 서버 미지원 명령(unknown/no such command) 세션 자동 잠금 패턴 추가

@@ -1,0 +1,11 @@
+AzerothAdmin 3.2.4 / WoW 3.3.5a
+- Profession window UI compacted and profession icon changed.
+- Removed source-reference wording from visible UI.
+- Profession categories use distinct colors; item/reagent names use WoW item-quality colors.
+- Reagent live-cache refresh now preserves the selected recipe, restoring reagent Item IDs/icons after trade-skill data loads.
+- Recipe Spell ID shows learned/not-learned state and can learn the selected recipe for the current GM character.
+- Required skill shows current/required state and can raise the current GM profession skill to the recipe requirement.
+- Item quantity command now uses the canonical self-target .additem itemID count form to avoid optional PlayerIdentifier ambiguity.
+- Item, profession and quest windows explicitly close on a second toolbar click without restoring a previous managed child.
+- Item/profession/quest window geometry compacted.
+- Bank command/session logic unchanged.

@@ -1,0 +1,21 @@
+GM에드온 v2.7 정적 검증 보고
+
+- AzerothAdmin.toc Interface 30300 확인
+- TOC 참조 파일 누락 0개
+- 메인 카테고리 11개 확인
+  GM메뉴 / GM / 캐릭터 / 크리쳐 / 오브젝트 / 아이템 / 퀘스트 / 순간이동 / 티켓 / 기타 / 서버
+- 검색 메인 탭 제거 확인
+- GM메뉴 버튼 20개: 한 페이지 구성 확인
+- 퀘스트 탭 action=questhelper 확인
+- 크리쳐 탭 koKR 검색 포함 확인
+- 캐릭터 탭 전문기술 정보 포함 확인
+- 아이템 탭 별도 구성 확인
+- InvenCraftInfo 외부 AddOn 경로 참조 제거 확인
+- BlueItemInfo3 외부 AddOn 경로 참조 제거 확인
+- BankFrame 직접 Show/Hide 토글 확인
+- .npc guid 적용 확인
+- GM level 입력 힌트/예제 확인
+- 변경 파일 Lua 구문 검사 통과
+- 원본 InvenCraftInfo의 Lua 5.1 필드명 goto를 검사기용으로만 변환한 전체 사본에서도 Lua 구문 검사 통과
+
+실제 GM 명령 성공 여부는 서버의 AzerothCore 빌드 및 RBAC 권한에 따라 달라질 수 있습니다.
