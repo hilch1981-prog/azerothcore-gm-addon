@@ -16,6 +16,7 @@ CommandMeta.lua
 KoKRSearchData.lua
 FeaturedCreatures.lua
 FeaturedCreaturesExpanded.lua
+FeaturedCreatureModels.lua
 KoKRSearch.lua
 CreatureBrowser.lua
 Teleports.lua
