@@ -50,3 +50,4 @@ Embedded\BlueItemInfo3\Integrated.lua
 Embedded\InvenCraftInfoUI\Rebuilt.lua
 
 Integrations.lua
+CreatureBrowserFixes.lua
