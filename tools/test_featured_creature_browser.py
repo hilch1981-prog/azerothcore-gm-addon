@@ -151,8 +151,9 @@ class FeaturedCreatureBrowserTests(unittest.TestCase):
         ]
         for marker in required:
             self.assertIn(marker, runtime)
-        # Do not return to the unreliable physical-Hangul-key emulation attempts.
-        self.assertNotIn("ToggleInputLanguage", runtime)
+        # Comments may mention the abandoned API, but executable calls must not return.
+        self.assertNotIn("edit.ToggleInputLanguage", runtime)
+        self.assertNotIn("safeCall(edit.ToggleInputLanguage", runtime)
 
     def test_temp_and_permanent_spawn_are_separate_confirmed_actions(self):
         browser = BROWSER_PATH.read_text(encoding="utf-8-sig")
