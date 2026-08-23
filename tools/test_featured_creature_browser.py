@@ -103,7 +103,7 @@ class FeaturedCreatureBrowserTests(unittest.TestCase):
         self.assertIn("self.creatureBrowserModel.SetRotation", browser)
         self.assertNotIn("SetPortraitTextureFromCreatureDisplayID", browser)
 
-    def test_r7_model_map_covers_every_featured_entry(self):
+    def test_r8_model_map_covers_every_featured_entry(self):
         featured = parse_all_featured_entries()
         models = parse_model_map()
         self.assertGreaterEqual(len(featured), 400)
@@ -113,38 +113,46 @@ class FeaturedCreatureBrowserTests(unittest.TestCase):
             self.assertGreater(display_id, 0)
             self.assertGreater(scale, 0)
 
-    def test_r7_known_azerothcore_display_ids_are_pinned(self):
+    def test_r8_known_azerothcore_display_ids_are_pinned(self):
         models = parse_model_map()
-        self.assertEqual(models[4949][0], 4527)   # Thrall
-        self.assertEqual(models[4968][0], 30863)  # Jaina
-        self.assertEqual(models[10181][0], 28213) # Sylvanas
-        self.assertEqual(models[10184][0], 8570)  # Onyxia
-        self.assertEqual(models[12397][0], 12449) # Lord Kazzak
-        self.assertEqual(models[36597][0], 30721) # Lich King
+        self.assertEqual(models[4949][0], 4527)
+        self.assertEqual(models[4968][0], 30863)
+        self.assertEqual(models[10181][0], 28213)
+        self.assertEqual(models[10184][0], 8570)
+        self.assertEqual(models[12397][0], 12449)
+        self.assertEqual(models[36597][0], 30721)
 
-    def test_r7_runtime_has_cache_independent_morph_snapshot_fallback(self):
+    def test_r8_runtime_uses_native_npcscan_model_lifecycle(self):
         runtime = RUNTIME_PATH.read_text(encoding="utf-8-sig")
         required = [
-            'addon.CreatureBrowserRuntimeRevision = "IME R6 / MODEL R7"',
-            'sendPreviewCommand(".morph target " .. tostring(info.displayID))',
-            'sendPreviewCommand(".morph reset")',
-            'safeCall(model.SetUnit, model, "player")',
-            'InCombatLockdown',
-            'ClearTarget',
-            'TargetLastTarget',
-            'cancelActiveMorph()',
+            'addon.CreatureBrowserRuntimeRevision = "IME/MODEL R8"',
+            'model:Show()',
+            'model.ClearModel',
+            'model:SetScript("OnUpdateModel"',
+            'safeCall(model.SetCreature, model, entry)',
+            'safeCall(model.SetUnit, model, "target")',
+            'string.sub(guid, 8, 12)',
         ]
         for marker in required:
             self.assertIn(marker, runtime)
-        # Preview morph/reset must stay transient and out of normal GM history.
-        self.assertNotIn('addon:SendNow(".morph', runtime)
+        # R7's cache-independent morph snapshot fallback caused a full-model regression.
+        self.assertNotIn('sendPreviewCommand(".morph target ', runtime)
+        self.assertNotIn('sendPreviewCommand(".morph reset")', runtime)
 
-    def test_r6_game_verified_korean_ime_release_is_preserved_in_r7(self):
+    def test_r8_korean_ime_uses_native_blank_chat_flush(self):
         runtime = RUNTIME_PATH.read_text(encoding="utf-8-sig")
-        self.assertIn("function addon:ReleaseKoreanSearchInput(edit)", runtime)
-        self.assertIn("edit.ToggleInputLanguage", runtime)
-        self.assertIn('language == "ROMAN"', runtime)
-        self.assertIn("GetCurrentKeyBoardFocus", runtime)
+        required = [
+            "function addon:ReleaseKoreanSearchInput(edit)",
+            "nativeBlankChatFlush",
+            'edit:SetText("  ")',
+            "ChatEdit_OnEnterPressed",
+            "ChatEdit_ActivateChat",
+            "hasMeaningfulText",
+        ]
+        for marker in required:
+            self.assertIn(marker, runtime)
+        # Do not return to the unreliable physical-Hangul-key emulation attempts.
+        self.assertNotIn("ToggleInputLanguage", runtime)
 
     def test_temp_and_permanent_spawn_are_separate_confirmed_actions(self):
         browser = BROWSER_PATH.read_text(encoding="utf-8-sig")
