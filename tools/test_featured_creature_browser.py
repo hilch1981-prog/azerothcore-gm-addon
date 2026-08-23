@@ -6,11 +6,14 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 ADDON = ROOT / "AzerothAdmin"
 DATA_PATH = ADDON / "FeaturedCreatures.lua"
+EXPANDED_DATA_PATH = ADDON / "FeaturedCreaturesExpanded.lua"
+MODEL_DATA_PATH = ADDON / "FeaturedCreatureModels.lua"
 BROWSER_PATH = ADDON / "CreatureBrowser.lua"
+RUNTIME_PATH = ADDON / "CreatureBrowserRuntimeFixes.lua"
 
 
-def parse_featured_records():
-    text = DATA_PATH.read_text(encoding="utf-8-sig")
+def parse_featured_records(path=DATA_PATH):
+    text = path.read_text(encoding="utf-8-sig")
     pattern = re.compile(
         r'\{\s*(\d+),\s*"([^"]+)",\s*"(raid|dungeon|world|rare|event|utility|leader)",\s*'
         r'"(classic|tbc|wotlk)",\s*"([^"]+)",\s*(true|false)\s*\}'
@@ -19,6 +22,22 @@ def parse_featured_records():
         (int(entry), name, group, expansion, place, restricted == "true")
         for entry, name, group, expansion, place, restricted in pattern.findall(text)
     ]
+
+
+def parse_all_featured_entries():
+    entries = {record[0] for record in parse_featured_records(DATA_PATH)}
+    entries.update(record[0] for record in parse_featured_records(EXPANDED_DATA_PATH))
+    return entries
+
+
+def parse_model_map():
+    text = MODEL_DATA_PATH.read_text(encoding="utf-8-sig")
+    return {
+        int(entry): (int(display_id), float(scale), int(build))
+        for entry, display_id, scale, build in re.findall(
+            r'\[(\d+)\]\s*=\s*\{\s*(\d+)\s*,\s*([0-9.]+)\s*,\s*(-?\d+)\s*\}', text
+        )
+    }
 
 
 def parse_kokr_creatures():
@@ -84,6 +103,49 @@ class FeaturedCreatureBrowserTests(unittest.TestCase):
         self.assertIn("self.creatureBrowserModel.SetRotation", browser)
         self.assertNotIn("SetPortraitTextureFromCreatureDisplayID", browser)
 
+    def test_r7_model_map_covers_every_featured_entry(self):
+        featured = parse_all_featured_entries()
+        models = parse_model_map()
+        self.assertGreaterEqual(len(featured), 400)
+        self.assertEqual(featured - set(models), set())
+        for entry in featured:
+            display_id, scale, _build = models[entry]
+            self.assertGreater(display_id, 0)
+            self.assertGreater(scale, 0)
+
+    def test_r7_known_azerothcore_display_ids_are_pinned(self):
+        models = parse_model_map()
+        self.assertEqual(models[4949][0], 4527)   # Thrall
+        self.assertEqual(models[4968][0], 30863)  # Jaina
+        self.assertEqual(models[10181][0], 28213) # Sylvanas
+        self.assertEqual(models[10184][0], 8570)  # Onyxia
+        self.assertEqual(models[12397][0], 12449) # Lord Kazzak
+        self.assertEqual(models[36597][0], 30721) # Lich King
+
+    def test_r7_runtime_has_cache_independent_morph_snapshot_fallback(self):
+        runtime = RUNTIME_PATH.read_text(encoding="utf-8-sig")
+        required = [
+            'addon.CreatureBrowserRuntimeRevision = "IME R6 / MODEL R7"',
+            'sendPreviewCommand(".morph target " .. tostring(info.displayID))',
+            'sendPreviewCommand(".morph reset")',
+            'safeCall(model.SetUnit, model, "player")',
+            'InCombatLockdown',
+            'ClearTarget',
+            'TargetLastTarget',
+            'cancelActiveMorph()',
+        ]
+        for marker in required:
+            self.assertIn(marker, runtime)
+        # Preview morph/reset must stay transient and out of normal GM history.
+        self.assertNotIn('addon:SendNow(".morph', runtime)
+
+    def test_r6_game_verified_korean_ime_release_is_preserved_in_r7(self):
+        runtime = RUNTIME_PATH.read_text(encoding="utf-8-sig")
+        self.assertIn("function addon:ReleaseKoreanSearchInput(edit)", runtime)
+        self.assertIn("edit.ToggleInputLanguage", runtime)
+        self.assertIn('language == "ROMAN"', runtime)
+        self.assertIn("GetCurrentKeyBoardFocus", runtime)
+
     def test_temp_and_permanent_spawn_are_separate_confirmed_actions(self):
         browser = BROWSER_PATH.read_text(encoding="utf-8-sig")
         self.assertIn('".npc add temp " .. tostring(entry)', browser)
@@ -106,6 +168,8 @@ class FeaturedCreatureBrowserTests(unittest.TestCase):
     def test_toc_load_order_and_managed_frame_registration(self):
         toc = (ADDON / "AzerothAdmin.toc").read_text(encoding="utf-8-sig")
         self.assertLess(toc.index("FeaturedCreatures.lua"), toc.index("CreatureBrowser.lua"))
+        self.assertLess(toc.index("FeaturedCreaturesExpanded.lua"), toc.index("FeaturedCreatureModels.lua"))
+        self.assertLess(toc.index("FeaturedCreatureModels.lua"), toc.index("CreatureBrowserRuntimeFixes.lua"))
         self.assertLess(toc.index("CreatureBrowser.lua"), toc.index("Core.lua"))
         core = (ADDON / "Core.lua").read_text(encoding="utf-8-sig")
         self.assertIn("add(self.creatureBrowserFrame)", core)
