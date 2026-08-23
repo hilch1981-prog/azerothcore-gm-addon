@@ -1,127 +1,151 @@
 AzerothAdminEasy = AzerothAdminEasy or {}
 local addon = AzerothAdminEasy
 
--- Runtime corrections for WoW WotLK 3.3.5a Build 12340 + AzerothCore.
--- Loaded last so the original browser/UI remains intact.
---
--- Important 3.3.5a limitation:
--- PlayerModel:SetCreature(entry) uses creature data already known by the client.
--- Unlike later clients, arbitrary CreatureDisplayID values cannot be used as a
--- reliable uncached model source.  When the selected NPC is the live target we
--- therefore switch to SetUnit("target"), which also supplies the exact humanoid
--- appearance/equipment that SetCreature alone can miss.
+-- WoW WotLK 3.3.5a Build 12340 + AzerothCore runtime diagnostics/fixes.
+-- This file is loaded last.  R4 deliberately hooks the actual button scripts
+-- after BlueItemInfo3/CreatureBrowser have finished building their UI.
+addon.CreatureBrowserRuntimeRevision = "IME/MODEL R4"
 
--- Verified directly against AzerothCore:
--- data/sql/base/db_world/creature_template_model.sql
--- { CreatureDisplayID, VerifiedBuild }.  Prefer a 12340 row when AzerothCore
--- keeps more than one model row for the same creature.
+-- Selected AzerothCore creature_template_model rows verified against the public
+-- AzerothCore WotLK world DB.  A Build 12340 row is preferred when one exists.
+-- The second argument to SetCreature is attempted only through pcall because
+-- support differs between old client builds; SetUnit(target) remains the exact
+-- path when the creature is physically loaded in the 3.3.5a client.
 local ACORE_MODEL_INFO = {
-    [3057]  = { { 4307, 51831 } },                         -- Cairne Bloodhoof
-    [4949]  = { { 4527, 12340 } },                         -- Thrall
-    [4968]  = { { 30863, 51831 } },                        -- Lady Jaina Proudmoore
-    [7937]  = { { 7006, 12340 }, { 31658, 51831 } },       -- High Tinker Mekkatorque
-    [7999]  = { { 7274, 51831 } },                         -- Tyrande Whisperwind
-    [10181] = { { 28213, 12340 } },                        -- Lady Sylvanas Windrunner
-    [10184] = { { 8570, 51831 } },                         -- Onyxia
-    [12397] = { { 12449, 12340 } },                        -- Lord Kazzak
-    [14887] = { { 15364, 12340 } },                        -- Ysondre
-    [14888] = { { 15365, 12340 } },                        -- Lethon
-    [14889] = { { 15366, 12340 } },                        -- Emeriss
-    [14890] = { { 15363, 12340 } },                        -- Taerar
-    [36597] = { { 30721, 11159 } },                        -- The Lich King
+    [3057]  = { { 4307, 51831 } },
+    [4949]  = { { 4527, 12340 } },
+    [4968]  = { { 30863, 51831 } },
+    [7937]  = { { 7006, 12340 }, { 31658, 51831 } },
+    [7999]  = { { 7274, 51831 } },
+    [10181] = { { 28213, 12340 } },
+    [10184] = { { 8570, 51831 } },
+    [12397] = { { 12449, 12340 } },
+    [14887] = { { 15364, 12340 } },
+    [14888] = { { 15365, 12340 } },
+    [14889] = { { 15366, 12340 } },
+    [14890] = { { 15363, 12340 } },
+    [36597] = { { 30721, 11159 } },
 }
 addon.AzerothCoreCreatureModelInfo = ACORE_MODEL_INFO
 
-local function clearFocus(edit)
-    if edit and edit.ClearFocus then pcall(edit.ClearFocus, edit) end
+local function safeCall(method, object, ...)
+    if not method or not object then return false end
+    return pcall(method, object, ...)
 end
 
-local function disableEditKeyboard(edit)
-    if edit and edit.EnableKeyboard then pcall(edit.EnableKeyboard, edit, false) end
-end
-
-local function enableEditKeyboard(edit)
-    if edit and edit.EnableKeyboard then pcall(edit.EnableKeyboard, edit, true) end
-end
-
-local function releaseChatFocus()
-    local edit = nil
-    if ChatEdit_GetActiveWindow then
-        local ok, active = pcall(ChatEdit_GetActiveWindow)
-        if ok then edit = active end
-    end
-    if edit then
-        if ChatEdit_DeactivateChat then
-            pcall(ChatEdit_DeactivateChat, edit)
-        else
-            clearFocus(edit)
-        end
-    end
-end
-
--- A normal ClearFocus() was not enough on the koKR 3.3.5a client: after a
--- Hangul search, movement did not return until the physical Hangul/English key
--- was pressed.  Remove the EditBox from keyboard input entirely after submit.
--- A visual button keeps the same search field location/text; clicking it brings
--- the real EditBox back for the next edit.
-local function updateCreatureSearchDisplay()
-    local display = addon.creatureBrowserSearchDisplay
-    local edit = addon.creatureBrowserSearch
-    if not display or not display.aaeText or not edit then return end
-    local text = edit:GetText() or ""
-    if text == "" then text = "검색어 입력 / 수정" end
-    display.aaeText:SetText(text)
-end
-
-local function commitCreatureSearchEdit(edit)
-    if not edit then return end
-    clearFocus(edit)
-    disableEditKeyboard(edit)
-    if edit.Hide then edit:Hide() end
-    updateCreatureSearchDisplay()
-    if addon.creatureBrowserSearchDisplay then addon.creatureBrowserSearchDisplay:Show() end
-    releaseChatFocus()
-end
-
-local function activateCreatureSearchEdit()
-    local edit = addon.creatureBrowserSearch
-    local display = addon.creatureBrowserSearchDisplay
-    if not edit then return end
-    if display then display:Hide() end
-    enableEditKeyboard(edit)
-    edit:Show()
-    if edit.SetFocus then pcall(edit.SetFocus, edit) end
-    if edit.HighlightText then pcall(edit.HighlightText, edit) end
-end
-
--- Other search windows do not have a dedicated display overlay.  For them,
--- force an OnHide/OnShow cycle after submitting so the 3.3.5a edit control
--- releases its IME composition instead of merely losing cursor focus.
-local function hardResetSearchEdit(edit)
-    if not edit then return end
-    local wasShown = edit.IsShown and edit:IsShown()
-    clearFocus(edit)
-    disableEditKeyboard(edit)
-    if edit.Hide then edit:Hide() end
-    releaseChatFocus()
-
-    local function restore()
-        enableEditKeyboard(edit)
-        if wasShown and edit.Show then edit:Show() end
-        clearFocus(edit)
-    end
+local function runAfter(delay, callback)
     if addon.RunAfter then
-        addon:RunAfter(0.05, restore)
+        addon:RunAfter(delay, callback)
     else
-        restore()
+        callback()
     end
+end
+
+-- ---------------------------------------------------------------------------
+-- Keyboard / koKR IME
+-- ---------------------------------------------------------------------------
+
+local imeSink = CreateFrame("EditBox", "AzerothAdminImeReleaseSink", UIParent)
+imeSink:SetWidth(1)
+imeSink:SetHeight(1)
+imeSink:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -20, 20)
+imeSink:SetAutoFocus(false)
+imeSink:SetAlpha(0)
+imeSink:EnableMouse(false)
+imeSink:Hide()
+
+local function getCurrentFocus()
+    if not GetCurrentKeyBoardFocus then return nil end
+    local ok, focus = pcall(GetCurrentKeyBoardFocus)
+    if ok then return focus end
+    return nil
+end
+
+local function clearCurrentFocus()
+    local pass
+    for pass = 1, 4 do
+        local focus = getCurrentFocus()
+        if not focus then return true end
+        if focus.ClearFocus then safeCall(focus.ClearFocus, focus) end
+    end
+    return getCurrentFocus() == nil
+end
+
+local function focusStateText()
+    local focus = getCurrentFocus()
+    if not focus then return "KEY:FREE" end
+    local name = nil
+    if focus.GetName then
+        local ok, value = pcall(focus.GetName, focus)
+        if ok then name = value end
+    end
+    if not name or name == "" then name = "EditBox" end
+    return "KEY:FOCUS " .. tostring(name)
+end
+
+local function updateImeBadges()
+    local state = focusStateText()
+    if addon._aaeR4CreatureBadge then
+        addon._aaeR4CreatureBadge:SetText("IME/MODEL R4 · " .. state)
+    end
+    local BII3 = _G.BlueItemInfo3
+    if BII3 and BII3._aaeR4ImeBadge then
+        BII3._aaeR4ImeBadge:SetText("IME R4 · " .. state)
+    end
+end
+
+local function forceFocusToSinkAndRelease()
+    imeSink:Show()
+    if imeSink.EnableKeyboard then safeCall(imeSink.EnableKeyboard, imeSink, true) end
+    if imeSink.SetText then imeSink:SetText("") end
+    if imeSink.SetFocus then safeCall(imeSink.SetFocus, imeSink) end
+    if imeSink.ClearFocus then safeCall(imeSink.ClearFocus, imeSink) end
+    if imeSink.EnableKeyboard then safeCall(imeSink.EnableKeyboard, imeSink, false) end
+    imeSink:Hide()
+end
+
+local function hardReleaseEdit(edit)
+    -- The key difference from the previous attempts is that R4 does not assume
+    -- that 'edit' is the object still owning the keyboard.  It clears the real
+    -- keyboard focus reported by the 3.3.5 API after the search handler ran.
+    if edit and edit.ClearFocus then safeCall(edit.ClearFocus, edit) end
+    clearCurrentFocus()
+    forceFocusToSinkAndRelease()
+    clearCurrentFocus()
+
+    -- Keep the submitted EditBox unable to recapture keyboard input until the
+    -- user explicitly clicks it again.  This is intentional for koKR IME.
+    if edit and edit.EnableKeyboard then safeCall(edit.EnableKeyboard, edit, false) end
+
+    updateImeBadges()
+    runAfter(0.05, function()
+        clearCurrentFocus()
+        updateImeBadges()
+    end)
+    runAfter(0.20, function()
+        clearCurrentFocus()
+        updateImeBadges()
+    end)
+end
+
+local function makeEditReactivatable(edit)
+    if not edit or edit._aaeR4Reactivatable then return end
+    edit._aaeR4Reactivatable = true
+
+    local oldMouseDown = edit:GetScript("OnMouseDown")
+    edit:SetScript("OnMouseDown", function(self, ...)
+        if self.EnableKeyboard then safeCall(self.EnableKeyboard, self, true) end
+        if oldMouseDown then oldMouseDown(self, ...) end
+        if self.SetFocus then safeCall(self.SetFocus, self) end
+        updateImeBadges()
+    end)
 end
 
 local function getButtonText(button)
     if not button then return nil end
     if button.label and button.label.GetText then
         local ok, text = pcall(button.label.GetText, button.label)
-        if ok then return text end
+        if ok and text then return text end
     end
     if button.GetText then
         local ok, text = pcall(button.GetText, button)
@@ -130,58 +154,121 @@ local function getButtonText(button)
     return nil
 end
 
-local function hookCreatureSearchButton(button, edit)
-    if not button or button._aaeHardImeHooked then return end
+local function hookSubmitButton(button, edit, accepted)
+    if not button or button._aaeR4ImeHooked then return end
     local text = getButtonText(button)
-    if text ~= "검색" and text ~= "전체 DB 검색" then return end
-    local original = button:GetScript("OnClick")
-    if not original then return end
-    button._aaeHardImeHooked = true
+    if not text or not accepted[text] then return end
+    local oldClick = button:GetScript("OnClick")
+    if not oldClick then return end
+
+    button._aaeR4ImeHooked = true
     button:SetScript("OnClick", function(self, ...)
-        commitCreatureSearchEdit(edit)
-        return original(self, ...)
+        -- IMPORTANT: run original FIRST.  BlueItemInfo3's visible search button
+        -- calls its local runSearch() directly; it does not call BII3:Search().
+        oldClick(self, ...)
+        hardReleaseEdit(edit)
     end)
 end
 
-local function hookCreatureSearchButtonsRecursive(frame, edit)
+local function hookButtonsRecursive(frame, edit, accepted)
     if not frame or not frame.GetChildren then return end
     local children = { frame:GetChildren() }
     local i
     for i = 1, table.getn(children) do
         local child = children[i]
-        hookCreatureSearchButton(child, edit)
-        hookCreatureSearchButtonsRecursive(child, edit)
+        hookSubmitButton(child, edit, accepted)
+        hookButtonsRecursive(child, edit, accepted)
     end
 end
 
-local function hookCreatureSearchEnter(edit)
-    if not edit or edit._aaeHardImeEnterHooked then return end
-    local original = edit:GetScript("OnEnterPressed")
-    if not original then return end
-    edit._aaeHardImeEnterHooked = true
+local function hookEnter(edit)
+    if not edit or edit._aaeR4EnterHooked then return end
+    local oldEnter = edit:GetScript("OnEnterPressed")
+    if not oldEnter then return end
+
+    edit._aaeR4EnterHooked = true
     edit:SetScript("OnEnterPressed", function(self, ...)
-        commitCreatureSearchEdit(self)
-        return original(self, ...)
+        oldEnter(self, ...)
+        hardReleaseEdit(self)
     end)
 end
 
-local previousRunLocaleSearch = addon.RunLocaleSearch
-if previousRunLocaleSearch then
+local function createBadge(parent, text, point, x, y)
+    if not parent then return nil end
+    local badge = parent:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    badge:SetPoint(point or "TOPRIGHT", parent, point or "TOPRIGHT", x or -12, y or -10)
+    badge:SetText(text)
+    badge:SetTextColor(1, 0.82, 0.1)
+    return badge
+end
+
+local function installBlueItemImeR4()
+    local BII3 = _G.BlueItemInfo3
+    if not BII3 or not BII3.searchEdit then return end
+
+    local edit = BII3.searchEdit
+    makeEditReactivatable(edit)
+    hookEnter(edit)
+    hookButtonsRecursive(BII3, edit, {
+        ["검색"] = true,
+        ["분류"] = true,
+        ["필터 적용"] = true,
+    })
+
+    if not BII3._aaeR4ImeBadge then
+        BII3._aaeR4ImeBadge = createBadge(BII3, "IME R4 · " .. focusStateText(), "TOPRIGHT", -12, -11)
+    end
+
+    if BII3.Search and not BII3._aaeR4SearchWrapped then
+        BII3._aaeR4SearchWrapped = true
+        local oldSearch = BII3.Search
+        BII3.Search = function(self, ...)
+            local result = oldSearch(self, ...)
+            hardReleaseEdit(self.searchEdit)
+            return result
+        end
+    end
+end
+
+local function installCreatureSearchImeR4()
+    local frame = addon.creatureBrowserFrame
+    local edit = addon.creatureBrowserSearch
+    if not frame or not edit then return end
+
+    makeEditReactivatable(edit)
+    hookEnter(edit)
+    hookButtonsRecursive(frame, edit, {
+        ["검색"] = true,
+        ["전체 DB 검색"] = true,
+    })
+
+    if not addon._aaeR4CreatureBadge then
+        addon._aaeR4CreatureBadge = createBadge(frame, "IME/MODEL R4 · " .. focusStateText(), "TOPRIGHT", -12, -11)
+    end
+end
+
+if addon.RunLocaleSearch and not addon._aaeR4LocaleSearchWrapped then
+    addon._aaeR4LocaleSearchWrapped = true
+    local oldRunLocaleSearch = addon.RunLocaleSearch
     addon.RunLocaleSearch = function(self, ...)
-        local result = previousRunLocaleSearch(self, ...)
-        hardResetSearchEdit(self.localeSearchEdit)
+        local result = oldRunLocaleSearch(self, ...)
+        hardReleaseEdit(self.localeSearchEdit)
         return result
     end
 end
 
-local BII3 = _G.BlueItemInfo3
-if BII3 and BII3.Search then
-    local previousBII3Search = BII3.Search
-    BII3.Search = function(self, ...)
-        local result = previousBII3Search(self, ...)
-        hardResetSearchEdit(self.searchEdit)
-        return result
+-- ---------------------------------------------------------------------------
+-- Creature model preview
+-- ---------------------------------------------------------------------------
+
+local function preferredModelInfo(entry)
+    local rows = ACORE_MODEL_INFO[tonumber(entry)]
+    if not rows then return nil end
+    local i
+    for i = 1, table.getn(rows) do
+        if tonumber(rows[i][2]) == 12340 then return rows[i] end
     end
+    return rows[1]
 end
 
 local function getLoadedModelPath(model)
@@ -196,35 +283,23 @@ local function getTargetCreatureEntry()
     local guid = UnitGUID("target")
     if type(guid) ~= "string" or string.len(guid) < 12 then return nil end
 
-    -- Pre-4.0 GUID layout (2.4.0-3.3.5): creature entry occupies the six hex
-    -- digits at characters 7..12 in the canonical 0xF130...... GUID.
-    local prefix = string.sub(guid, 3, 6)
-    if prefix ~= "F130" and prefix ~= "F150" then return nil end
+    -- WotLK 3.3.5 GUID: 0xF130 + 6 hex creature entry + low GUID.
+    if string.sub(guid, 3, 6) ~= "F130" then return nil end
     return tonumber(string.sub(guid, 7, 12), 16)
 end
 
-local function targetMatchesRecord(record)
+local function targetMatches(record)
     local entry = tonumber(record and record[1])
     return entry and getTargetCreatureEntry() == entry
 end
 
-local function preferredModelInfo(entry)
-    local rows = ACORE_MODEL_INFO[tonumber(entry)]
-    if not rows then return nil end
-    local i
-    for i = 1, table.getn(rows) do
-        if tonumber(rows[i][2]) == 12340 then return rows[i] end
-    end
-    return rows[1]
-end
-
 local function modelSourceText(record)
     local entry = tonumber(record and record[1])
-    local row = preferredModelInfo(entry)
-    if not row then
-        return "AzerothCore Entry " .. tostring(entry or "?")
+    local info = preferredModelInfo(entry)
+    if info then
+        return "Entry " .. tostring(entry) .. " · DisplayID " .. tostring(info[1]) .. " · Build " .. tostring(info[2])
     end
-    return "AzerothCore DisplayID " .. tostring(row[1]) .. " · VerifiedBuild " .. tostring(row[2])
+    return "Entry " .. tostring(entry or "?") .. " · AzerothCore creature_template_model"
 end
 
 local function setModelStatus(text)
@@ -234,214 +309,178 @@ local function setModelStatus(text)
     if text and text ~= "" then status:Show() else status:Hide() end
 end
 
-local function applyModelPresentation(model, path)
+local function prepareModel(model)
     if not model then return end
-    if model.SetModelScale then pcall(model.SetModelScale, model, 1) end
-    if model.SetCamDistanceScale then pcall(model.SetCamDistanceScale, model, 1.05) end
-    if model.SetFacing then pcall(model.SetFacing, model, 0) end
-    if model.SetSequence then pcall(model.SetSequence, model, 4) end
-    if model.SetRotation then pcall(model.SetRotation, model, addon.creatureBrowserModelRotation or 0) end
-    if model.SetAlpha then pcall(model.SetAlpha, model, 1) end
-
-    local lower = path and string.lower(path) or ""
-    local largeFlying = string.find(lower, "dragon", 1, true)
-        or string.find(lower, "wurm", 1, true)
-        or string.find(lower, "drake", 1, true)
-        or string.find(lower, "malygos", 1, true)
-        or string.find(lower, "yoggsaron", 1, true)
-    if largeFlying then
-        if model.SetPosition then pcall(model.SetPosition, model, 0, 0, 0) end
-        if model.SetCamera then pcall(model.SetCamera, model, 0) end
-    else
-        if model.SetPosition then pcall(model.SetPosition, model, 0.4, 0, 0) end
-    end
+    if model.SetAlpha then safeCall(model.SetAlpha, model, 0) end
+    if model.ClearModel then safeCall(model.ClearModel, model) end
+    if model.SetModelScale then safeCall(model.SetModelScale, model, 1) end
+    if model.SetPosition then safeCall(model.SetPosition, model, 0, 0, 0) end
+    if model.SetFacing then safeCall(model.SetFacing, model, 0) end
 end
 
-local function loadSelectedCreatureModel(record)
-    if addon.creatureBrowserSelected ~= record then return false end
+local function presentModel(model)
+    if not model then return end
+    if model.SetCamDistanceScale then safeCall(model.SetCamDistanceScale, model, 1.05) end
+    if model.SetRotation then safeCall(model.SetRotation, model, addon.creatureBrowserModelRotation or 0) end
+    if model.SetAlpha then safeCall(model.SetAlpha, model, 1) end
+    model:Show()
+end
+
+local function loadModelR4(record)
     local model = addon.creatureBrowserModel
     local entry = tonumber(record and record[1])
     if not model or not entry then return false end
 
-    if model.ClearModel then pcall(model.ClearModel, model) end
-    if model.SetAlpha then pcall(model.SetAlpha, model, 0) end
+    prepareModel(model)
+    if addon.creatureBrowserModelFallback then addon.creatureBrowserModelFallback:Hide() end
 
-    local usingTarget = targetMatchesRecord(record)
+    -- Exact live unit is the reliable 3.3.5 path, including humanoid equipment.
+    if targetMatches(record) and model.SetUnit then
+        local ok = safeCall(model.SetUnit, model, "target")
+        if ok then
+            setModelStatus(modelSourceText(record) .. "\nR4: 실제 target 외형 로드")
+            return true
+        end
+    end
+
+    local info = preferredModelInfo(entry)
     local ok = false
-    if usingTarget and model.SetUnit then
-        ok = pcall(model.SetUnit, model, "target")
-    elseif model.SetCreature then
-        ok = pcall(model.SetCreature, model, entry)
+
+    -- Some old PlayerModel implementations accept an optional displayID on
+    -- SetCreature.  Try it only through pcall; if Build 12340 ignores/rejects
+    -- it we immediately fall back to the canonical SetCreature(entry).
+    if info and model.SetCreature then
+        ok = safeCall(model.SetCreature, model, entry, tonumber(info[1]))
+    end
+    if not ok and model.SetCreature then
+        ok = safeCall(model.SetCreature, model, entry)
     end
 
-    if not ok then
-        model:Hide()
-        if addon.creatureBrowserModelFallback then addon.creatureBrowserModelFallback:Hide() end
-        setModelStatus(modelSourceText(record) .. "\n3D 모델 호출에 실패했습니다.")
-        return false
+    if ok then
+        setModelStatus(modelSourceText(record) .. "\nR4: 모델 응답 확인 중...")
+    else
+        setModelStatus(modelSourceText(record) .. "\nR4: PlayerModel 호출 실패")
     end
-
-    model:Show()
-    return true
+    return ok
 end
 
-local function inspectSelectedModel(record, finalCheck)
+local function inspectModelR4(record, finalCheck)
     if addon.creatureBrowserSelected ~= record then return false end
     local model = addon.creatureBrowserModel
     if not model then return false end
+
     local path = getLoadedModelPath(model)
     if path then
-        applyModelPresentation(model, path)
-        model:Show()
-        if addon.creatureBrowserModelFallback then addon.creatureBrowserModelFallback:Hide() end
-        if targetMatchesRecord(record) then
-            setModelStatus(modelSourceText(record) .. "\n실제 대상 외형으로 갱신됨")
+        presentModel(model)
+        if targetMatches(record) then
+            setModelStatus(modelSourceText(record) .. "\nR4: 실제 target 외형")
         else
             setModelStatus("")
         end
         return true
     end
 
+    -- Never leave the previously selected Thrall/Jaina model visible.  A blank
+    -- result is a real 3.3.5 creature-cache miss, not a successful model swap.
+    prepareModel(model)
+    model:Hide()
+    if addon.creatureBrowserModelFallback then addon.creatureBrowserModelFallback:Hide() end
+
     if finalCheck then
-        model:Hide()
-        if addon.creatureBrowserModelFallback then addon.creatureBrowserModelFallback:Hide() end
         setModelStatus(modelSourceText(record)
-            .. "\n3.3.5a 캐시에 없는 NPC입니다."
-            .. "\nNPC를 실제로 대상으로 선택하면 정확한 외형으로 갱신됩니다.")
-    else
-        setModelStatus(modelSourceText(record) .. "\n3D 외형 불러오는 중...")
+            .. "\nR4: 3.3.5a creature cache 미등록"
+            .. "\n해당 NPC를 실제 대상 지정하면 SetUnit(target)으로 갱신됩니다.")
     end
     return false
 end
 
-local previousSelectFeaturedCreature = addon.SelectFeaturedCreature
-if previousSelectFeaturedCreature then
+if addon.SelectFeaturedCreature and not addon._aaeR4SelectWrapped then
+    addon._aaeR4SelectWrapped = true
+    local oldSelectFeaturedCreature = addon.SelectFeaturedCreature
     addon.SelectFeaturedCreature = function(self, record)
-        local result = previousSelectFeaturedCreature(self, record)
-        self._runtimeModelSerial = (self._runtimeModelSerial or 0) + 1
-        local serial = self._runtimeModelSerial
+        local result = oldSelectFeaturedCreature(self, record)
+        self._aaeR4ModelSerial = (self._aaeR4ModelSerial or 0) + 1
+        local serial = self._aaeR4ModelSerial
 
         if not record then
             setModelStatus("")
             return result
         end
 
-        if self.creatureBrowserModelFallback then self.creatureBrowserModelFallback:Hide() end
-        setModelStatus(modelSourceText(record) .. "\n3D 외형 불러오는 중...")
+        -- Remove whatever the previous compatibility layer displayed before R4.
+        prepareModel(self.creatureBrowserModel)
+        if self.creatureBrowserModel then self.creatureBrowserModel:Hide() end
+        setModelStatus(modelSourceText(record) .. "\nR4: 모델 로드 시작")
 
-        local function loadAndInspect(finalCheck)
-            if serial ~= addon._runtimeModelSerial or addon.creatureBrowserSelected ~= record then return end
-            loadSelectedCreatureModel(record)
-            if addon.RunAfter then
-                addon:RunAfter(0.18, function()
-                    if serial == addon._runtimeModelSerial then inspectSelectedModel(record, finalCheck) end
-                end)
-            else
-                inspectSelectedModel(record, finalCheck)
-            end
-        end
-
-        -- CreatureBrowserFixes has an older 0.05-second SetCreature refresh.
-        -- Run after it so this final compatibility layer owns the visible model.
-        if self.RunAfter then
-            self:RunAfter(0.08, function() loadAndInspect(false) end)
-            self:RunAfter(0.55, function()
-                if serial ~= addon._runtimeModelSerial then return end
-                if not inspectSelectedModel(record, false) then
-                    loadAndInspect(true)
-                end
+        runAfter(0.08, function()
+            if serial ~= addon._aaeR4ModelSerial or addon.creatureBrowserSelected ~= record then return end
+            loadModelR4(record)
+            runAfter(0.18, function()
+                if serial == addon._aaeR4ModelSerial then inspectModelR4(record, false) end
             end)
-        else
-            loadAndInspect(true)
-        end
+            runAfter(0.55, function()
+                if serial == addon._aaeR4ModelSerial then inspectModelR4(record, true) end
+            end)
+        end)
         return result
     end
 end
 
--- _NPCScan 3.3.5 used the same pattern: SetCreature for a cached NPC, then
--- SetUnit("target") after the player actually targeted that NPC to refresh the
--- accurate visual (especially humanoid clothing).  Keep our preview in sync.
-local modelEventFrame = CreateFrame("Frame")
-modelEventFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
-modelEventFrame:RegisterEvent("UNIT_MODEL_CHANGED")
-modelEventFrame:SetScript("OnEvent", function(self, event, unit)
+local modelEvents = CreateFrame("Frame")
+modelEvents:RegisterEvent("PLAYER_TARGET_CHANGED")
+modelEvents:RegisterEvent("UNIT_MODEL_CHANGED")
+modelEvents:SetScript("OnEvent", function(self, event, unit)
+    if event == "UNIT_MODEL_CHANGED" and unit and unit ~= "target" then return end
     local record = addon.creatureBrowserSelected
     if not record or not addon.creatureBrowserFrame or not addon.creatureBrowserFrame:IsShown() then return end
-    if event == "UNIT_MODEL_CHANGED" and unit and unit ~= "target" then return end
-    if not targetMatchesRecord(record) then return end
+    if not targetMatches(record) then return end
 
-    addon._runtimeModelSerial = (addon._runtimeModelSerial or 0) + 1
-    local serial = addon._runtimeModelSerial
-    loadSelectedCreatureModel(record)
-    if addon.RunAfter then
-        addon:RunAfter(0.18, function()
-            if serial == addon._runtimeModelSerial then inspectSelectedModel(record, true) end
-        end)
-    else
-        inspectSelectedModel(record, true)
-    end
+    addon._aaeR4ModelSerial = (addon._aaeR4ModelSerial or 0) + 1
+    local serial = addon._aaeR4ModelSerial
+    loadModelR4(record)
+    runAfter(0.18, function()
+        if serial == addon._aaeR4ModelSerial then inspectModelR4(record, true) end
+    end)
 end)
 
-local function createCreatureSearchDisplay(edit)
-    if addon.creatureBrowserSearchDisplay or not edit then return end
-    local parent = edit:GetParent()
-    if not parent then return end
+-- ---------------------------------------------------------------------------
+-- Installation after all original UI constructors are available
+-- ---------------------------------------------------------------------------
 
-    local button = CreateFrame("Button", nil, parent)
-    button:SetPoint("TOPLEFT", edit, "TOPLEFT", 0, 0)
-    button:SetPoint("BOTTOMRIGHT", edit, "BOTTOMRIGHT", 0, 0)
-    button:SetFrameLevel((edit:GetFrameLevel() or 1) + 1)
-    button:SetBackdrop({
-        bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-        tile = true, tileSize = 12, edgeSize = 8,
-        insets = { left = 2, right = 2, top = 2, bottom = 2 },
-    })
-    button:SetBackdropColor(0.01, 0.02, 0.025, 1)
-    button:SetBackdropBorderColor(0.48, 0.43, 0.31, 1)
-
-    local text = button:CreateFontString(nil, "OVERLAY")
-    text:SetFontObject(ChatFontNormal)
-    text:SetPoint("LEFT", button, "LEFT", 6, 0)
-    text:SetPoint("RIGHT", button, "RIGHT", -6, 0)
-    text:SetJustifyH("LEFT")
-    button.aaeText = text
-    button:SetScript("OnClick", activateCreatureSearchEdit)
-    button:Hide()
-    addon.creatureBrowserSearchDisplay = button
+local function ensureModelStatus()
+    if not addon.creatureBrowserModel or addon.creatureBrowserModelStatus then return end
+    local panel = addon.creatureBrowserModel:GetParent()
+    if not panel then return end
+    local status = panel:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    status:SetPoint("CENTER", panel, "CENTER", 0, -4)
+    status:SetWidth(180)
+    status:SetJustifyH("CENTER")
+    status:SetTextColor(0.9, 0.85, 0.7)
+    status:SetText("")
+    status:Hide()
+    addon.creatureBrowserModelStatus = status
 end
 
-local function installCreatureBrowserRuntimeUI()
-    if not addon.creatureBrowserFrame then return end
-
-    local edit = addon.creatureBrowserSearch
-    createCreatureSearchDisplay(edit)
-    hookCreatureSearchEnter(edit)
-    hookCreatureSearchButtonsRecursive(addon.creatureBrowserFrame, edit)
-
-    if addon.creatureBrowserModel and not addon.creatureBrowserModelStatus then
-        local panel = addon.creatureBrowserModel:GetParent()
-        if panel then
-            local status = panel:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-            status:SetPoint("CENTER", panel, "CENTER", 0, -4)
-            status:SetWidth(174)
-            status:SetJustifyH("CENTER")
-            status:SetTextColor(0.85, 0.85, 0.78)
-            status:SetText("")
-            status:Hide()
-            addon.creatureBrowserModelStatus = status
-        end
-    end
+local function installCreatureR4()
+    installCreatureSearchImeR4()
+    ensureModelStatus()
+    updateImeBadges()
 end
 
-local previousCreateCreatureBrowser = addon.CreateCreatureBrowser
-if previousCreateCreatureBrowser then
+if addon.CreateCreatureBrowser and not addon._aaeR4CreateWrapped then
+    addon._aaeR4CreateWrapped = true
+    local oldCreateCreatureBrowser = addon.CreateCreatureBrowser
     addon.CreateCreatureBrowser = function(self, ...)
-        local result = previousCreateCreatureBrowser(self, ...)
-        installCreatureBrowserRuntimeUI()
+        local result = oldCreateCreatureBrowser(self, ...)
+        installCreatureR4()
         return result
     end
 end
+
+-- The frames normally already exist because their files are loaded before this
+-- runtime layer.  These immediate calls are therefore the primary R4 install.
+installBlueItemImeR4()
+installCreatureR4()
 
 -- Correct the Gundrak encounter entry used by AzerothCore.
 local function correctFeaturedEntry()
