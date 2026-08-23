@@ -15,6 +15,7 @@ Locale.lua
 CommandMeta.lua
 KoKRSearchData.lua
 FeaturedCreatures.lua
+FeaturedCreaturesExpanded.lua
 KoKRSearch.lua
 CreatureBrowser.lua
 Teleports.lua
@@ -51,3 +52,4 @@ Embedded\InvenCraftInfoUI\Rebuilt.lua
 
 Integrations.lua
 CreatureBrowserFixes.lua
+CreatureBrowserRuntimeFixes.lua
