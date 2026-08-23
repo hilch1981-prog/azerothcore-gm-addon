@@ -1,9 +1,10 @@
 AzerothAdminEasy = AzerothAdminEasy or {}
 local addon = AzerothAdminEasy
 
--- R6 runtime corrections for WoW WotLK 3.3.5a Build 12340 + AzerothCore.
--- Keyboard and PlayerModel ownership is intentionally centralized in this file.
-addon.CreatureBrowserRuntimeRevision = "IME/MODEL R6"
+-- R7 runtime corrections for WoW WotLK 3.3.5a Build 12340 + AzerothCore.
+-- Keyboard behavior from R6 is preserved; PlayerModel handling is replaced with
+-- a cache-independent AzerothCore GM morph snapshot fallback.
+addon.CreatureBrowserRuntimeRevision = "IME R6 / MODEL R7"
 
 local function safeCall(method, object, ...)
     if not method or not object then return false end
@@ -20,18 +21,11 @@ local function chatMessage(text)
     end
 end
 
-chatMessage("|cffffd24aAzerothAdmin R6 FULL TEST 로드됨|r")
+chatMessage("|cffffd24aAzerothAdmin R7 MODEL TEST 로드됨|r")
 
 -- ---------------------------------------------------------------------------
--- koKR IME release
+-- koKR IME release (R6: user game-tested and confirmed working)
 -- ---------------------------------------------------------------------------
---
--- 3.3.5 FrameXML treats input-language changes asynchronously:
--- ChatEdit_OnInputLanguageChanged() reads EditBox:GetInputLanguage() only after
--- the OnInputLanguageChanged script fires.  Clearing focus immediately after
--- ToggleInputLanguage() can therefore leave Windows/klient IME in Hangul mode.
--- R6 keeps the submitted EditBox focused until it actually reports ROMAN (or a
--- short fail-safe timeout), then releases keyboard focus.
 
 local imeFrame = CreateFrame("Frame")
 imeFrame:Hide()
@@ -60,8 +54,6 @@ local function finalRelease(edit, serial)
 
     if edit then
         if edit.ClearFocus then safeCall(edit.ClearFocus, edit) end
-        -- Prevent the submitted custom search box from immediately reclaiming
-        -- the keyboard.  OnMouseDown/OnEditFocusGained hooks restore it.
         if edit.EnableKeyboard then safeCall(edit.EnableKeyboard, edit, false) end
     end
 
@@ -96,17 +88,12 @@ imeFrame:SetScript("OnUpdate", function(self, elapsed)
         return
     end
 
-    -- A physical Hangul/English key changes the same input-language state.  If
-    -- the first request was swallowed while IME composition was completing,
-    -- retry once while the EditBox still owns focus.
     if self.elapsed >= 0.12 and not self.retried then
         self.retried = true
         if edit.SetFocus then safeCall(edit.SetFocus, edit) end
         if edit.ToggleInputLanguage then safeCall(edit.ToggleInputLanguage, edit) end
     end
 
-    -- Never trap the user in the search field indefinitely.  This is a fallback
-    -- only; successful koKR conversion normally reaches ROMAN before this.
     if self.elapsed >= 0.45 then
         finalRelease(edit, self.serial)
     end
@@ -133,7 +120,6 @@ function addon:ReleaseKoreanSearchInput(edit)
 
     if edit.ToggleInputLanguage then
         safeCall(edit.ToggleInputLanguage, edit)
-        -- Do NOT ClearFocus here.  Wait for GetInputLanguage()==ROMAN.
         imeFrame:Show()
     else
         finalRelease(edit, serial)
@@ -183,8 +169,6 @@ local function hookSubmitButton(button, edit, accepted)
 
     button._aaeR6ImeHooked = true
     button:SetScript("OnClick", function(self, ...)
-        -- Search first: runSearch() only reads edit:GetText().  Then perform the
-        -- asynchronous Hangul -> ROMAN transition while focus remains valid.
         oldClick(self, ...)
         addon:ReleaseKoreanSearchInput(edit)
     end)
@@ -224,8 +208,6 @@ local function installBlueItemImeR6()
         ["필터 적용"] = true,
     })
 
-    -- Public BII3:Search() previously called SetFocus()+HighlightText() after
-    -- searching.  Wrap it last and always release that same exposed EditBox.
     if BII3.Search and not BII3._aaeR6PublicSearchWrapped then
         BII3._aaeR6PublicSearchWrapped = true
         local oldSearch = BII3.Search
@@ -263,13 +245,11 @@ installBlueItemImeR6()
 installCreatureSearchImeR6()
 
 -- ---------------------------------------------------------------------------
--- Creature PlayerModel
+-- Creature PlayerModel R7
 -- ---------------------------------------------------------------------------
--- The companion R6 package contains a Build-12340 koKR creaturecache.wdb built
--- from the supplied AzerothCore creature_template + creature_template_model
--- data.  Once that cache is installed, the stock 3.3.5 SetCreature(entry) path
--- has all 30k+ creature query records locally and no synthetic GUID trick is
--- required here.
+-- Stock 3.3.5a PlayerModel:SetCreature(entry) only renders entries already
+-- known to the client.  R7 keeps that fast path, then falls back to AzerothCore
+-- GM morph + PlayerModel:SetUnit("player") so first-ever-seen NPCs can render.
 
 local function clearModel()
     local model = addon.creatureBrowserModel
@@ -306,106 +286,276 @@ local function setStatus(text)
     if text and text ~= "" then status:Show() else status:Hide() end
 end
 
-local function targetEntry()
+local function applyPreviewPresentation()
+    local model = addon.creatureBrowserModel
+    if not model then return end
+    if model.SetModelScale then safeCall(model.SetModelScale, model, 0.82) end
+    if model.SetPosition then safeCall(model.SetPosition, model, 0, 0, 0) end
+    if model.SetCamDistanceScale then safeCall(model.SetCamDistanceScale, model, 1.05) end
+    if model.SetRotation then safeCall(model.SetRotation, model, addon.creatureBrowserModelRotation or 0) end
+    if model.SetAlpha then safeCall(model.SetAlpha, model, 1) end
+    model:Show()
+    if addon.creatureBrowserModelFallback then addon.creatureBrowserModelFallback:Hide() end
+end
+
+-- _NPCScan 3.3.5 uses characters 8..12 of UnitGUID for the 20-bit NPC ID.
+local function targetCreatureEntry()
+    if not UnitExists or not UnitExists("target") or (UnitIsPlayer and UnitIsPlayer("target")) then return nil end
     if not UnitGUID then return nil end
     local guid = UnitGUID("target")
     if type(guid) ~= "string" or string.len(guid) < 12 then return nil end
-    if string.sub(guid, 3, 6) ~= "F130" then return nil end
-    return tonumber(string.sub(guid, 7, 12), 16)
+    return tonumber(string.sub(guid, 8, 12), 16)
 end
 
-local function loadCreatureModel(record)
+local function selectedModelInfo(record)
+    local entry = tonumber(record and record[1])
+    local map = addon.FeaturedCreatureModelInfo or {}
+    local info = entry and map[entry] or nil
+    if not info then return nil end
+    return {
+        entry = entry,
+        displayID = tonumber(info[1]),
+        displayScale = tonumber(info[2]) or 1,
+        verifiedBuild = tonumber(info[3]) or 0,
+    }
+end
+
+local function sendPreviewCommand(command)
+    if not command or command == "" or not SendChatMessage then return false end
+    -- Do not use addon:SendNow: preview morph/reset must not pollute GM history.
+    SendChatMessage(command, "SAY")
+    return true
+end
+
+local function tryDirectModel(record)
     local model = addon.creatureBrowserModel
     local entry = tonumber(record and record[1])
     if not model or not entry then return false end
 
     clearModel()
-    if addon.creatureBrowserModelFallback then addon.creatureBrowserModelFallback:Hide() end
-
-    local ok = false
-    if targetEntry() == entry and model.SetUnit then
-        ok = safeCall(model.SetUnit, model, "target")
+    if targetCreatureEntry() == entry and model.SetUnit then
+        if safeCall(model.SetUnit, model, "target") then return true end
     end
-    if not ok and model.SetCreature then
-        ok = safeCall(model.SetCreature, model, entry)
-    end
-
-    if ok then
-        if model.SetCamDistanceScale then safeCall(model.SetCamDistanceScale, model, 1.05) end
-        if model.SetRotation then safeCall(model.SetRotation, model, addon.creatureBrowserModelRotation or 0) end
-        if model.SetAlpha then safeCall(model.SetAlpha, model, 1) end
-        model:Show()
-    end
-    return ok
-end
-
-local function verifyCreatureModel(record, final)
-    if addon.creatureBrowserSelected ~= record then return false end
-    local model = addon.creatureBrowserModel
-    if modelLoaded(model) then
-        if addon.creatureBrowserModelFallback then addon.creatureBrowserModelFallback:Hide() end
-        setStatus("")
-        return true
-    end
-
-    clearModel()
-    if final then
-        if addon.creatureBrowserModelFallback then addon.creatureBrowserModelFallback:Show() end
-        setStatus("R6: creaturecache에서 Entry " .. tostring(record and record[1] or "?")
-            .. " 외형을 찾지 못했습니다.\nR6 클라이언트 캐시 설치 여부를 확인하세요.")
-    end
+    if model.SetCreature then return safeCall(model.SetCreature, model, entry) end
     return false
 end
 
-local function startCreatureModel(record)
-    addon._aaeR6ModelSerial = (addon._aaeR6ModelSerial or 0) + 1
-    local serial = addon._aaeR6ModelSerial
-    clearModel()
+local morphState = {
+    serial = 0,
+    _state = nil,
+}
 
-    if not record then setStatus(""); return end
-    setStatus("R6: Entry " .. tostring(record[1]) .. " 외형 로드 중...")
-    loadCreatureModel(record)
+local function restorePreviousTarget(state)
+    if state and state.hadTarget and TargetLastTarget then pcall(TargetLastTarget) end
+end
 
-    runAfter(0.12, function()
-        if serial ~= addon._aaeR6ModelSerial then return end
-        if not verifyCreatureModel(record, false) then loadCreatureModel(record) end
-    end)
-    runAfter(0.35, function()
-        if serial ~= addon._aaeR6ModelSerial then return end
-        verifyCreatureModel(record, true)
+local function resetSelfMorph(state)
+    if not state or state.phase == "done" then return end
+    if ClearTarget then pcall(ClearTarget) end
+    sendPreviewCommand(".morph reset")
+    state.phase = "resetting"
+
+    runAfter(0.18, function()
+        if morphState.serial ~= state.serial then return end
+        restorePreviousTarget(state)
+        state.phase = "done"
+        if morphState._state == state then morphState._state = nil end
+        if modelLoaded(addon.creatureBrowserModel) then
+            applyPreviewPresentation()
+            setStatus("")
+        else
+            clearModel()
+            if addon.creatureBrowserModelFallback then addon.creatureBrowserModelFallback:Show() end
+            setStatus("R7: DisplayID " .. tostring(state.info and state.info.displayID or "?")
+                .. " 스냅샷에 실패했습니다.")
+        end
     end)
 end
 
-if addon.SelectFeaturedCreature and not addon._aaeR6SelectWrapped then
-    addon._aaeR6SelectWrapped = true
+local function captureMorphedPlayer(state)
+    if not state or morphState.serial ~= state.serial or state.captured then return end
+    state.captured = true
+    state.phase = "capturing"
+
+    local model = addon.creatureBrowserModel
+    if not model or not model.SetUnit then
+        resetSelfMorph(state)
+        return
+    end
+
+    clearModel()
+    if model.SetModelScale then safeCall(model.SetModelScale, model, 1) end
+    if model.SetPosition then safeCall(model.SetPosition, model, 0, 0, 0) end
+
+    local finished = false
+    local function finishSnapshot()
+        if finished or morphState.serial ~= state.serial then return end
+        finished = true
+        if model.SetScript then model:SetScript("OnUpdateModel", state.oldOnUpdateModel) end
+        if modelLoaded(model) then
+            applyPreviewPresentation()
+            setStatus("")
+        end
+        resetSelfMorph(state)
+    end
+
+    if model.GetScript then state.oldOnUpdateModel = model:GetScript("OnUpdateModel") end
+    if model.SetScript then
+        model:SetScript("OnUpdateModel", function(self)
+            finishSnapshot()
+        end)
+    end
+
+    safeCall(model.SetUnit, model, "player")
+    model:Show()
+    runAfter(0.16, finishSnapshot)
+end
+
+local function cancelActiveMorph()
+    local state = morphState._state
+    if not state or state.phase == "done" then return end
+    if ClearTarget then pcall(ClearTarget) end
+    sendPreviewCommand(".morph reset")
+    restorePreviousTarget(state)
+    state.phase = "done"
+    morphState.serial = morphState.serial + 1
+    morphState._state = nil
+end
+
+local function beginMorphFallback(record, serial)
+    if serial ~= addon._aaeR7ModelSerial or addon.creatureBrowserSelected ~= record then return end
+
+    local info = selectedModelInfo(record)
+    if not info or not info.displayID or info.displayID <= 0 then
+        clearModel()
+        if addon.creatureBrowserModelFallback then addon.creatureBrowserModelFallback:Show() end
+        setStatus("R7: Entry " .. tostring(record and record[1] or "?") .. " DisplayID 데이터가 없습니다.")
+        return
+    end
+
+    if InCombatLockdown and InCombatLockdown() then
+        clearModel()
+        if addon.creatureBrowserModelFallback then addon.creatureBrowserModelFallback:Show() end
+        setStatus("R7: 전투 중에는 서버 보조 3D 미리보기를 실행하지 않습니다.")
+        return
+    end
+
+    local hadTarget = UnitExists and UnitExists("target") and true or false
+    if hadTarget and not ClearTarget then
+        setStatus("R7: 현재 대상을 안전하게 해제할 수 없어 서버 보조 미리보기를 중단했습니다.")
+        return
+    end
+    if hadTarget then pcall(ClearTarget) end
+
+    morphState.serial = morphState.serial + 1
+    local state = {
+        serial = morphState.serial,
+        phase = "waitingMorph",
+        record = record,
+        info = info,
+        hadTarget = hadTarget,
+        captured = false,
+        oldOnUpdateModel = nil,
+    }
+    morphState._state = state
+
+    setStatus("R7: 캐시 미등록 · DisplayID " .. tostring(info.displayID) .. " 서버 보조 로드 중...")
+    if not sendPreviewCommand(".morph target " .. tostring(info.displayID)) then
+        restorePreviousTarget(state)
+        morphState._state = nil
+        setStatus("R7: morph 명령을 전송하지 못했습니다.")
+        return
+    end
+
+    runAfter(0.30, function()
+        if morphState._state ~= state or state.phase ~= "waitingMorph" then return end
+        captureMorphedPlayer(state)
+    end)
+
+    runAfter(0.90, function()
+        if morphState._state ~= state or state.phase == "done" then return end
+        if not state.captured then captureMorphedPlayer(state) end
+        if state.phase ~= "done" and state.phase ~= "resetting" then resetSelfMorph(state) end
+    end)
+end
+
+local function startCreatureModel(record)
+    cancelActiveMorph()
+    addon._aaeR7ModelSerial = (addon._aaeR7ModelSerial or 0) + 1
+    local serial = addon._aaeR7ModelSerial
+    clearModel()
+
+    if not record then
+        setStatus("")
+        return
+    end
+
+    setStatus("R7: Entry " .. tostring(record[1]) .. " 외형 로드 중...")
+    tryDirectModel(record)
+
+    runAfter(0.14, function()
+        if serial ~= addon._aaeR7ModelSerial or addon.creatureBrowserSelected ~= record then return end
+        if modelLoaded(addon.creatureBrowserModel) then
+            applyPreviewPresentation()
+            setStatus("")
+            return
+        end
+        beginMorphFallback(record, serial)
+    end)
+end
+
+if addon.SelectFeaturedCreature and not addon._aaeR7SelectWrapped then
+    addon._aaeR7SelectWrapped = true
     local oldSelectFeaturedCreature = addon.SelectFeaturedCreature
     addon.SelectFeaturedCreature = function(self, record)
-        -- Preserve all existing selection text/warnings/favorites/row refresh.
         local result = oldSelectFeaturedCreature(self, record)
-        -- Then become the sole owner of the visible model state.
         startCreatureModel(record)
         return result
     end
 end
 
 local modelEvents = CreateFrame("Frame")
-modelEvents:RegisterEvent("PLAYER_TARGET_CHANGED")
 modelEvents:RegisterEvent("UNIT_MODEL_CHANGED")
+modelEvents:RegisterEvent("PLAYER_TARGET_CHANGED")
 modelEvents:SetScript("OnEvent", function(self, event, unit)
-    if event == "UNIT_MODEL_CHANGED" and unit and unit ~= "target" then return end
-    local record = addon.creatureBrowserSelected
-    if not record then return end
-    if not addon.creatureBrowserFrame or not addon.creatureBrowserFrame:IsShown() then return end
-    if targetEntry() == tonumber(record[1]) then startCreatureModel(record) end
+    local state = morphState._state
+
+    if event == "UNIT_MODEL_CHANGED" and unit == "player" and state and state.phase == "waitingMorph" then
+        captureMorphedPlayer(state)
+        return
+    end
+
+    if event == "PLAYER_TARGET_CHANGED" and (not state or state.phase == "done") then
+        local record = addon.creatureBrowserSelected
+        if not record or not addon.creatureBrowserFrame or not addon.creatureBrowserFrame:IsShown() then return end
+        if targetCreatureEntry() == tonumber(record[1]) then
+            addon._aaeR7ModelSerial = (addon._aaeR7ModelSerial or 0) + 1
+            local model = addon.creatureBrowserModel
+            clearModel()
+            if model and model.SetUnit and safeCall(model.SetUnit, model, "target") then
+                runAfter(0.12, function()
+                    if modelLoaded(model) then applyPreviewPresentation(); setStatus("") end
+                end)
+            end
+        end
+    end
 end)
 
-if addon.CreateCreatureBrowser and not addon._aaeR6CreateWrapped then
-    addon._aaeR6CreateWrapped = true
+if addon.CreateCreatureBrowser and not addon._aaeR7CreateWrapped then
+    addon._aaeR7CreateWrapped = true
     local oldCreateCreatureBrowser = addon.CreateCreatureBrowser
     addon.CreateCreatureBrowser = function(self, ...)
         local result = oldCreateCreatureBrowser(self, ...)
         installCreatureSearchImeR6()
         ensureStatus()
+        if self.creatureBrowserFrame and not self.creatureBrowserFrame._aaeR7MorphHideHooked then
+            self.creatureBrowserFrame._aaeR7MorphHideHooked = true
+            local oldHide = self.creatureBrowserFrame:GetScript("OnHide")
+            self.creatureBrowserFrame:SetScript("OnHide", function(frame, ...)
+                cancelActiveMorph()
+                if oldHide then oldHide(frame, ...) end
+            end)
+        end
         return result
     end
 end
