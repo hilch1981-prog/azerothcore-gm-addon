@@ -1,24 +1,22 @@
 AzerothAdminEasy = AzerothAdminEasy or {}
 local addon = AzerothAdminEasy
 
--- R8 runtime corrections for WoW WotLK 3.3.5a Build 12340 + AzerothCore.
+-- R8.1 precheck runtime corrections for WoW WotLK 3.3.5a Build 12340 + AzerothCore.
 --
 -- Keyboard:
---   Do not force ToggleInputLanguage().  Korean WoW clients can leave the
+--   Do not force ToggleInputLanguage(). Korean WoW clients can leave the
 --   internal IME/chat state active even after an addon EditBox loses focus.
---   R8 uses Blizzard's own 3.3.5 chat submit/escape path with whitespace only;
+--   Use Blizzard's own 3.3.5 chat submit/escape path with whitespace only;
 --   ChatEdit_SendText does not send whitespace, but ChatEdit_OnEnterPressed
 --   still closes/deactivates the native chat EditBox and clears the stuck state.
+--   R8.1 applies the flush after submit, Enter, Escape and frame close.
 --
 -- PlayerModel:
 --   Follow the real 3.3.5 _NPCScan sequence: keep PlayerModel visible,
 --   ClearModel -> reset scale/position/facing -> install OnUpdateModel ->
---   SetCreature(entry).  Do not Hide/alpha-zero the model before loading.
---   A companion R8 cache installer merges the 414 curated creature records into
---   the user's existing valid creaturecache.wdb while preserving its 24-byte
---   server cache header/version.
+--   SetCreature(entry). Do not Hide/alpha-zero the model before loading.
 
-addon.CreatureBrowserRuntimeRevision = "IME/MODEL R8"
+addon.CreatureBrowserRuntimeRevision = "IME/MODEL R8.1 PRECHECK"
 
 local function safeCall(method, object, ...)
     if not method or not object then return false end
@@ -35,7 +33,7 @@ local function chatMessage(text)
     end
 end
 
-chatMessage("|cffffd24aAzerothAdmin R8 IME/MODEL TEST 로드됨|r")
+chatMessage("|cffffd24aAzerothAdmin R8.1 PRECHECK 로드됨|r")
 
 -- ---------------------------------------------------------------------------
 -- koKR IME: native blank-chat flush
@@ -66,7 +64,7 @@ local function nativeBlankChatFlush()
     local edit = chooseNativeChatEditBox()
     if not edit then return false end
 
-    -- Never destroy a real chat draft.  A focused chat box containing actual
+    -- Never destroy a real chat draft. A focused chat box containing actual
     -- text already explains why movement is disabled; leave it to the player.
     if hasMeaningfulText(edit) then return false end
 
@@ -77,9 +75,9 @@ local function nativeBlankChatFlush()
         if edit.SetFocus then safeCall(edit.SetFocus, edit) end
     end
 
-    -- Two spaces reproduce the field workaround reported by Korean WoW users.
     -- Blizzard 3.3.5 ChatEdit_SendText only calls SendChatMessage when there is
-    -- at least one non-whitespace character, so this cannot emit chat text.
+    -- at least one non-whitespace character. Two spaces therefore drive the
+    -- native Enter/Escape cleanup path without emitting a chat message.
     if edit.SetText then edit:SetText("  ") end
 
     if ChatEdit_OnEnterPressed then
@@ -98,13 +96,9 @@ local function nativeBlankChatFlush()
 end
 
 function addon:ReleaseKoreanSearchInput(edit)
-    -- First finish the custom addon EditBox normally.  We intentionally do not
-    -- call ToggleInputLanguage(): that API does not reliably mirror the physical
-    -- Hangul/English key on affected WoW clients.
     if edit and edit.ClearFocus then safeCall(edit.ClearFocus, edit) end
-
     -- Let the search click/IME composition finish, then pass through Blizzard's
-    -- native chat enter/escape path.  The second pass catches composition that
+    -- native chat enter/escape path. The second pass catches composition that
     -- commits one frame late; both passes are whitespace-only and invisible.
     runAfter(0.02, nativeBlankChatFlush)
     runAfter(0.18, nativeBlankChatFlush)
@@ -124,13 +118,13 @@ local function getButtonText(button)
 end
 
 local function hookSubmitButton(button, edit, accepted)
-    if not button or button._aaeR8ImeHooked then return end
+    if not button or button._aaeR81ImeHooked then return end
     local text = getButtonText(button)
     if not text or not accepted[text] then return end
     local oldClick = button:GetScript("OnClick")
     if not oldClick then return end
 
-    button._aaeR8ImeHooked = true
+    button._aaeR81ImeHooked = true
     button:SetScript("OnClick", function(self, ...)
         oldClick(self, ...)
         addon:ReleaseKoreanSearchInput(edit)
@@ -149,29 +143,51 @@ local function hookButtonsRecursive(frame, edit, accepted)
 end
 
 local function hookEnter(edit)
-    if not edit or edit._aaeR8EnterHooked then return end
+    if not edit or edit._aaeR81EnterHooked then return end
     local oldEnter = edit:GetScript("OnEnterPressed")
     if not oldEnter then return end
-    edit._aaeR8EnterHooked = true
+    edit._aaeR81EnterHooked = true
     edit:SetScript("OnEnterPressed", function(self, ...)
         oldEnter(self, ...)
         addon:ReleaseKoreanSearchInput(self)
     end)
 end
 
-local function installBlueItemImeR8()
+local function hookEscape(edit)
+    if not edit or edit._aaeR81EscapeHooked then return end
+    local oldEscape = edit:GetScript("OnEscapePressed")
+    edit._aaeR81EscapeHooked = true
+    edit:SetScript("OnEscapePressed", function(self, ...)
+        if oldEscape then oldEscape(self, ...) end
+        addon:ReleaseKoreanSearchInput(self)
+    end)
+end
+
+local function hookFrameHide(frame, edit)
+    if not frame or frame._aaeR81ImeHideHooked then return end
+    frame._aaeR81ImeHideHooked = true
+    local oldHide = frame:GetScript("OnHide")
+    frame:SetScript("OnHide", function(self, ...)
+        if oldHide then oldHide(self, ...) end
+        addon:ReleaseKoreanSearchInput(edit)
+    end)
+end
+
+local function installBlueItemImeR81()
     local BII3 = _G.BlueItemInfo3
     if not BII3 or not BII3.searchEdit then return end
     local edit = BII3.searchEdit
     hookEnter(edit)
+    hookEscape(edit)
+    hookFrameHide(BII3, edit)
     hookButtonsRecursive(BII3, edit, {
         ["검색"] = true,
         ["분류"] = true,
         ["필터 적용"] = true,
     })
 
-    if BII3.Search and not BII3._aaeR8PublicSearchWrapped then
-        BII3._aaeR8PublicSearchWrapped = true
+    if BII3.Search and not BII3._aaeR81PublicSearchWrapped then
+        BII3._aaeR81PublicSearchWrapped = true
         local oldSearch = BII3.Search
         BII3.Search = function(self, ...)
             local result = oldSearch(self, ...)
@@ -181,19 +197,21 @@ local function installBlueItemImeR8()
     end
 end
 
-local function installCreatureSearchImeR8()
+local function installCreatureSearchImeR81()
     local frame = addon.creatureBrowserFrame
     local edit = addon.creatureBrowserSearch
     if not frame or not edit then return end
     hookEnter(edit)
+    hookEscape(edit)
+    hookFrameHide(frame, edit)
     hookButtonsRecursive(frame, edit, {
         ["검색"] = true,
         ["전체 DB 검색"] = true,
     })
 end
 
-if addon.RunLocaleSearch and not addon._aaeR8LocaleWrapped then
-    addon._aaeR8LocaleWrapped = true
+if addon.RunLocaleSearch and not addon._aaeR81LocaleWrapped then
+    addon._aaeR81LocaleWrapped = true
     local oldRunLocaleSearch = addon.RunLocaleSearch
     addon.RunLocaleSearch = function(self, ...)
         local result = oldRunLocaleSearch(self, ...)
@@ -202,17 +220,14 @@ if addon.RunLocaleSearch and not addon._aaeR8LocaleWrapped then
     end
 end
 
-installBlueItemImeR8()
-installCreatureSearchImeR8()
+installBlueItemImeR81()
+installCreatureSearchImeR81()
 
 -- ---------------------------------------------------------------------------
 -- Creature PlayerModel: 3.3.5 _NPCScan-compatible load lifecycle
 -- ---------------------------------------------------------------------------
 
 local MODEL_DEFAULT_SCALE = 0.75
-
--- Camera corrections borrowed only as behavioral guidance from 3.3.5 _NPCScan;
--- unknown model paths use the normal centered camera.
 local MODEL_CAMERAS = {
     ["creature\\dragon\\northrenddragon.m2"] = { 0.50, 0, 20, -14 },
     ["creature\\protodragon\\protodragon.m2"] = { 1.30, 0, -3, 0 },
@@ -252,13 +267,11 @@ end
 local function applyModelCamera(model)
     local path = modelPath(model)
     if not path then return false end
-
     local camera = MODEL_CAMERAS[string.lower(path)]
     local scale = camera and camera[1] or 1
     local x = camera and camera[2] or 0
     local y = camera and camera[3] or 0
     local z = camera and camera[4] or 0
-
     if model.SetModelScale then safeCall(model.SetModelScale, model, MODEL_DEFAULT_SCALE * scale) end
     if model.SetPosition then safeCall(model.SetPosition, model, z, x, y) end
     if model.SetCamDistanceScale then safeCall(model.SetCamDistanceScale, model, 1.05) end
@@ -272,10 +285,8 @@ end
 
 local function resetModelVisible(model, keepFacing)
     if not model then return end
-
-    -- Critical R8 regression fix: SetCreature must run on a visible PlayerModel.
-    -- R7 hid the frame and set alpha=0 before SetCreature, which caused even
-    -- previously working cached models to disappear on the user's client.
+    -- _NPCScan keeps the PlayerModel active while SetCreature loads its mesh.
+    -- R7 hid/zeroed alpha before loading and regressed even known cached models.
     model:Show()
     if model.SetAlpha then safeCall(model.SetAlpha, model, 1) end
     if model.ClearModel then safeCall(model.ClearModel, model) end
@@ -284,7 +295,7 @@ local function resetModelVisible(model, keepFacing)
     if not keepFacing and model.SetFacing then safeCall(model.SetFacing, model, 0) end
 end
 
--- _NPCScan 3.3.5 extracts the 20-bit NPC entry from characters 8..12.
+-- _NPCScan 3.3.5 extracts the 20-bit NPC entry from GUID characters 8..12.
 local function targetCreatureEntry()
     if not UnitExists or not UnitExists("target") then return nil end
     if UnitIsPlayer and UnitIsPlayer("target") then return nil end
@@ -299,13 +310,9 @@ local modelSerial = 0
 local function finishModelLoad(model, record, serial)
     if serial ~= modelSerial or addon.creatureBrowserSelected ~= record then return end
     if applyModelCamera(model) then return end
-
-    -- If direct SetCreature did not load, do not destroy the previously proven
-    -- native behavior with morph hacks.  The R8 cache merge is the supported
-    -- path for first-ever-seen entries.
     if addon.creatureBrowserModelFallback then addon.creatureBrowserModelFallback:Show() end
-    setStatus("R8: Entry " .. tostring(record and record[1] or "?")
-        .. " 가 클라이언트 creaturecache에 없습니다.\nR8 캐시 병합 설치 후 WoW를 완전히 재시작하세요.")
+    setStatus("R8.1: Entry " .. tostring(record and record[1] or "?")
+        .. " 가 클라이언트 creaturecache에 없습니다.\n검증된 R8.1 캐시 병합 후 WoW를 완전히 재시작하세요.")
 end
 
 local function loadModelNative(record, useTarget)
@@ -315,9 +322,8 @@ local function loadModelNative(record, useTarget)
 
     modelSerial = modelSerial + 1
     local serial = modelSerial
-    setStatus("R8: Entry " .. tostring(entry) .. " 3D 외형 로드 중...")
+    setStatus("R8.1: Entry " .. tostring(entry) .. " 3D 외형 로드 중...")
     if addon.creatureBrowserModelFallback then addon.creatureBrowserModelFallback:Hide() end
-
     resetModelVisible(model, false)
 
     local oldOnUpdate = model:GetScript("OnUpdate")
@@ -334,15 +340,11 @@ local function loadModelNative(record, useTarget)
         if serial ~= modelSerial then return end
         self:SetScript("OnUpdate", oldOnUpdate)
         modelReady = applyModelCamera(self)
-        if modelReady then
-            self:SetScript("OnUpdateModel", oldOnUpdateModel)
-        end
+        if modelReady then self:SetScript("OnUpdateModel", oldOnUpdateModel) end
     end
 
     model:SetScript("OnUpdateModel", function(self)
         if serial ~= modelSerial then return end
-        -- _NPCScan waits one additional frame after the mesh-load event before
-        -- applying relative scale/position.
         self:SetScript("OnUpdateModel", nil)
         self:SetScript("OnUpdate", afterOneFrame)
     end)
@@ -357,11 +359,10 @@ local function loadModelNative(record, useTarget)
     if not ok then
         restoreScripts()
         if addon.creatureBrowserModelFallback then addon.creatureBrowserModelFallback:Show() end
-        setStatus("R8: PlayerModel 호출 실패 · Entry " .. tostring(entry))
+        setStatus("R8.1: PlayerModel 호출 실패 · Entry " .. tostring(entry))
         return
     end
 
-    -- Cached entries often have GetModel() ready before OnUpdateModel fires.
     runAfter(0.08, function()
         if serial ~= modelSerial or modelReady then return end
         if modelPath(model) then
@@ -377,8 +378,8 @@ local function loadModelNative(record, useTarget)
     end)
 end
 
-if addon.SelectFeaturedCreature and not addon._aaeR8SelectWrapped then
-    addon._aaeR8SelectWrapped = true
+if addon.SelectFeaturedCreature and not addon._aaeR81SelectWrapped then
+    addon._aaeR81SelectWrapped = true
     local oldSelectFeaturedCreature = addon.SelectFeaturedCreature
     addon.SelectFeaturedCreature = function(self, record)
         local result = oldSelectFeaturedCreature(self, record)
@@ -403,17 +404,15 @@ modelEvents:SetScript("OnEvent", function(self, event, unit)
     if event == "UNIT_MODEL_CHANGED" and unit and unit ~= "target" then return end
     local record = addon.creatureBrowserSelected
     if not record or not addon.creatureBrowserFrame or not addon.creatureBrowserFrame:IsShown() then return end
-    if targetCreatureEntry() == tonumber(record[1]) then
-        loadModelNative(record, true)
-    end
+    if targetCreatureEntry() == tonumber(record[1]) then loadModelNative(record, true) end
 end)
 
-if addon.CreateCreatureBrowser and not addon._aaeR8CreateWrapped then
-    addon._aaeR8CreateWrapped = true
+if addon.CreateCreatureBrowser and not addon._aaeR81CreateWrapped then
+    addon._aaeR81CreateWrapped = true
     local oldCreateCreatureBrowser = addon.CreateCreatureBrowser
     addon.CreateCreatureBrowser = function(self, ...)
         local result = oldCreateCreatureBrowser(self, ...)
-        installCreatureSearchImeR8()
+        installCreatureSearchImeR81()
         ensureStatus()
         return result
     end
