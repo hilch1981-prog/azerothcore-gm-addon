@@ -103,7 +103,7 @@ class FeaturedCreatureBrowserTests(unittest.TestCase):
         self.assertIn("self.creatureBrowserModel.SetRotation", browser)
         self.assertNotIn("SetPortraitTextureFromCreatureDisplayID", browser)
 
-    def test_r8_model_map_covers_every_featured_entry(self):
+    def test_r81_model_map_covers_every_featured_entry(self):
         featured = parse_all_featured_entries()
         models = parse_model_map()
         self.assertGreaterEqual(len(featured), 400)
@@ -113,7 +113,7 @@ class FeaturedCreatureBrowserTests(unittest.TestCase):
             self.assertGreater(display_id, 0)
             self.assertGreater(scale, 0)
 
-    def test_r8_known_azerothcore_display_ids_are_pinned(self):
+    def test_r81_known_azerothcore_display_ids_are_pinned(self):
         models = parse_model_map()
         self.assertEqual(models[4949][0], 4527)
         self.assertEqual(models[4968][0], 30863)
@@ -122,10 +122,10 @@ class FeaturedCreatureBrowserTests(unittest.TestCase):
         self.assertEqual(models[12397][0], 12449)
         self.assertEqual(models[36597][0], 30721)
 
-    def test_r8_runtime_uses_native_npcscan_model_lifecycle(self):
+    def test_r81_runtime_uses_native_npcscan_model_lifecycle(self):
         runtime = RUNTIME_PATH.read_text(encoding="utf-8-sig")
         required = [
-            'addon.CreatureBrowserRuntimeRevision = "IME/MODEL R8"',
+            'addon.CreatureBrowserRuntimeRevision = "IME/MODEL R8.1 PRECHECK"',
             'model:Show()',
             'model.ClearModel',
             'model:SetScript("OnUpdateModel"',
@@ -135,11 +135,11 @@ class FeaturedCreatureBrowserTests(unittest.TestCase):
         ]
         for marker in required:
             self.assertIn(marker, runtime)
-        # R7's cache-independent morph snapshot fallback caused a full-model regression.
         self.assertNotIn('sendPreviewCommand(".morph target ', runtime)
         self.assertNotIn('sendPreviewCommand(".morph reset")', runtime)
+        self.assertNotIn("SetDisplayInfo", runtime)
 
-    def test_r8_korean_ime_uses_native_blank_chat_flush(self):
+    def test_r81_korean_ime_uses_native_blank_chat_flush_on_every_exit(self):
         runtime = RUNTIME_PATH.read_text(encoding="utf-8-sig")
         required = [
             "function addon:ReleaseKoreanSearchInput(edit)",
@@ -148,10 +148,13 @@ class FeaturedCreatureBrowserTests(unittest.TestCase):
             "ChatEdit_OnEnterPressed",
             "ChatEdit_ActivateChat",
             "hasMeaningfulText",
+            "hookSubmitButton",
+            "hookEnter",
+            "hookEscape",
+            "hookFrameHide",
         ]
         for marker in required:
             self.assertIn(marker, runtime)
-        # Comments may mention the abandoned API, but executable calls must not return.
         self.assertNotIn("edit.ToggleInputLanguage", runtime)
         self.assertNotIn("safeCall(edit.ToggleInputLanguage", runtime)
 
