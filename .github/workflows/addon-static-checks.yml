@@ -66,7 +66,7 @@ jobs:
         run: python tools/validate_addon_structure.py
 
       - name: Build and verify release ZIP
-        run: python tools/build_release_zip.py --output "${RUNNER_TEMP}/AzerothAdmin.zip"
+        run: python tools/build_release_zip.py --output "AzerothAdmin-R6-Test.zip"
 
       - name: Test Python audit tools
         run: >-
@@ -90,3 +90,11 @@ jobs:
 
       - name: Audit faction formatter tokens
         run: python tools/audit_faction_tokens.py
+
+      - name: Upload validated addon ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: AzerothAdmin-R6-Test
+          path: AzerothAdmin-R6-Test.zip
+          if-no-files-found: error
+          retention-days: 14
