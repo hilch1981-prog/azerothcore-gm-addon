@@ -66,7 +66,7 @@ jobs:
         run: python tools/validate_addon_structure.py
 
       - name: Build and verify release ZIP
-        run: python tools/build_release_zip.py --output "AzerothAdmin-R8-IME-Model-Test.zip"
+        run: python tools/build_release_zip.py --output "AzerothAdmin-R81-Precheck.zip"
 
       - name: Test Python audit tools
         run: >-
@@ -94,7 +94,108 @@ jobs:
       - name: Upload validated addon ZIP
         uses: actions/upload-artifact@v4
         with:
-          name: AzerothAdmin-R8-IME-Model-Test
-          path: AzerothAdmin-R8-IME-Model-Test.zip
+          name: AzerothAdmin-R81-Precheck
+          path: AzerothAdmin-R81-Precheck.zip
           if-no-files-found: error
           retention-days: 14
+
+  creature-cache-preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Download pinned AzerothCore creature query SQL
+        shell: bash
+        run: |
+          set -euo pipefail
+          AC_COMMIT="ca8e6d78dee182fbe4c840dbc24a577c25844593"
+          BASE="https://raw.githubusercontent.com/azerothcore/azerothcore-wotlk/${AC_COMMIT}/data/sql/base/db_world"
+          mkdir -p .cache-preflight
+          for file in creature_template.sql creature_template_model.sql creature_questitem.sql creature_template_locale.sql; do
+            curl --fail --location --retry 3 --output ".cache-preflight/${file}" "${BASE}/${file}"
+            test -s ".cache-preflight/${file}"
+          done
+
+      - name: Build exact koKR creature query WDB patch
+        run: >-
+          python tools/build_featured_creature_cache.py
+          --addon AzerothAdmin
+          --template .cache-preflight/creature_template.sql
+          --models .cache-preflight/creature_template_model.sql
+          --questitems .cache-preflight/creature_questitem.sql
+          --locale .cache-preflight/creature_template_locale.sql
+          --locale-code koKR
+          --output featured_creaturecache_r81.wdb
+
+      - name: Validate WDB structure and pinned records
+        run: >-
+          python tools/validate_featured_creature_cache.py
+          --wdb featured_creaturecache_r81.wdb
+          --expected-count 414
+          --expect-model 4949:4527
+          --expect-model 4968:30863
+          --expect-model 10181:28213
+          --expect-model 10184:8570
+          --expect-model 12397:12449
+          --expect-model 36597:30721
+          --expect-quest 10184:18705
+
+      - name: Upload validated WDB patch
+        uses: actions/upload-artifact@v4
+        with:
+          name: creaturecache-r81-patch
+          path: featured_creaturecache_r81.wdb
+          if-no-files-found: error
+          retention-days: 14
+
+  creature-cache-windows:
+    needs: creature-cache-preflight
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Download validated WDB patch
+        uses: actions/download-artifact@v4
+        with:
+          name: creaturecache-r81-patch
+          path: .cache-preflight
+
+      - name: Create synthetic live cache with server cacheVersion
+        shell: pwsh
+        run: |
+          python tools/test_creature_cache_merger.py create --patch .cache-preflight/featured_creaturecache_r81.wdb --target .cache-preflight/live.wdb
+          Copy-Item .cache-preflight/live.wdb .cache-preflight/original.wdb
+
+      - name: Run real PowerShell append-only merger
+        shell: pwsh
+        run: >-
+          ./tools/client_cache_r81/Merge-CreatureCache-R81.ps1
+          -TargetPath .cache-preflight/live.wdb
+          -PatchPath .cache-preflight/featured_creaturecache_r81.wdb
+
+      - name: Verify header and every existing record are byte-identical
+        shell: pwsh
+        run: >-
+          python tools/test_creature_cache_merger.py verify
+          --original .cache-preflight/original.wdb
+          --merged .cache-preflight/live.wdb
+          --patch .cache-preflight/featured_creaturecache_r81.wdb
+
+      - name: Verify second merge is idempotent
+        shell: pwsh
+        run: |
+          $before = (Get-FileHash .cache-preflight/live.wdb -Algorithm SHA256).Hash
+          ./tools/client_cache_r81/Merge-CreatureCache-R81.ps1 -TargetPath .cache-preflight/live.wdb -PatchPath .cache-preflight/featured_creaturecache_r81.wdb
+          $after = (Get-FileHash .cache-preflight/live.wdb -Algorithm SHA256).Hash
+          if ($before -ne $after) { throw "Second merge changed an already complete cache." }
+          Write-Host "Idempotence PASS: $after"
