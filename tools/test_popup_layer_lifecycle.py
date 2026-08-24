@@ -5,7 +5,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CORE = ROOT / "AzerothAdmin/Core.lua"
-QUEST = ROOT / "AzerothAdmin/QuestHelper.lua"
+QUEST = ROOT / "AzerothAdmin/Modules/QuestHelper/Module.lua"
 SEARCH = ROOT / "AzerothAdmin/KoKRSearch.lua"
 CRAFT = ROOT / "AzerothAdmin/Embedded/InvenCraftInfoUI/Rebuilt.lua"
 
