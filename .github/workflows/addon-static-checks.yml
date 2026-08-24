@@ -73,6 +73,7 @@ jobs:
           python -m unittest
           tools/test_addon_structure.py
           tools/test_audit_command_meta.py
+          tools/test_build_featured_creature_cache.py
           tools/test_build_release_zip.py
           tools/test_craft_frame_lifecycle.py
           tools/test_featured_creature_browser.py
@@ -136,7 +137,7 @@ jobs:
         run: >-
           python tools/validate_featured_creature_cache.py
           --wdb featured_creaturecache_r81.wdb
-          --expected-count 414
+          --expected-count 415
           --expect-model 4949:4527
           --expect-model 4968:30863
           --expect-model 10181:28213
