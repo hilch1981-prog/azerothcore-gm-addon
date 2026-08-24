@@ -73,3 +73,10 @@ Embedded\BlueItemInfo3\Integrated.lua
 Embedded\InvenCraftInfoUI\Rebuilt.lua
 
 Integrations.lua
+
+# Bank module
+Modules\Bank\Locales\enUS.lua
+Modules\Bank\Locales\koKR.lua
+Modules\Bank\Locales\zhCN.lua
+Modules\Bank\Locales\zhTW.lua
+Modules\Bank\Module.lua

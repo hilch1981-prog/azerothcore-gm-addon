@@ -144,12 +144,18 @@
       "future_path": "AzerothAdmin/Modules/ProfessionInfo"
     },
     "bank": {
-      "status": "legacy-cross-cutting",
+      "status": "module-active",
+      "dependencies": [
+        "shell",
+        "commands",
+        "language"
+      ],
       "runtime_files": [
-        "AzerothAdmin/Integrations.lua",
-        "AzerothAdmin/Core.lua",
-        "AzerothAdmin/UI.lua",
-        "AzerothAdmin/Commands.lua"
+        "AzerothAdmin/Modules/Bank/Module.lua",
+        "AzerothAdmin/Core.lua"
+      ],
+      "data_files": [
+        "AzerothAdmin/Modules/Bank/Locales"
       ],
       "tests": [
         "tools/test_remote_bank_flow.py"
