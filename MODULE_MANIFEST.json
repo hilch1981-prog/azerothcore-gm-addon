@@ -103,10 +103,16 @@
       "future_path": "AzerothAdmin/Modules/Creatures"
     },
     "quest-helper": {
-      "status": "legacy-migration-pending",
-      "runtime_files": [
-        "AzerothAdmin/QuestHelper.lua"
+      "status": "module-active-translation-pending",
+      "dependencies": [
+        "shell",
+        "teleports"
       ],
+      "runtime_files": [
+        "AzerothAdmin/Modules/QuestHelper/Module.lua",
+        "AzerothAdmin/Modules/QuestHelper/Registration.lua"
+      ],
+      "data_files": [],
       "tests": [
         "tools/test_quest_drop_source_cycle.py",
         "tools/test_party_bot_quest_sync.py"

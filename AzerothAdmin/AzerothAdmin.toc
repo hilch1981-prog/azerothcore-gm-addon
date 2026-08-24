@@ -44,7 +44,10 @@ Teleports.lua
 FavoriteTeleports.lua
 Commands.lua
 Core.lua
-QuestHelper.lua
+
+# Quest helper module (same load position as the legacy file).
+Modules\QuestHelper\Module.lua
+Modules\QuestHelper\Registration.lua
 UI.lua
 
 # Embedded profession database (3.3.5a)

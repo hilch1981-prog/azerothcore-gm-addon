@@ -4,7 +4,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-QUEST_HELPER = ROOT / "AzerothAdmin/QuestHelper.lua"
+QUEST_HELPER = ROOT / "AzerothAdmin/Modules/QuestHelper/Module.lua"
 
 
 def lua_function(source, name, next_name):

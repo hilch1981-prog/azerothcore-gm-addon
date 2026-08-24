@@ -4,7 +4,8 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-QUEST = ROOT / "AzerothAdmin/QuestHelper.lua"
+QUEST = ROOT / "AzerothAdmin/Modules/QuestHelper/Module.lua"
+REGISTRATION = ROOT / "AzerothAdmin/Modules/QuestHelper/Registration.lua"
 
 
 class PartyBotQuestSyncTests(unittest.TestCase):
@@ -58,6 +59,20 @@ class PartyBotQuestSyncTests(unittest.TestCase):
         ):
             self.assertIn(event, self.source)
         self.assertIn("addon._partyBotRosterGeneration", self.source)
+
+    def test_module_move_preserves_load_position_and_registration(self):
+        self.assertFalse((ROOT / "AzerothAdmin/QuestHelper.lua").exists())
+        toc = (ROOT / "AzerothAdmin/AzerothAdmin.toc").read_text(encoding="utf-8-sig")
+        core = toc.index("Core.lua")
+        module = toc.index("Modules\\QuestHelper\\Module.lua")
+        registration = toc.index("Modules\\QuestHelper\\Registration.lua")
+        ui = toc.index("UI.lua")
+        self.assertLess(core, module)
+        self.assertLess(module, registration)
+        self.assertLess(registration, ui)
+        registration_text = REGISTRATION.read_text(encoding="utf-8")
+        self.assertIn('addon:RegisterModule("quest-helper"', registration_text)
+        self.assertIn('status = "module-active-translation-pending"', registration_text)
 
 
 if __name__ == "__main__":
