@@ -80,3 +80,6 @@ Modules\Bank\Locales\koKR.lua
 Modules\Bank\Locales\zhCN.lua
 Modules\Bank\Locales\zhTW.lua
 Modules\Bank\Module.lua
+
+# Revive module
+Modules\Revive\Module.lua

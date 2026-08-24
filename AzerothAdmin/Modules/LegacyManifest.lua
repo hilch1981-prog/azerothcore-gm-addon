@@ -13,7 +13,6 @@ local modules = {
     { "quest-helper", { "shell", "teleports" }, { "QuestHelper.lua" }, {}, { "tools/test_quest_drop_source_cycle.py", "tools/test_party_bot_quest_sync.py" }, "AzerothAdmin/Modules/QuestHelper" },
     { "item-browser", { "shell" }, { "Embedded/BlueItemInfo3/Integrated.lua" }, { "Embedded/BlueItemInfo3/Data.lua", "Embedded/BlueItemInfo3/CategoryIndex.lua", "Embedded/BlueItemInfo3/QuestRewards335.lua" }, { "tools/test_generate_quest_reward_335.py", "tools/test_profession_enhancement_categories.py" }, "AzerothAdmin/Modules/ItemBrowser" },
     { "profession-info", { "shell" }, { "Embedded/InvenCraftInfo/Core.lua", "Embedded/InvenCraftInfoUI/Rebuilt.lua" }, { "Embedded/InvenCraftInfoData" }, { "tools/test_craft_frame_lifecycle.py" }, "AzerothAdmin/Modules/ProfessionInfo" },
-    { "revive", { "shell", "commands" }, { "Core.lua", "Commands.lua" }, {}, { "tools/test_self_revive_flow.py" }, "AzerothAdmin/Modules/Revive" },
     { "integrations", { "shell" }, { "Integrations.lua" }, {}, {}, "AzerothAdmin/Modules/Integrations" },
 }
 

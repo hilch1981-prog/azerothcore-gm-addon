@@ -163,11 +163,16 @@
       "future_path": "AzerothAdmin/Modules/Bank"
     },
     "revive": {
-      "status": "legacy-cross-cutting",
-      "runtime_files": [
-        "AzerothAdmin/Core.lua",
-        "AzerothAdmin/Commands.lua"
+      "status": "module-active-legacy-fallback",
+      "dependencies": [
+        "shell",
+        "commands"
       ],
+      "runtime_files": [
+        "AzerothAdmin/Modules/Revive/Module.lua",
+        "AzerothAdmin/Core.lua"
+      ],
+      "data_files": [],
       "tests": [
         "tools/test_self_revive_flow.py"
       ],
