@@ -18,23 +18,16 @@
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
 
-# Shared framework; keep this order stable.
 Framework\Bootstrap.lua
 Framework\ModuleRegistry.lua
 Framework\Localization.lua
-
-# Base language and automatic client-locale override.
 Locales\enUS.lua
 Locales\koKR.lua
 Locales\zhCN.lua
 Locales\zhTW.lua
 Locale.lua
-
-# Current ownership map. Feature code remains in its original paths until each
-# module is migrated in a separate PR.
 Modules\LegacyManifest.lua
 Modules\Language\Module.lua
-
 CommandMeta.lua
 KoKRSearchData.lua
 FeaturedCreatures.lua
@@ -44,13 +37,9 @@ Teleports.lua
 FavoriteTeleports.lua
 Commands.lua
 Core.lua
-
-# Quest helper module (same load position as the legacy file).
 Modules\QuestHelper\Module.lua
 Modules\QuestHelper\Registration.lua
 UI.lua
-
-# Embedded profession database (3.3.5a)
 Embedded\InvenCraftInfo\libs\LibStub\LibStub.lua
 Embedded\InvenCraftInfo\libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
 Embedded\InvenCraftInfo\libs\LibItemTooltip-1.0\LibItemTooltip-1.0.lua
@@ -65,25 +54,17 @@ Embedded\InvenCraftInfoData\UseDB.lua
 Embedded\InvenCraftInfoData\DropDB.lua
 Embedded\InvenCraftInfoData\NpcDB.lua
 Embedded\InvenCraftInfoData\RecipeDB.lua
-
-# Integrated item information data/browser
 Embedded\BlueItemInfo3\Data.lua
 Embedded\BlueItemInfo3\CategoryIndex.lua
 Embedded\BlueItemInfo3\QuestRewards335.lua
 Modules\ItemBrowser\Module.lua
 Modules\ItemBrowser\Registration.lua
-
-# Profession information UI
-Embedded\InvenCraftInfoUI\Rebuilt.lua
-
+Modules\ProfessionInfo\UI.lua
+Modules\ProfessionInfo\Registration.lua
 Integrations.lua
-
-# Bank module
 Modules\Bank\Locales\enUS.lua
 Modules\Bank\Locales\koKR.lua
 Modules\Bank\Locales\zhCN.lua
 Modules\Bank\Locales\zhTW.lua
 Modules\Bank\Module.lua
-
-# Revive module
 Modules\Revive\Module.lua
