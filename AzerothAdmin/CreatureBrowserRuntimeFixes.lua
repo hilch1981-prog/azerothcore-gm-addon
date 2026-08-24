@@ -4,19 +4,17 @@ local addon = AzerothAdminEasy
 -- R8.1 precheck runtime corrections for WoW WotLK 3.3.5a Build 12340 + AzerothCore.
 --
 -- Keyboard:
---   Do not force ToggleInputLanguage(). Korean WoW clients can leave the
---   internal IME/chat state active even after an addon EditBox loses focus.
---   Use Blizzard's own 3.3.5 chat submit/escape path with whitespace only;
---   ChatEdit_SendText does not send whitespace, but ChatEdit_OnEnterPressed
---   still closes/deactivates the native chat EditBox and clears the stuck state.
---   R8.1 applies the flush after submit, Enter, Escape and frame close.
+--   Preserve the R6 koKR input-release sequence that was confirmed in game.
+--   It completes the input-language transition, clears any keyboard focus,
+--   disables keyboard capture on the finished search EditBox, and restores it
+--   when the player clicks the field again. It never submits chat text.
 --
 -- PlayerModel:
 --   Follow the real 3.3.5 _NPCScan sequence: keep PlayerModel visible,
 --   ClearModel -> reset scale/position/facing -> install OnUpdateModel ->
 --   SetCreature(entry). Do not Hide/alpha-zero the model before loading.
 
-addon.CreatureBrowserRuntimeRevision = "IME/MODEL R8.1 PRECHECK"
+addon.CreatureBrowserRuntimeRevision = "IME R6 / MODEL R8.1 PRECHECK"
 
 local function safeCall(method, object, ...)
     if not method or not object then return false end
@@ -33,75 +31,130 @@ local function chatMessage(text)
     end
 end
 
-chatMessage("|cffffd24aAzerothAdmin R8.1 PRECHECK 로드됨|r")
+chatMessage("|cffffd24aAzerothAdmin R8.1 PRECHECK · IME R6 로드됨|r")
 
 -- ---------------------------------------------------------------------------
--- koKR IME: native blank-chat flush
+-- koKR IME release (R6: user game-tested and confirmed working)
 -- ---------------------------------------------------------------------------
 
-local function chooseNativeChatEditBox()
-    local edit = nil
-    if ChatEdit_GetActiveWindow then
-        local ok, active = pcall(ChatEdit_GetActiveWindow)
-        if ok and active then edit = active end
-    end
-    if not edit and ChatEdit_ChooseBoxForSend then
-        local ok, chosen = pcall(ChatEdit_ChooseBoxForSend, DEFAULT_CHAT_FRAME)
-        if ok and chosen then edit = chosen end
-    end
-    if not edit then edit = _G.ChatFrame1EditBox end
-    return edit
+local imeFrame = CreateFrame("Frame")
+imeFrame:Hide()
+imeFrame.elapsed = 0
+imeFrame.edit = nil
+imeFrame.oldLanguageScript = nil
+imeFrame.serial = 0
+
+local function currentKeyboardFocus()
+    if not GetCurrentKeyBoardFocus then return nil end
+    local ok, focus = pcall(GetCurrentKeyBoardFocus)
+    if ok then return focus end
+    return nil
 end
 
-local function hasMeaningfulText(edit)
-    if not edit or not edit.GetText then return false end
-    local ok, text = pcall(edit.GetText, edit)
-    if not ok or type(text) ~= "string" then return false end
-    return string.find(text, "%S") ~= nil
+local function deactivateActiveChat()
+    if not ChatEdit_GetActiveWindow then return end
+    local ok, active = pcall(ChatEdit_GetActiveWindow)
+    if ok and active and ChatEdit_DeactivateChat then
+        pcall(ChatEdit_DeactivateChat, active)
+    end
 end
 
-local function nativeBlankChatFlush()
-    local edit = chooseNativeChatEditBox()
-    if not edit then return false end
+local function finalRelease(edit, serial)
+    if serial and serial ~= imeFrame.serial then return end
 
-    -- Never destroy a real chat draft. A focused chat box containing actual
-    -- text already explains why movement is disabled; leave it to the player.
-    if hasMeaningfulText(edit) then return false end
+    if edit then
+        if edit.ClearFocus then safeCall(edit.ClearFocus, edit) end
+        if edit.EnableKeyboard then safeCall(edit.EnableKeyboard, edit, false) end
+    end
 
-    if ChatEdit_ActivateChat then
-        pcall(ChatEdit_ActivateChat, edit)
-    else
-        if edit.Show then edit:Show() end
+    local focus = currentKeyboardFocus()
+    if focus and focus ~= edit and focus.ClearFocus then
+        safeCall(focus.ClearFocus, focus)
+    elseif focus == edit and edit and edit.ClearFocus then
+        safeCall(edit.ClearFocus, edit)
+    end
+
+    deactivateActiveChat()
+    imeFrame:Hide()
+    imeFrame.edit = nil
+    imeFrame.elapsed = 0
+end
+
+local function getInputLanguage(edit)
+    if not edit or not edit.GetInputLanguage then return nil end
+    local ok, language = pcall(edit.GetInputLanguage, edit)
+    if ok then return language end
+    return nil
+end
+
+imeFrame:SetScript("OnUpdate", function(self, elapsed)
+    local edit = self.edit
+    if not edit then self:Hide(); return end
+    self.elapsed = self.elapsed + (elapsed or 0)
+
+    local language = getInputLanguage(edit)
+    if language == "ROMAN" then
+        finalRelease(edit, self.serial)
+        return
+    end
+
+    if self.elapsed >= 0.12 and not self.retried then
+        self.retried = true
         if edit.SetFocus then safeCall(edit.SetFocus, edit) end
+        if edit.ToggleInputLanguage then safeCall(edit.ToggleInputLanguage, edit) end
     end
 
-    -- Blizzard 3.3.5 ChatEdit_SendText only calls SendChatMessage when there is
-    -- at least one non-whitespace character. Two spaces therefore drive the
-    -- native Enter/Escape cleanup path without emitting a chat message.
-    if edit.SetText then edit:SetText("  ") end
-
-    if ChatEdit_OnEnterPressed then
-        pcall(ChatEdit_OnEnterPressed, edit)
-    else
-        if ChatEdit_SendText then pcall(ChatEdit_SendText, edit, false) end
-        if ChatEdit_OnEscapePressed then
-            pcall(ChatEdit_OnEscapePressed, edit)
-        elseif ChatEdit_DeactivateChat then
-            pcall(ChatEdit_DeactivateChat, edit)
-        elseif edit.ClearFocus then
-            safeCall(edit.ClearFocus, edit)
-        end
+    if self.elapsed >= 0.45 then
+        finalRelease(edit, self.serial)
     end
-    return true
-end
+end)
 
 function addon:ReleaseKoreanSearchInput(edit)
-    if edit and edit.ClearFocus then safeCall(edit.ClearFocus, edit) end
-    -- Let the search click/IME composition finish, then pass through Blizzard's
-    -- native chat enter/escape path. The second pass catches composition that
-    -- commits one frame late; both passes are whitespace-only and invisible.
-    runAfter(0.02, nativeBlankChatFlush)
-    runAfter(0.18, nativeBlankChatFlush)
+    if not edit then return end
+
+    imeFrame.serial = imeFrame.serial + 1
+    local serial = imeFrame.serial
+    imeFrame.edit = edit
+    imeFrame.elapsed = 0
+    imeFrame.retried = false
+
+    if edit.EnableKeyboard then safeCall(edit.EnableKeyboard, edit, true) end
+    if edit.Show then edit:Show() end
+    if edit.SetFocus then safeCall(edit.SetFocus, edit) end
+
+    local language = getInputLanguage(edit)
+    if language == "ROMAN" then
+        finalRelease(edit, serial)
+        return
+    end
+
+    if edit.ToggleInputLanguage then
+        safeCall(edit.ToggleInputLanguage, edit)
+        imeFrame:Show()
+    else
+        finalRelease(edit, serial)
+    end
+end
+
+local function makeEditReactivatable(edit)
+    if not edit or edit._aaeR6Reactivatable then return end
+    edit._aaeR6Reactivatable = true
+
+    local oldMouseDown = edit:GetScript("OnMouseDown")
+    edit:SetScript("OnMouseDown", function(self, ...)
+        imeFrame.serial = imeFrame.serial + 1
+        imeFrame:Hide()
+        imeFrame.edit = nil
+        if self.EnableKeyboard then safeCall(self.EnableKeyboard, self, true) end
+        if oldMouseDown then oldMouseDown(self, ...) end
+        if self.SetFocus then safeCall(self.SetFocus, self) end
+    end)
+
+    local oldFocusGained = edit:GetScript("OnEditFocusGained")
+    edit:SetScript("OnEditFocusGained", function(self, ...)
+        if self.EnableKeyboard then safeCall(self.EnableKeyboard, self, true) end
+        if oldFocusGained then oldFocusGained(self, ...) end
+    end)
 end
 
 local function getButtonText(button)
@@ -118,13 +171,13 @@ local function getButtonText(button)
 end
 
 local function hookSubmitButton(button, edit, accepted)
-    if not button or button._aaeR81ImeHooked then return end
+    if not button or button._aaeR6ImeHooked then return end
     local text = getButtonText(button)
     if not text or not accepted[text] then return end
     local oldClick = button:GetScript("OnClick")
     if not oldClick then return end
 
-    button._aaeR81ImeHooked = true
+    button._aaeR6ImeHooked = true
     button:SetScript("OnClick", function(self, ...)
         oldClick(self, ...)
         addon:ReleaseKoreanSearchInput(edit)
@@ -143,51 +196,30 @@ local function hookButtonsRecursive(frame, edit, accepted)
 end
 
 local function hookEnter(edit)
-    if not edit or edit._aaeR81EnterHooked then return end
+    if not edit or edit._aaeR6EnterHooked then return end
     local oldEnter = edit:GetScript("OnEnterPressed")
     if not oldEnter then return end
-    edit._aaeR81EnterHooked = true
+    edit._aaeR6EnterHooked = true
     edit:SetScript("OnEnterPressed", function(self, ...)
         oldEnter(self, ...)
         addon:ReleaseKoreanSearchInput(self)
     end)
 end
 
-local function hookEscape(edit)
-    if not edit or edit._aaeR81EscapeHooked then return end
-    local oldEscape = edit:GetScript("OnEscapePressed")
-    edit._aaeR81EscapeHooked = true
-    edit:SetScript("OnEscapePressed", function(self, ...)
-        if oldEscape then oldEscape(self, ...) end
-        addon:ReleaseKoreanSearchInput(self)
-    end)
-end
-
-local function hookFrameHide(frame, edit)
-    if not frame or frame._aaeR81ImeHideHooked then return end
-    frame._aaeR81ImeHideHooked = true
-    local oldHide = frame:GetScript("OnHide")
-    frame:SetScript("OnHide", function(self, ...)
-        if oldHide then oldHide(self, ...) end
-        addon:ReleaseKoreanSearchInput(edit)
-    end)
-end
-
-local function installBlueItemImeR81()
+local function installBlueItemImeR6()
     local BII3 = _G.BlueItemInfo3
     if not BII3 or not BII3.searchEdit then return end
     local edit = BII3.searchEdit
+    makeEditReactivatable(edit)
     hookEnter(edit)
-    hookEscape(edit)
-    hookFrameHide(BII3, edit)
     hookButtonsRecursive(BII3, edit, {
         ["검색"] = true,
         ["분류"] = true,
         ["필터 적용"] = true,
     })
 
-    if BII3.Search and not BII3._aaeR81PublicSearchWrapped then
-        BII3._aaeR81PublicSearchWrapped = true
+    if BII3.Search and not BII3._aaeR6PublicSearchWrapped then
+        BII3._aaeR6PublicSearchWrapped = true
         local oldSearch = BII3.Search
         BII3.Search = function(self, ...)
             local result = oldSearch(self, ...)
@@ -197,21 +229,20 @@ local function installBlueItemImeR81()
     end
 end
 
-local function installCreatureSearchImeR81()
+local function installCreatureSearchImeR6()
     local frame = addon.creatureBrowserFrame
     local edit = addon.creatureBrowserSearch
     if not frame or not edit then return end
+    makeEditReactivatable(edit)
     hookEnter(edit)
-    hookEscape(edit)
-    hookFrameHide(frame, edit)
     hookButtonsRecursive(frame, edit, {
         ["검색"] = true,
         ["전체 DB 검색"] = true,
     })
 end
 
-if addon.RunLocaleSearch and not addon._aaeR81LocaleWrapped then
-    addon._aaeR81LocaleWrapped = true
+if addon.RunLocaleSearch and not addon._aaeR6LocaleWrapped then
+    addon._aaeR6LocaleWrapped = true
     local oldRunLocaleSearch = addon.RunLocaleSearch
     addon.RunLocaleSearch = function(self, ...)
         local result = oldRunLocaleSearch(self, ...)
@@ -220,8 +251,8 @@ if addon.RunLocaleSearch and not addon._aaeR81LocaleWrapped then
     end
 end
 
-installBlueItemImeR81()
-installCreatureSearchImeR81()
+installBlueItemImeR6()
+installCreatureSearchImeR6()
 
 -- ---------------------------------------------------------------------------
 -- Creature PlayerModel: 3.3.5 _NPCScan-compatible load lifecycle
@@ -412,7 +443,7 @@ if addon.CreateCreatureBrowser and not addon._aaeR81CreateWrapped then
     local oldCreateCreatureBrowser = addon.CreateCreatureBrowser
     addon.CreateCreatureBrowser = function(self, ...)
         local result = oldCreateCreatureBrowser(self, ...)
-        installCreatureSearchImeR81()
+        installCreatureSearchImeR6()
         ensureStatus()
         return result
     end

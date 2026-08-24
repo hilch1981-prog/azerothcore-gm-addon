@@ -12,6 +12,7 @@ import csv
 import re
 import struct
 from pathlib import Path
+from typing import Iterator
 
 FEATURE_RE = re.compile(
     r'\{\s*(\d+),\s*"[^"]+",\s*"(?:raid|dungeon|world|rare|event|utility|leader)",\s*'
@@ -33,17 +34,96 @@ def featured_entries(addon: Path) -> set[int]:
     return entries
 
 
-def split_sql_tuple(line: str):
-    value = line.strip()
-    if not value.startswith("("):
-        return None
-    if value.endswith(",") or value.endswith(";"):
-        value = value[:-1]
-    if not value.endswith(")"):
-        return None
-    value = value[1:-1]
-    row = next(csv.reader([value], delimiter=",", quotechar="'", escapechar="\\", skipinitialspace=True))
+def parse_sql_tuple(value: str) -> list[str | None]:
+    """Parse one SQL VALUES tuple body using the legacy dump escape rules."""
+    row = next(
+        csv.reader(
+            [value],
+            delimiter=",",
+            quotechar="'",
+            escapechar="\\",
+            doublequote=True,
+            skipinitialspace=True,
+        )
+    )
     return [None if item.strip().upper() == "NULL" else item.strip() for item in row]
+
+
+def statement_is_complete(text: str) -> bool:
+    """Return True when an unquoted semicolon terminates the INSERT statement."""
+    quoted = False
+    escaped = False
+    index = 0
+    while index < len(text):
+        char = text[index]
+        if quoted:
+            if escaped:
+                escaped = False
+            elif char == "\\":
+                escaped = True
+            elif char == "'":
+                if index + 1 < len(text) and text[index + 1] == "'":
+                    index += 1
+                else:
+                    quoted = False
+        else:
+            if char == "'":
+                quoted = True
+            elif char == ";":
+                return True
+        index += 1
+    return False
+
+
+def iter_sql_tuple_bodies(values_text: str) -> Iterator[str]:
+    """Yield every top-level tuple body from a complete VALUES clause."""
+    index = 0
+    length = len(values_text)
+    found = False
+
+    while index < length:
+        while index < length and (values_text[index].isspace() or values_text[index] == ","):
+            index += 1
+        if index >= length or values_text[index] == ";":
+            break
+        if values_text[index] != "(":
+            snippet = values_text[index:index + 80].replace("\n", "\\n")
+            raise RuntimeError(f"Unexpected SQL after VALUES: {snippet!r}")
+
+        start = index + 1
+        depth = 1
+        quoted = False
+        escaped = False
+        index += 1
+        while index < length and depth > 0:
+            char = values_text[index]
+            if quoted:
+                if escaped:
+                    escaped = False
+                elif char == "\\":
+                    escaped = True
+                elif char == "'":
+                    if index + 1 < length and values_text[index + 1] == "'":
+                        index += 1
+                    else:
+                        quoted = False
+            else:
+                if char == "'":
+                    quoted = True
+                elif char == "(":
+                    depth += 1
+                elif char == ")":
+                    depth -= 1
+                    if depth == 0:
+                        found = True
+                        yield values_text[start:index]
+            index += 1
+
+        if depth != 0 or quoted or escaped:
+            raise RuntimeError("Unterminated SQL tuple or quoted string in VALUES clause")
+
+    if not found:
+        raise RuntimeError("VALUES clause contained no SQL tuples")
 
 
 def create_columns(path: Path, table: str) -> list[str]:
@@ -65,35 +145,61 @@ def create_columns(path: Path, table: str) -> list[str]:
 
 
 def iter_rows(path: Path, table: str):
+    """Yield INSERT/REPLACE rows from multiline and extended mysqldump SQL."""
     default_columns = create_columns(path, table)
-    columns = None
-    active = False
-    insert_re = re.compile(rf"^(?:INSERT|REPLACE) INTO `{re.escape(table)}`(?: \((.*?)\))? VALUES")
+    insert_re = re.compile(
+        rf"^\s*(?:INSERT|REPLACE)\s+INTO\s+`{re.escape(table)}`"
+        rf"(?:\s*\((.*?)\))?\s+VALUES\s*(.*)$",
+        re.IGNORECASE,
+    )
+    parsed_rows = 0
+
     with path.open("r", encoding="utf-8", errors="strict") as handle:
-        for line in handle:
-            match = insert_re.match(line)
-            if match:
-                active = True
-                raw = match.group(1)
-                columns = [item.strip().strip("`") for item in raw.split(",")] if raw else default_columns
-                if not columns:
-                    raise RuntimeError(f"No column order available for {table} in {path}")
+        iterator = iter(handle)
+        for line in iterator:
+            match = insert_re.match(line.rstrip("\r\n"))
+            if not match:
                 continue
-            if active:
-                stripped = line.lstrip()
-                if stripped.startswith("("):
-                    values = split_sql_tuple(line)
-                    if values is None:
-                        continue
-                    if len(values) != len(columns):
-                        raise RuntimeError(
-                            f"{table}: value count {len(values)} != columns {len(columns)}: {line[:120]!r}"
-                        )
-                    yield dict(zip(columns, values))
-                    if line.rstrip().endswith(";"):
-                        active = False
-                elif line.startswith("UNLOCK TABLES") or line.startswith("/*!40000 ALTER TABLE"):
-                    active = False
+
+            raw_columns = match.group(1)
+            columns = (
+                [item.strip().strip("`") for item in raw_columns.split(",")]
+                if raw_columns
+                else default_columns
+            )
+            if not columns:
+                raise RuntimeError(
+                    f"No column order available for {table} in {path}; "
+                    "include CREATE TABLE columns or an explicit INSERT column list"
+                )
+
+            values_text = match.group(2)
+            while not statement_is_complete(values_text):
+                try:
+                    values_text += "\n" + next(iterator).rstrip("\r\n")
+                except StopIteration as exc:
+                    raise RuntimeError(f"Unterminated INSERT/REPLACE for {table} in {path}") from exc
+
+            statement_rows = 0
+            for tuple_body in iter_sql_tuple_bodies(values_text):
+                values = parse_sql_tuple(tuple_body)
+                if len(values) != len(columns):
+                    preview = tuple_body[:120].replace("\n", "\\n")
+                    raise RuntimeError(
+                        f"{table}: value count {len(values)} != columns {len(columns)}: {preview!r}"
+                    )
+                statement_rows += 1
+                parsed_rows += 1
+                yield dict(zip(columns, values))
+
+            if statement_rows == 0:
+                raise RuntimeError(f"{table}: INSERT/REPLACE contained no rows in {path}")
+
+    if parsed_rows == 0:
+        raise RuntimeError(
+            f"{table}: no INSERT/REPLACE rows parsed from {path}; "
+            "check the SQL dump format and table name"
+        )
 
 
 def as_int(value) -> int:
