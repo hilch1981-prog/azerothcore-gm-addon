@@ -10,7 +10,6 @@ local modules = {
     { "teleports", { "shell", "commands" }, { "FavoriteTeleports.lua" }, { "Teleports.lua" }, {}, "AzerothAdmin/Modules/Teleports" },
     { "search", { "shell" }, { "KoKRSearch.lua" }, { "KoKRSearchData.lua" }, {}, "AzerothAdmin/Modules/Search" },
     { "creatures", { "shell", "search", "teleports" }, { "CreatureBrowser.lua" }, { "FeaturedCreatures.lua" }, { "tools/test_featured_creature_browser.py" }, "AzerothAdmin/Modules/Creatures" },
-    { "item-browser", { "shell" }, { "Embedded/BlueItemInfo3/Integrated.lua" }, { "Embedded/BlueItemInfo3/Data.lua", "Embedded/BlueItemInfo3/CategoryIndex.lua", "Embedded/BlueItemInfo3/QuestRewards335.lua" }, { "tools/test_generate_quest_reward_335.py", "tools/test_profession_enhancement_categories.py" }, "AzerothAdmin/Modules/ItemBrowser" },
     { "profession-info", { "shell" }, { "Embedded/InvenCraftInfo/Core.lua", "Embedded/InvenCraftInfoUI/Rebuilt.lua" }, { "Embedded/InvenCraftInfoData" }, { "tools/test_craft_frame_lifecycle.py" }, "AzerothAdmin/Modules/ProfessionInfo" },
     { "integrations", { "shell" }, { "Integrations.lua" }, {}, {}, "AzerothAdmin/Modules/Integrations" },
 }

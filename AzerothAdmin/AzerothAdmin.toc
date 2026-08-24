@@ -70,7 +70,8 @@ Embedded\InvenCraftInfoData\RecipeDB.lua
 Embedded\BlueItemInfo3\Data.lua
 Embedded\BlueItemInfo3\CategoryIndex.lua
 Embedded\BlueItemInfo3\QuestRewards335.lua
-Embedded\BlueItemInfo3\Integrated.lua
+Modules\ItemBrowser\Module.lua
+Modules\ItemBrowser\Registration.lua
 
 # Profession information UI
 Embedded\InvenCraftInfoUI\Rebuilt.lua

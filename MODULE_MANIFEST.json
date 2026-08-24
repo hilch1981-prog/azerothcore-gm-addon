@@ -13,12 +13,7 @@
     "one_feature_per_pr": true,
     "preserve_existing_behavior_during_move": true,
     "read_data_files_only_when_data_changes": true,
-    "locales_required": [
-      "enUS",
-      "koKR",
-      "zhCN",
-      "zhTW"
-    ],
+    "locales_required": ["enUS", "koKR", "zhCN", "zhTW"],
     "default_locale": "enUS",
     "locale_selection": "automatic-with-manual-override"
   },
@@ -32,163 +27,84 @@
   "modules": {
     "language": {
       "status": "foundation-active",
-      "runtime_files": [
-        "AzerothAdmin/Framework/Localization.lua",
-        "AzerothAdmin/Locale.lua",
-        "AzerothAdmin/Modules/Language/Module.lua"
-      ],
-      "data_files": [
-        "AzerothAdmin/Locales"
-      ],
-      "tests": [
-        "tools/test_module_architecture.py"
-      ],
+      "runtime_files": ["AzerothAdmin/Framework/Localization.lua", "AzerothAdmin/Locale.lua", "AzerothAdmin/Modules/Language/Module.lua"],
+      "data_files": ["AzerothAdmin/Locales"],
+      "tests": ["tools/test_module_architecture.py"],
       "future_path": "AzerothAdmin/Modules/Language"
     },
     "shell": {
       "status": "legacy-migration-pending",
-      "runtime_files": [
-        "AzerothAdmin/Core.lua",
-        "AzerothAdmin/UI.lua",
-        "AzerothAdmin/Locale.lua"
-      ],
-      "tests": [
-        "tools/test_quickslot_actions.py",
-        "tools/test_popup_layer_lifecycle.py"
-      ],
+      "runtime_files": ["AzerothAdmin/Core.lua", "AzerothAdmin/UI.lua", "AzerothAdmin/Locale.lua"],
+      "tests": ["tools/test_quickslot_actions.py", "tools/test_popup_layer_lifecycle.py"],
       "future_path": "AzerothAdmin/Modules/Shell"
     },
     "commands": {
       "status": "legacy-migration-pending",
-      "runtime_files": [
-        "AzerothAdmin/CommandMeta.lua",
-        "AzerothAdmin/Commands.lua"
-      ],
-      "tests": [
-        "tools/test_audit_command_meta.py"
-      ],
+      "runtime_files": ["AzerothAdmin/CommandMeta.lua", "AzerothAdmin/Commands.lua"],
+      "tests": ["tools/test_audit_command_meta.py"],
       "future_path": "AzerothAdmin/Modules/Commands"
     },
     "teleports": {
       "status": "legacy-migration-pending",
-      "runtime_files": [
-        "AzerothAdmin/FavoriteTeleports.lua"
-      ],
-      "data_files": [
-        "AzerothAdmin/Teleports.lua"
-      ],
+      "runtime_files": ["AzerothAdmin/FavoriteTeleports.lua"],
+      "data_files": ["AzerothAdmin/Teleports.lua"],
       "future_path": "AzerothAdmin/Modules/Teleports"
     },
     "search": {
       "status": "legacy-migration-pending",
-      "runtime_files": [
-        "AzerothAdmin/KoKRSearch.lua"
-      ],
-      "data_files": [
-        "AzerothAdmin/KoKRSearchData.lua"
-      ],
+      "runtime_files": ["AzerothAdmin/KoKRSearch.lua"],
+      "data_files": ["AzerothAdmin/KoKRSearchData.lua"],
       "future_path": "AzerothAdmin/Modules/Search"
     },
     "creatures": {
       "status": "legacy-migration-pending",
-      "runtime_files": [
-        "AzerothAdmin/CreatureBrowser.lua"
-      ],
-      "data_files": [
-        "AzerothAdmin/FeaturedCreatures.lua"
-      ],
-      "tests": [
-        "tools/test_featured_creature_browser.py"
-      ],
+      "runtime_files": ["AzerothAdmin/CreatureBrowser.lua"],
+      "data_files": ["AzerothAdmin/FeaturedCreatures.lua"],
+      "tests": ["tools/test_featured_creature_browser.py"],
       "future_path": "AzerothAdmin/Modules/Creatures"
     },
     "quest-helper": {
       "status": "module-active-translation-pending",
-      "dependencies": [
-        "shell",
-        "teleports"
-      ],
-      "runtime_files": [
-        "AzerothAdmin/Modules/QuestHelper/Module.lua",
-        "AzerothAdmin/Modules/QuestHelper/Registration.lua"
-      ],
+      "dependencies": ["shell", "teleports"],
+      "runtime_files": ["AzerothAdmin/Modules/QuestHelper/Module.lua", "AzerothAdmin/Modules/QuestHelper/Registration.lua"],
       "data_files": [],
-      "tests": [
-        "tools/test_quest_drop_source_cycle.py",
-        "tools/test_party_bot_quest_sync.py"
-      ],
+      "tests": ["tools/test_quest_drop_source_cycle.py", "tools/test_party_bot_quest_sync.py"],
       "future_path": "AzerothAdmin/Modules/QuestHelper"
     },
     "item-browser": {
-      "status": "legacy-migration-pending",
-      "runtime_files": [
-        "AzerothAdmin/Embedded/BlueItemInfo3/Integrated.lua"
-      ],
-      "data_files": [
-        "AzerothAdmin/Embedded/BlueItemInfo3/Data.lua",
-        "AzerothAdmin/Embedded/BlueItemInfo3/CategoryIndex.lua",
-        "AzerothAdmin/Embedded/BlueItemInfo3/QuestRewards335.lua"
-      ],
-      "tests": [
-        "tools/test_generate_quest_reward_335.py",
-        "tools/test_profession_enhancement_categories.py"
-      ],
+      "status": "module-active-translation-pending",
+      "dependencies": ["shell", "language"],
+      "runtime_files": ["AzerothAdmin/Modules/ItemBrowser/Module.lua", "AzerothAdmin/Modules/ItemBrowser/Registration.lua"],
+      "data_files": ["AzerothAdmin/Embedded/BlueItemInfo3/Data.lua", "AzerothAdmin/Embedded/BlueItemInfo3/CategoryIndex.lua", "AzerothAdmin/Embedded/BlueItemInfo3/QuestRewards335.lua"],
+      "tests": ["tools/test_generate_quest_reward_335.py", "tools/test_profession_enhancement_categories.py"],
       "future_path": "AzerothAdmin/Modules/ItemBrowser"
     },
     "profession-info": {
       "status": "legacy-migration-pending",
-      "runtime_files": [
-        "AzerothAdmin/Embedded/InvenCraftInfo/Core.lua",
-        "AzerothAdmin/Embedded/InvenCraftInfoUI/Rebuilt.lua"
-      ],
-      "data_files": [
-        "AzerothAdmin/Embedded/InvenCraftInfoData"
-      ],
-      "tests": [
-        "tools/test_craft_frame_lifecycle.py"
-      ],
+      "runtime_files": ["AzerothAdmin/Embedded/InvenCraftInfo/Core.lua", "AzerothAdmin/Embedded/InvenCraftInfoUI/Rebuilt.lua"],
+      "data_files": ["AzerothAdmin/Embedded/InvenCraftInfoData"],
+      "tests": ["tools/test_craft_frame_lifecycle.py"],
       "future_path": "AzerothAdmin/Modules/ProfessionInfo"
     },
     "bank": {
       "status": "module-active",
-      "dependencies": [
-        "shell",
-        "commands",
-        "language"
-      ],
-      "runtime_files": [
-        "AzerothAdmin/Modules/Bank/Module.lua",
-        "AzerothAdmin/Core.lua"
-      ],
-      "data_files": [
-        "AzerothAdmin/Modules/Bank/Locales"
-      ],
-      "tests": [
-        "tools/test_remote_bank_flow.py"
-      ],
+      "dependencies": ["shell", "commands", "language"],
+      "runtime_files": ["AzerothAdmin/Modules/Bank/Module.lua", "AzerothAdmin/Core.lua"],
+      "data_files": ["AzerothAdmin/Modules/Bank/Locales"],
+      "tests": ["tools/test_remote_bank_flow.py"],
       "future_path": "AzerothAdmin/Modules/Bank"
     },
     "revive": {
       "status": "module-active-legacy-fallback",
-      "dependencies": [
-        "shell",
-        "commands"
-      ],
-      "runtime_files": [
-        "AzerothAdmin/Modules/Revive/Module.lua",
-        "AzerothAdmin/Core.lua"
-      ],
+      "dependencies": ["shell", "commands"],
+      "runtime_files": ["AzerothAdmin/Modules/Revive/Module.lua", "AzerothAdmin/Core.lua"],
       "data_files": [],
-      "tests": [
-        "tools/test_self_revive_flow.py"
-      ],
+      "tests": ["tools/test_self_revive_flow.py"],
       "future_path": "AzerothAdmin/Modules/Revive"
     },
     "integrations": {
       "status": "legacy-migration-pending",
-      "runtime_files": [
-        "AzerothAdmin/Integrations.lua"
-      ],
+      "runtime_files": ["AzerothAdmin/Integrations.lua"],
       "future_path": "AzerothAdmin/Modules/Integrations"
     }
   }

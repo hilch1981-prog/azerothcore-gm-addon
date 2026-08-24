@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 ADDON = ROOT / "AzerothAdmin"
 TOC = ADDON / "AzerothAdmin.toc"
 QUEST_HELPER = ADDON / "Modules/QuestHelper/Module.lua"
+ITEM_BROWSER = ADDON / "Modules/ItemBrowser/Module.lua"
 
 ORDER_RULES = (
     ("Locale.lua", "CommandMeta.lua"),
@@ -30,8 +31,9 @@ ORDER_RULES = (
     (r"Embedded\InvenCraftInfoData\RecipeDB.lua", r"Embedded\InvenCraftInfoUI\Rebuilt.lua"),
     (r"Embedded\BlueItemInfo3\Data.lua", r"Embedded\BlueItemInfo3\CategoryIndex.lua"),
     (r"Embedded\BlueItemInfo3\CategoryIndex.lua", r"Embedded\BlueItemInfo3\QuestRewards335.lua"),
-    (r"Embedded\BlueItemInfo3\QuestRewards335.lua", r"Embedded\BlueItemInfo3\Integrated.lua"),
-    (r"Embedded\BlueItemInfo3\Integrated.lua", r"Embedded\InvenCraftInfoUI\Rebuilt.lua"),
+    (r"Embedded\BlueItemInfo3\QuestRewards335.lua", r"Modules\ItemBrowser\Module.lua"),
+    (r"Modules\ItemBrowser\Module.lua", r"Modules\ItemBrowser\Registration.lua"),
+    (r"Modules\ItemBrowser\Registration.lua", r"Embedded\InvenCraftInfoUI\Rebuilt.lua"),
     (r"Embedded\InvenCraftInfoUI\Rebuilt.lua", "Integrations.lua"),
 )
 
@@ -112,7 +114,7 @@ def validate() -> list[str]:
             if token.encode("ascii") in source:
                 errors.append(f"Retail-only token {token} in {source_path.relative_to(ROOT)}")
 
-    item_source = (ADDON / "Embedded/BlueItemInfo3/Integrated.lua").read_text(encoding="utf-8-sig")
+    item_source = ITEM_BROWSER.read_text(encoding="utf-8-sig")
     craft_source = (ADDON / "Embedded/InvenCraftInfoUI/Rebuilt.lua").read_text(encoding="utf-8-sig")
     integration_source = (ADDON / "Integrations.lua").read_text(encoding="utf-8-sig")
     for snippet, label, source in (
