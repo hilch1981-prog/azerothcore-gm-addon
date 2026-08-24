@@ -11,6 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 ADDON = ROOT / "AzerothAdmin"
 TOC = ADDON / "AzerothAdmin.toc"
+QUEST_HELPER = ADDON / "Modules/QuestHelper/Module.lua"
 
 ORDER_RULES = (
     ("Locale.lua", "CommandMeta.lua"),
@@ -21,8 +22,9 @@ ORDER_RULES = (
     ("KoKRSearch.lua", "CreatureBrowser.lua"),
     ("CreatureBrowser.lua", "Core.lua"),
     ("Commands.lua", "Core.lua"),
-    ("Core.lua", "QuestHelper.lua"),
-    ("QuestHelper.lua", "UI.lua"),
+    ("Core.lua", r"Modules\QuestHelper\Module.lua"),
+    (r"Modules\QuestHelper\Module.lua", r"Modules\QuestHelper\Registration.lua"),
+    (r"Modules\QuestHelper\Registration.lua", "UI.lua"),
     (r"Embedded\InvenCraftInfo\libs\LibStub\LibStub.lua", r"Embedded\InvenCraftInfo\libs\CallbackHandler-1.0\CallbackHandler-1.0.lua"),
     (r"Embedded\InvenCraftInfo\Core.lua", r"Embedded\InvenCraftInfoData\KnownRecipe.lua"),
     (r"Embedded\InvenCraftInfoData\RecipeDB.lua", r"Embedded\InvenCraftInfoUI\Rebuilt.lua"),
@@ -123,7 +125,7 @@ def validate() -> list[str]:
         if snippet not in source:
             errors.append(f"missing separated {label}: {snippet}")
 
-    quest_source = (ADDON / "QuestHelper.lua").read_text(encoding="utf-8-sig")
+    quest_source = QUEST_HELPER.read_text(encoding="utf-8-sig")
     for snippet in (
         "function addon:RefreshQuestHelperSelectionHighlight()",
         "self.questHelperSelectedQuest = quest",
