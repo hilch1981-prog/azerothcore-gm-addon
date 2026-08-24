@@ -29,7 +29,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          # Stacked feature PRs need origin/main and their non-main base branch.
+          # The Claude review plugin compares origin/main...HEAD internally.
+          fetch-depth: 0
 
       - name: Run Claude Code Review
         id: claude-review
