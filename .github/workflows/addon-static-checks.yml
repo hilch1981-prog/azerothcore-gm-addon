@@ -85,6 +85,7 @@ jobs:
           tools/test_quickslot_actions.py
           tools/test_quest_drop_source_cycle.py
           tools/test_remote_bank_flow.py
+          tools/test_runtime_ui_localization.py
           tools/test_self_revive_flow.py
 
       - name: Audit AzerothCore command metadata
