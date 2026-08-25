@@ -30,6 +30,8 @@ Locales\UI\enUS.lua
 Locales\UI\zhCN.lua
 Locales\UI\zhTW.lua
 Locales\UI\Features\enUS.lua
+Locales\UI\Features\zhCN.lua
+Locales\UI\Features\zhTW.lua
 Locales\UI\Messages\enUS.lua
 Locale.lua
 Framework\FeatureLocalization.lua
