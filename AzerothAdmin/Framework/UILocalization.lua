@@ -21,22 +21,30 @@ function addon:RegisterUILiterals(locale, values, patterns)
     return true
 end
 
-function addon:TranslateUI(text)
-    text = tostring(text or "")
-    if text == "" or self.ActiveLocale == "koKR" then return text end
-    local locale = self.ActiveLocale or "enUS"
-    local pack = self.UILiteralPacks[locale] or self.UILiteralPacks.enUS or {}
-    local exact = pack[text]
-    if exact then return exact end
-    local patterns = self.UIPatternPacks[locale] or self.UIPatternPacks.enUS or {}
+local function applyPatterns(text, patterns)
     local translated = text
     local i
-    for i = 1, table.getn(patterns) do
+    for i = 1, table.getn(patterns or {}) do
         local rule = patterns[i]
         if type(rule) == "table" and rule[1] and rule[2] and string.find(translated, rule[1]) then
             translated = string.gsub(translated, rule[1], rule[2])
         end
     end
+    return translated
+end
+
+function addon:TranslateUI(text)
+    text = tostring(text or "")
+    if text == "" or self.ActiveLocale == "koKR" then return text end
+    local locale = self.ActiveLocale or "enUS"
+    local selected = self.UILiteralPacks[locale] or {}
+    local english = self.UILiteralPacks.enUS or {}
+    local exact = selected[text] or english[text]
+    if exact then return exact end
+
+    local translated = applyPatterns(text, self.UIPatternPacks[locale] or {})
+    if translated ~= text then return translated end
+    if locale ~= "enUS" then translated = applyPatterns(text, self.UIPatternPacks.enUS or {}) end
     return translated
 end
 
