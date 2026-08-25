@@ -26,21 +26,34 @@ function addon:TranslateUI(text)
     if text == "" or self.ActiveLocale == "koKR" then return text end
     local locale = self.ActiveLocale or "enUS"
     local pack = self.UILiteralPacks[locale] or self.UILiteralPacks.enUS or {}
-    local translated = pack[text]
-    if translated then return translated end
+    local exact = pack[text]
+    if exact then return exact end
     local patterns = self.UIPatternPacks[locale] or self.UIPatternPacks.enUS or {}
+    local translated = text
     local i
     for i = 1, table.getn(patterns) do
         local rule = patterns[i]
-        if type(rule) == "table" and rule[1] and rule[2] and string.find(text, rule[1]) then
-            return (string.gsub(text, rule[1], rule[2]))
+        if type(rule) == "table" and rule[1] and rule[2] and string.find(translated, rule[1]) then
+            translated = string.gsub(translated, rule[1], rule[2])
         end
     end
-    return text
+    return translated
+end
+
+local function localizeField(frame, key)
+    local current = frame and frame[key]
+    if type(current) ~= "string" or current == "" then return end
+    local translated = addon:TranslateUI(current)
+    if translated ~= current then frame[key] = translated end
 end
 
 local function localizeRegions(frame)
-    if not frame or not frame.GetRegions then return end
+    if not frame then return end
+    localizeField(frame, "aaeHint")
+    localizeField(frame, "aaeTitle")
+    localizeField(frame, "tooltipText")
+    localizeField(frame, "tooltipTitle")
+    if not frame.GetRegions then return end
     local regions = { frame:GetRegions() }
     local i
     for i = 1, table.getn(regions) do
