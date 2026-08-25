@@ -92,3 +92,6 @@ jobs:
 
       - name: Audit faction formatter tokens
         run: python tools/audit_faction_tokens.py
+
+      - name: Report remaining localization literals
+        run: python tools/audit_localization_literals.py
