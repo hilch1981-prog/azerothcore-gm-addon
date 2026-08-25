@@ -2,8 +2,8 @@ AzerothAdminEasy = AzerothAdminEasy or {}
 local addon = AzerothAdminEasy
 
 -- WotLK 3.3.5a / AzerothCore compatibility fixes that do NOT own keyboard or
--- PlayerModel state.  Keyboard/model handling lives only in
--- CreatureBrowserRuntimeFixes.lua so the two layers cannot fight each other.
+-- PlayerModel state. Keyboard/model handling lives only in RuntimeFixes.lua so
+-- the two layers cannot fight each other.
 
 -- Safe instance positions from the pinned AzerothCore WotLK game_tele table.
 -- The command syntax is `.go xyz x y z [mapId [orientation]]`.
@@ -65,6 +65,14 @@ local function normalizeTeleportLabel(value)
     return label
 end
 
+local function sourceName(row)
+    return row and (row._aaeSourceName or row.name) or nil
+end
+
+local function sourceZone(row)
+    return row and (row._aaeSourceZone or row.zone) or nil
+end
+
 local function findTeleportByLabel(label)
     if not label or label == "" then return nil end
     local wanted = normalizeTeleportLabel(label)
@@ -72,18 +80,18 @@ local function findTeleportByLabel(label)
     local firstZoneMatch = nil
     local i
 
-    -- Prefer an exact destination-name match anywhere in the legacy table.
+    -- Route from canonical source labels so UI translation can never change
+    -- instance lookup behavior.
     for i = 1, table.getn(list) do
         local row = list[i]
-        if row and row.command and normalizeTeleportLabel(row.name) == wanted then
+        if row and row.command and normalizeTeleportLabel(sourceName(row)) == wanted then
             return row.command
         end
     end
 
-    -- Otherwise use the first coordinate in the matching instance zone.
     for i = 1, table.getn(list) do
         local row = list[i]
-        if row and row.command and normalizeTeleportLabel(row.zone) == wanted then
+        if row and row.command and normalizeTeleportLabel(sourceZone(row)) == wanted then
             firstZoneMatch = row.command
             break
         end
