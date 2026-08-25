@@ -86,6 +86,7 @@ jobs:
           tools/test_featured_creature_browser.py
           tools/test_generate_quest_reward_335.py
           tools/test_language_minibar.py
+          tools/test_locale_teleport_integrity.py
           tools/test_module_architecture.py
           tools/test_party_bot_quest_sync.py
           tools/test_popup_layer_lifecycle.py
