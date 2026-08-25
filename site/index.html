@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="WoW WotLK 3.3.5a Build 12340 + AzerothCore용 AzerothAdmin GM 애드온 프로젝트 사이트">
+  <meta name="theme-color" content="#0d0b08">
+  <title>AzerothAdmin GM Addon</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="AzerothAdmin 홈">
+      <span class="brand-mark">AA</span>
+      <span>
+        <strong>AzerothAdmin</strong>
+        <small>GM Addon for AzerothCore</small>
+      </span>
+    </a>
+    <button class="menu-button" id="menuButton" aria-expanded="false" aria-controls="siteNav">메뉴</button>
+    <nav id="siteNav" class="site-nav" aria-label="주요 메뉴">
+      <a href="#features">기능</a>
+      <a href="#install">설치</a>
+      <a href="#status">검증 상태</a>
+      <a href="#development">개발</a>
+      <a class="nav-cta" href="https://github.com/hilch1981-prog/azerothcore-gm-addon" target="_blank" rel="noreferrer">GitHub</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero section-shell">
+      <div class="hero-copy">
+        <div class="eyebrow">WoW WotLK 3.3.5a · Build 12340 · Interface 30300</div>
+        <h1>GM 운영을 더 빠르고,<br><span>더 안전하게.</span></h1>
+        <p class="hero-lead">
+          AzerothCore WotLK 환경을 위한 한국어 GM 관리 애드온입니다.
+          검색, 퀘스트 도우미, 크리처 브라우저, 원격 은행, 자기 부활,
+          전문기술·아이템 정보와 GM 명령을 하나의 관리 UI에서 다룹니다.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="#install">설치 방법 보기</a>
+          <a class="button secondary" href="https://github.com/hilch1981-prog/azerothcore-gm-addon" target="_blank" rel="noreferrer">소스 코드 보기</a>
+        </div>
+        <div class="compatibility-strip" aria-label="호환성">
+          <span>Lua 5.1</span>
+          <span>WotLK 3.3.5a</span>
+          <span>AzerothCore</span>
+          <span>koKR 중심</span>
+        </div>
+      </div>
+
+      <div class="hero-panel" aria-label="애드온 UI 미리보기">
+        <div class="mock-window">
+          <div class="mock-titlebar">
+            <span>AzerothAdmin</span>
+            <div class="window-dots"><i></i><i></i><i></i></div>
+          </div>
+          <div class="mock-body">
+            <aside class="mock-sidebar">
+              <strong>GM 도구</strong>
+              <button class="active">대시보드</button>
+              <button>퀘스트 도우미</button>
+              <button>아이템 정보</button>
+              <button>전문기술 정보</button>
+              <button>주요 크리처</button>
+              <button>순간이동</button>
+            </aside>
+            <div class="mock-content">
+              <div class="mock-heading">
+                <div><small>WORLD MASTER TOOLS</small><h3>관리 대시보드</h3></div>
+                <span class="status-pill">AzerothCore</span>
+              </div>
+              <div class="mock-grid">
+                <article><b>187</b><span>주요 크리처</span></article>
+                <article><b>4</b><span>퀘스트 보상 대륙</span></article>
+                <article><b>30300</b><span>Interface</span></article>
+                <article><b>5.1</b><span>Lua</span></article>
+              </div>
+              <div class="mock-list">
+                <div><span>원격 은행</span><em>실사용 확인</em></div>
+                <div><span>자기 부활</span><em>실사용 확인</em></div>
+                <div><span>퀘스트 드랍처 이동</span><em>정적 검증</em></div>
+                <div><span>크리처 3D 미리보기</span><em>게임 테스트 대기</em></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-shell intro-band">
+      <div>
+        <span class="section-kicker">PROJECT GOAL</span>
+        <h2>가짜 기능보다 실제 서버 동작을 우선합니다.</h2>
+      </div>
+      <p>
+        Retail 전용 API를 사용하지 않고, WotLK 3.3.5a와 AzerothCore의 실제 명령 및 이벤트 흐름을 기준으로 구현합니다.
+        게임 내 검증이 끝나지 않은 항목은 사이트에서도 완료로 표시하지 않습니다.
+      </p>
+    </section>
+
+    <section id="features" class="section-shell section-block">
+      <div class="section-heading">
+        <span class="section-kicker">CORE FEATURES</span>
+        <h2>GM 운영에 자주 필요한 기능을 한 곳에</h2>
+        <p>현재 저장소에 실제 구현 위치가 확인된 기능만 소개합니다.</p>
+      </div>
+      <div class="feature-grid">
+        <article class="feature-card"><span class="feature-icon">01</span><h3>퀘스트 도우미</h3><p>진행 상태, 목표 상세, 선택 하이라이트, Questie 기반 아이템 드랍처 이동과 반복 순환을 지원합니다.</p></article>
+        <article class="feature-card"><span class="feature-icon">02</span><h3>아이템 정보</h3><p>WotLK 퀘스트 보상, 전문기술·강화 분류, 아이템 추가 기능을 독립 프레임에서 제공합니다.</p></article>
+        <article class="feature-card"><span class="feature-icon">03</span><h3>전문기술 정보</h3><p>InvenCraftInfo를 아이템 정보와 분리 유지하며, 검색·정렬·상세·재료 상태를 관리합니다.</p></article>
+        <article class="feature-card"><span class="feature-icon">04</span><h3>주요 크리처 브라우저</h3><p>주요 크리처 187개 분류, 스크롤 목록, 위치 이동, 스폰 정보, 소환과 3D 외형 미리보기를 제공합니다.</p></article>
+        <article class="feature-card"><span class="feature-icon">05</span><h3>원격 은행 & 자기 부활</h3><p>AzerothCore 실제 서버 처리 경로를 사용해 원격 은행 세션과 사망·유령 상태 자기 부활을 처리합니다.</p></article>
+        <article class="feature-card"><span class="feature-icon">06</span><h3>GM 명령 & 퀵슬롯</h3><p>명령 메타데이터를 감사하고, 자주 쓰는 GM 명령과 애드온 기능을 퀵슬롯에 저장해 빠르게 실행합니다.</p></article>
+      </div>
+    </section>
+
+    <section class="section-shell showcase">
+      <div class="showcase-copy">
+        <span class="section-kicker">DESIGN PRINCIPLE</span>
+        <h2>기존 애드온의 다크 + 골드 UI 흐름을 유지</h2>
+        <p>
+          3.3.5a 기본 Frame, ScrollFrame, FrameStrata, FrameLevel을 중심으로 구성하며
+          아이템 정보와 InvenCraftInfo처럼 역할이 다른 창은 시각적 통일감만 맞추고 로직은 분리합니다.
+        </p>
+        <ul class="check-list">
+          <li>기존 파일·기능·SavedVariables 최대한 보존</li>
+          <li>Retail 전용 API 사용 금지</li>
+          <li>사용자에게 의미 없는 중간 팝업 제거</li>
+          <li>팝업과 선택 상태의 레이어·수명주기 회귀 검사</li>
+        </ul>
+      </div>
+      <div class="code-card">
+        <div class="code-card-top"><span>호환성 기준</span><span class="code-badge">3.3.5a</span></div>
+        <pre><code>Interface: 30300
+Lua:       5.1
+Core:      AzerothCore WotLK
+Client:    Build 12340
+
+금지 API:
+  C_Container
+  C_Item
+  ScrollBox
+  최신 C_QuestLog
+
+실행 명령:
+  /aa</code></pre>
+      </div>
+    </section>
+
+    <section id="install" class="section-shell section-block">
+      <div class="section-heading compact">
+        <span class="section-kicker">INSTALL</span>
+        <h2>설치는 간단합니다</h2>
+      </div>
+      <div class="install-layout">
+        <div class="steps">
+          <article><b>1</b><div><h3>저장소 또는 릴리스 준비</h3><p>배포본의 <code>AzerothAdmin</code> 폴더를 준비합니다.</p></div></article>
+          <article><b>2</b><div><h3>AddOns 폴더에 복사</h3><p>WoW 클라이언트의 <code>Interface/AddOns/</code> 아래에 배치합니다.</p></div></article>
+          <article><b>3</b><div><h3>게임에서 실행</h3><p>접속 후 채팅창에 <code>/aa</code>를 입력해 메인 GM 창을 엽니다.</p></div></article>
+        </div>
+        <div class="path-card">
+          <small>최종 경로</small>
+          <code>Interface/AddOns/AzerothAdmin/AzerothAdmin.toc</code>
+          <button id="copyPath" type="button">경로 복사</button>
+          <span id="copyMessage" class="copy-message" aria-live="polite"></span>
+        </div>
+      </div>
+    </section>
+
+    <section id="status" class="section-shell section-block">
+      <div class="section-heading">
+        <span class="section-kicker">VALIDATION STATUS</span>
+        <h2>“정적 검사 통과”와 “게임 내 확인”을 구분합니다</h2>
+        <p>현재 프로젝트 문서에 기록된 검증 상태를 기준으로 표시합니다.</p>
+      </div>
+      <div class="status-grid">
+        <article class="status-card verified"><span>게임 내 확인</span><h3>원격 은행</h3><p>2026-08-22 사용자 실사용 확인 기록이 있습니다.</p></article>
+        <article class="status-card verified"><span>게임 내 확인</span><h3>자기 부활</h3><p>사망·유령 상태 자기 부활의 사용자 실사용 확인 기록이 있습니다.</p></article>
+        <article class="status-card static"><span>정적 검증</span><h3>퀘스트 보상 분류</h3><p>동부 왕국, 칼림도어, 아웃랜드, 노스렌드 데이터 생성 및 자동 검증을 통과했습니다.</p></article>
+        <article class="status-card pending"><span>게임 테스트 대기</span><h3>크리처·UI 회귀</h3><p>정적 검증과 자동 테스트는 존재하지만 실제 게임 내 전체 회귀 검증이 남아 있습니다.</p></article>
+      </div>
+      <div class="notice-box">
+        <strong>중요</strong>
+        <p>GitHub Actions 또는 Lua/TOC 정적 검사가 성공해도 게임에서 실제 기능이 모두 정상이라는 뜻은 아닙니다. 프로젝트 규칙에 따라 게임 내 검증 전에는 완료로 간주하지 않습니다.</p>
+      </div>
+    </section>
+
+    <section id="development" class="section-shell section-block development">
+      <div class="section-heading">
+        <span class="section-kicker">DEVELOPMENT</span>
+        <h2>Codex 구현 + Claude 교차 리뷰</h2>
+        <p>직접 main에 푸시하지 않고 기능별 브랜치와 Pull Request를 통해 변경합니다.</p>
+      </div>
+      <div class="dev-flow">
+        <article><b>01</b><h3>실제 코드 분석</h3><p>Lua/XML/TOC, 로드 순서와 AzerothCore 명령 구현을 먼저 확인합니다.</p></article>
+        <article><b>02</b><h3>기능별 브랜치</h3><p>Codex는 <code>codex/&lt;기능명&gt;</code>, Claude 구현은 <code>claude/&lt;기능명&gt;</code>을 사용합니다.</p></article>
+        <article><b>03</b><h3>자동 정적 검사</h3><p>Lua 5.1, TOC, Retail API, XML, 회귀 테스트와 ZIP 구조를 검사합니다.</p></article>
+        <article><b>04</b><h3>게임 검증 후 병합</h3><p>사용자가 실제 WotLK 3.3.5a + AzerothCore 환경에서 확인한 뒤 main 병합을 권고합니다.</p></article>
+      </div>
+    </section>
+
+    <section class="section-shell final-cta">
+      <div>
+        <span class="section-kicker">OPEN SOURCE PROJECT</span>
+        <h2>AzerothAdmin 개발 현황과 소스를 GitHub에서 확인하세요.</h2>
+      </div>
+      <a class="button primary" href="https://github.com/hilch1981-prog/azerothcore-gm-addon" target="_blank" rel="noreferrer">GitHub 저장소 열기</a>
+    </section>
+  </main>
+
+  <footer class="site-footer section-shell">
+    <div><strong>AzerothAdmin</strong><span>WoW WotLK 3.3.5a + AzerothCore GM Addon</span></div>
+    <p>World of Warcraft 및 관련 상표는 각 권리자의 자산입니다. 이 사이트는 비공식 커뮤니티 프로젝트 소개 페이지입니다.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
