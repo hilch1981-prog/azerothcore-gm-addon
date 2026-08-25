@@ -6,6 +6,7 @@ TOC = ROOT / "AzerothAdmin" / "AzerothAdmin.toc"
 UI = ROOT / "AzerothAdmin" / "Framework" / "UILocalization.lua"
 FEATURE = ROOT / "AzerothAdmin" / "Framework" / "FeatureLocalization.lua"
 OUTPUT = ROOT / "AzerothAdmin" / "Modules" / "Language" / "Output.lua"
+AUDIT = ROOT / "tools" / "audit_localization_literals.py"
 
 
 class RuntimeUILocalizationTests(unittest.TestCase):
@@ -65,6 +66,13 @@ class RuntimeUILocalizationTests(unittest.TestCase):
         self.assertIn('self.ActiveLocale ~= "koKR"', source)
         self.assertNotIn("SendNow", source)
         self.assertNotIn("command =", source)
+
+    def test_source_hangul_audit_is_informational_and_deduplicated(self):
+        source = AUDIT.read_text(encoding="utf-8-sig")
+        self.assertIn("This is NOT an untranslated-UI failure count.", source)
+        self.assertIn("runtime_file_roles", source)
+        self.assertIn("roles.setdefault(path, []).append(module_name)", source)
+        self.assertIn("canonical koKR data", source)
 
     def test_runtime_localizer_uses_wotlk_safe_apis(self):
         combined = (
