@@ -34,7 +34,8 @@ FeaturedCreatures.lua
 KoKRSearch.lua
 CreatureBrowser.lua
 Teleports.lua
-FavoriteTeleports.lua
+Modules\Teleports\Module.lua
+Modules\Teleports\Registration.lua
 Commands.lua
 Core.lua
 Modules\QuestHelper\Module.lua
