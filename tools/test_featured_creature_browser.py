@@ -91,7 +91,7 @@ class FeaturedCreatureBrowserTests(unittest.TestCase):
         self.assertRegex(browser, r'creatureDefinition\("\.npc add temp .*?label, true, false\)')
         self.assertRegex(browser, r'creatureDefinition\("\.npc add .*?label, true, true\)')
 
-        search = (ADDON / "KoKRSearch.lua").read_text(encoding="utf-8-sig")
+        search = (ADDON / "Modules/Search/Module.lua").read_text(encoding="utf-8-sig")
         self.assertIn("현재 위치에 임시 소환 (DB 미저장)", search)
         self.assertIn("현재 위치에 영구 생성 (DB 저장)", search)
         self.assertIn("전체 DB 검색 항목은 지역·인스턴스 스크립트 여부가 분류되지 않았습니다.", search)
