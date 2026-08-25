@@ -31,7 +31,8 @@ Modules\Language\Module.lua
 CommandMeta.lua
 KoKRSearchData.lua
 FeaturedCreatures.lua
-KoKRSearch.lua
+Modules\Search\Module.lua
+Modules\Search\Registration.lua
 CreatureBrowser.lua
 Teleports.lua
 Modules\Teleports\Module.lua
