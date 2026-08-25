@@ -9,9 +9,15 @@ desktop.ini
 __pycache__/
 *.py[cod]
 
-# Local archives and runtime data
+# Local archives, generated output, runtime data and raw logs
 *.zip
+*.log
+*.tmp
+*.bak
 dist/
+build/
+out/
+reports/
 WTF/
 Cache/
 Logs/
