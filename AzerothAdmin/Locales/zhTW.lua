@@ -37,4 +37,6 @@ addon:RegisterLocale("zhTW", {
     LANGUAGE_USAGE = "目前語言：%s / 用法：/aalang auto|enUS|koKR|zhCN|zhTW",
     LANGUAGE_UNSUPPORTED = "不支援此語言。請使用 auto、enUS、koKR、zhCN 或 zhTW。",
     LANGUAGE_SAVED = "語言設定已儲存：%s。正在重新載入介面...",
+    LANGUAGE_BUTTON_TITLE = "語言切換",
+    LANGUAGE_BUTTON_HINT = "目前顯示語言：%s\n點擊：自動 → 韓文 → 英文 → 簡體中文 → 繁體中文",
 })
