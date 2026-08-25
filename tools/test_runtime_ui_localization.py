@@ -17,6 +17,8 @@ class RuntimeUILocalizationTests(unittest.TestCase):
             r"Locales\UI\zhCN.lua",
             r"Locales\UI\zhTW.lua",
             r"Locales\UI\Features\enUS.lua",
+            r"Locales\UI\Features\zhCN.lua",
+            r"Locales\UI\Features\zhTW.lua",
             r"Locales\UI\Messages\enUS.lua",
             r"Locale.lua",
             r"Framework\FeatureLocalization.lua",
