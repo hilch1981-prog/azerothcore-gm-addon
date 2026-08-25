@@ -28,7 +28,7 @@ Locales\zhTW.lua
 Locale.lua
 Modules\LegacyManifest.lua
 Modules\Language\Module.lua
-CommandMeta.lua
+Modules\Commands\CommandMeta.lua
 KoKRSearchData.lua
 Modules\Creatures\Data.lua
 Modules\Creatures\ExpandedData.lua
@@ -38,7 +38,8 @@ Modules\Creatures\Browser.lua
 Teleports.lua
 Modules\Teleports\Module.lua
 Modules\Teleports\Registration.lua
-Commands.lua
+Modules\Commands\Module.lua
+Modules\Commands\Registration.lua
 Core.lua
 Modules\QuestHelper\Module.lua
 Modules\QuestHelper\Registration.lua

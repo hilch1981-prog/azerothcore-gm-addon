@@ -11,7 +11,7 @@ class QuickslotActionTests(unittest.TestCase):
     def setUpClass(cls):
         cls.core = (ADDON / "Core.lua").read_text(encoding="utf-8-sig")
         cls.ui = (ADDON / "UI.lua").read_text(encoding="utf-8-sig")
-        cls.commands = (ADDON / "Commands.lua").read_text(encoding="utf-8-sig")
+        cls.commands = (ADDON / "Modules/Commands/Module.lua").read_text(encoding="utf-8-sig")
 
     def test_commands_and_client_actions_have_stable_typed_keys(self):
         self.assertIn('return "cmd:" .. tostring(definition.command)', self.core)

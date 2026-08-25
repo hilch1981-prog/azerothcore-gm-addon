@@ -15,8 +15,8 @@ ITEM_BROWSER = ADDON / "Modules/ItemBrowser/Module.lua"
 CRAFT_UI = ADDON / "Modules/ProfessionInfo/UI.lua"
 
 ORDER_RULES = (
-    ("Locale.lua", "CommandMeta.lua"),
-    ("CommandMeta.lua", "Commands.lua"),
+    ("Locale.lua", r"Modules\Commands\CommandMeta.lua"),
+    (r"Modules\Commands\CommandMeta.lua", r"Modules\Commands\Module.lua"),
     ("KoKRSearchData.lua", r"Modules\Creatures\Data.lua"),
     (r"Modules\Creatures\Data.lua", r"Modules\Creatures\ExpandedData.lua"),
     (r"Modules\Creatures\ExpandedData.lua", r"Modules\Search\Module.lua"),
@@ -25,8 +25,9 @@ ORDER_RULES = (
     (r"Modules\Creatures\Browser.lua", "Core.lua"),
     ("Teleports.lua", r"Modules\Teleports\Module.lua"),
     (r"Modules\Teleports\Module.lua", r"Modules\Teleports\Registration.lua"),
-    (r"Modules\Teleports\Registration.lua", "Commands.lua"),
-    ("Commands.lua", "Core.lua"),
+    (r"Modules\Teleports\Registration.lua", r"Modules\Commands\Module.lua"),
+    (r"Modules\Commands\Module.lua", r"Modules\Commands\Registration.lua"),
+    (r"Modules\Commands\Registration.lua", "Core.lua"),
     ("Core.lua", r"Modules\QuestHelper\Module.lua"),
     (r"Modules\QuestHelper\Module.lua", r"Modules\QuestHelper\Registration.lua"),
     (r"Modules\QuestHelper\Registration.lua", "UI.lua"),

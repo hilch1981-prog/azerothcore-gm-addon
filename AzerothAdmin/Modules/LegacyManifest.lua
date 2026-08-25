@@ -4,7 +4,6 @@ if not addon.RegisterModule then return end
 
 local modules = {
     { "shell", {}, { "Core.lua", "UI.lua", "Locale.lua" }, {}, { "tools/test_quickslot_actions.py", "tools/test_popup_layer_lifecycle.py" }, "AzerothAdmin/Modules/Shell" },
-    { "commands", { "shell" }, { "CommandMeta.lua", "Commands.lua" }, {}, { "tools/test_audit_command_meta.py" }, "AzerothAdmin/Modules/Commands" },
     { "integrations", { "shell" }, { "Integrations.lua" }, {}, {}, "AzerothAdmin/Modules/Integrations" },
 }
 

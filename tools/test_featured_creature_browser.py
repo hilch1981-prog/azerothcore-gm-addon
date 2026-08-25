@@ -254,7 +254,7 @@ class FeaturedCreatureBrowserTests(unittest.TestCase):
 
     def test_browser_routes_from_existing_creature_search_action(self):
         core = (ADDON / "Core.lua").read_text(encoding="utf-8-sig")
-        commands = (ADDON / "Commands.lua").read_text(encoding="utf-8-sig")
+        commands = (ADDON / "Modules/Commands/Module.lua").read_text(encoding="utf-8-sig")
         self.assertIn('definition.action == "kr_creature_search"', core)
         self.assertIn("self:ToggleCreatureBrowser()", core)
         self.assertIn("주요 크리처 / 한글·ID 검색", commands)
