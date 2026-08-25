@@ -62,6 +62,23 @@ function addon:LocalizeCommandDefinitions()
     end
 end
 
+local function localizeTeleportEntries(entries)
+    local i
+    for i = 1, table.getn(entries or {}) do
+        local entry = entries[i]
+        if entry then
+            if entry.name then
+                local translated = addon:TranslateUI(entry.name)
+                if translated ~= entry.name then entry.name = translated end
+            end
+            if entry.zone then
+                local translated = addon:TranslateUI(entry.zone)
+                if translated ~= entry.zone then entry.zone = translated end
+            end
+        end
+    end
+end
+
 function addon:LocalizeTeleportDefinitions()
     if self.ActiveLocale == "koKR" then return end
     local groups = self.FavoriteTeleportGroups or {}
@@ -69,14 +86,19 @@ function addon:LocalizeTeleportDefinitions()
     for i = 1, table.getn(groups) do
         if groups[i] and groups[i].name then groups[i].name = self:TranslateUI(groups[i].name) end
     end
-    local teleports = self.FavoriteTeleports or {}
-    for i = 1, table.getn(teleports) do
-        local entry = teleports[i]
-        if entry and entry.name then
-            local translated = self:TranslateUI(entry.name)
-            -- Proper-place names are source data. Keep the koKR source name when
-            -- no verified localized name is registered instead of inventing one.
-            entry.displayName = translated
+    localizeTeleportEntries(self.FavoriteTeleports)
+    localizeTeleportEntries(self.Teleports)
+end
+
+function addon:LocalizeAddonPopups()
+    if self.ActiveLocale == "koKR" or type(StaticPopupDialogs) ~= "table" then return end
+    local key, dialog
+    for key, dialog in pairs(StaticPopupDialogs) do
+        if type(key) == "string" and string.find(key, "AZEROTHADMIN_", 1, true) == 1 and type(dialog) == "table" then
+            if type(dialog.text) == "string" then dialog.text = self:TranslateUI(dialog.text) end
+            if type(dialog.button1) == "string" then dialog.button1 = self:TranslateUI(dialog.button1) end
+            if type(dialog.button2) == "string" then dialog.button2 = self:TranslateUI(dialog.button2) end
+            if type(dialog.button3) == "string" then dialog.button3 = self:TranslateUI(dialog.button3) end
         end
     end
 end
@@ -100,8 +122,11 @@ end
 function addon:InstallRuntimeLocalizationHooks()
     if self.ActiveLocale == "koKR" then return end
     local frames = {
-        self.frame, self.toolbar, self.localeSearchFrame, self.questHelperFrame,
+        self.frame, self.toolbar, self.argumentFrame, self.teleportFrame, self.favoriteFrame,
+        self.localeSearchFrame, self.questHelperFrame, self.questHelperSearchResultFrame,
         self.creatureBrowserFrame, _G.AzerothAdminCraftInfoFrame, _G.BlueItemInfo3,
+        _G.AzerothAdminTeleportFrame, _G.AzerothAdminFavoriteTeleportFrame,
+        _G.AzerothAdminQuestHelperFrame, _G.AzerothAdminKoKRSearchFrame,
     }
     local i
     for i = 1, table.getn(frames) do hookFrame(frames[i]) end
@@ -115,6 +140,7 @@ events:SetScript("OnEvent", function(self, event, name)
         if name ~= "AzerothAdmin" then return end
         addon:LocalizeCommandDefinitions()
         addon:LocalizeTeleportDefinitions()
+        addon:LocalizeAddonPopups()
         self:UnregisterEvent("ADDON_LOADED")
     elseif event == "PLAYER_LOGIN" then
         local driver = CreateFrame("Frame")
