@@ -67,13 +67,18 @@ local function localizeTeleportEntries(entries)
     for i = 1, table.getn(entries or {}) do
         local entry = entries[i]
         if entry then
+            -- Keep immutable canonical labels beside translated display values.
+            -- Creature/instance routing and other lookup logic must not depend on
+            -- whichever UI language is currently active.
             if entry.name then
-                local translated = addon:TranslateUI(entry.name)
-                if translated ~= entry.name then entry.name = translated end
+                if entry._aaeSourceName == nil then entry._aaeSourceName = entry.name end
+                local translated = addon:TranslateUI(entry._aaeSourceName)
+                entry.name = translated
             end
             if entry.zone then
-                local translated = addon:TranslateUI(entry.zone)
-                if translated ~= entry.zone then entry.zone = translated end
+                if entry._aaeSourceZone == nil then entry._aaeSourceZone = entry.zone end
+                local translated = addon:TranslateUI(entry._aaeSourceZone)
+                entry.zone = translated
             end
         end
     end
