@@ -8,7 +8,7 @@
 | 퀘스트 도우미 | 도구 모음 `퀘스트` | `AzerothAdmin/QuestHelper.lua` | 퀘스트 로그 API, `.quest complete`, `.go creature`, `.go object` | 선택·상세·하이라이트 수명주기 자동검사 |
 | 파티·봇 퀘스트 동기화 | 퀘스트 도우미 상단 선택 항목 | `AzerothAdmin/QuestHelper.lua` | `QuestLogPushQuest`, Playerbots `quest complete [quest]` | 큐·상태 전환·파티 합류 자동검사; 게임 검사 대기 |
 | 한글 아이템/퀘스트 검색 | 검색 UI와 명령 인수 창 | `AzerothAdmin/KoKRSearch.lua`, `KoKRSearchData.lua` | `.additem`, `.quest add` | 팝업·수량 처리 자동검사 |
-| 주요 크리처 정보 | 명령 메뉴 `주요 크리처 / 한글·ID 검색` | `AzerothAdmin/FeaturedCreatures.lua`, `CreatureBrowser.lua`, `KoKRSearch.lua` | 3.3.5a `PlayerModel:SetCreature`, `.go creature id`, `.list creature`, `.npc add temp`, `.npc add` | 187개 선별 데이터·koKR 일치·스크롤·3D 외형·소환 분리 자동검사; 게임 검사 대기 |
+| 주요 크리처 정보 | 명령 메뉴 `주요 크리처 / 한글·ID 검색` | `AzerothAdmin/Modules/Creatures/` | `.go creature id`, `.list creature`, `.npc add temp`, `.npc add` | 187개 선별 데이터·koKR 일치·확장 스크롤·소환 분리 자동검사. 동작하지 않은 `PlayerModel` 미리보기 제거; 마우스 카메라·기능 회귀 게임 검사 대기 |
 | 기능 퀵슬롯 | 메인 명령/기능 버튼 우클릭, 하단 퀵슬롯 | `AzerothAdmin/Core.lua`, `UI.lua`, `Commands.lua` | 공통 `ExecuteDefinition` | command/action 키·기존 저장값 호환·권한 명령 자동검사; 게임 검사 대기 |
 | 아이템 정보 | 도구 모음 `아이템 정보` | `Embedded/BlueItemInfo3/Integrated.lua` | `.additem` | `BlueItemInfo3` 독립 프레임 자동검사 |
 | 전문기술 정보 | 도구 모음 `전문기술` | `Embedded/InvenCraftInfoUI/Rebuilt.lua`, `Embedded/InvenCraftInfo*` | `.learn`, `.setskill` | `AzerothAdminCraftInfoFrame` 독립 프레임·초기화 자동검사 |

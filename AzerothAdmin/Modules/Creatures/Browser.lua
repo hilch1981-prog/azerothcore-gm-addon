@@ -159,8 +159,6 @@ function addon:SelectFeaturedCreature(record)
         if self.creatureBrowserSelectedText then self.creatureBrowserSelectedText:SetText("크리처를 선택하세요.") end
         if self.creatureBrowserWarning then self.creatureBrowserWarning:SetText("") end
         if self.creatureBrowserFavoriteButton then self.creatureBrowserFavoriteButton:SetText("☆ 즐겨찾기") end
-        if self.creatureBrowserModel then self.creatureBrowserModel:Hide() end
-        if self.creatureBrowserModelFallback then self.creatureBrowserModelFallback:Show() end
         self:RefreshCreatureBrowserRows()
         return
     end
@@ -178,19 +176,6 @@ function addon:SelectFeaturedCreature(record)
     end
     if self.creatureBrowserFavoriteButton then
         self.creatureBrowserFavoriteButton:SetText(self:IsFeaturedCreatureFavorite(entry) and "★ 해제" or "☆ 즐겨찾기")
-    end
-    if self.creatureBrowserModel then
-        local ok = pcall(self.creatureBrowserModel.SetCreature, self.creatureBrowserModel, tonumber(entry))
-        if ok then
-            self.creatureBrowserModel:Show()
-            if self.creatureBrowserModelFallback then self.creatureBrowserModelFallback:Hide() end
-            if self.creatureBrowserModel.SetRotation then
-                pcall(self.creatureBrowserModel.SetRotation, self.creatureBrowserModel, self.creatureBrowserModelRotation or 0)
-            end
-        else
-            self.creatureBrowserModel:Hide()
-            if self.creatureBrowserModelFallback then self.creatureBrowserModelFallback:Show() end
-        end
     end
     self:RefreshCreatureBrowserRows()
 end
@@ -420,7 +405,7 @@ function addon:CreateCreatureBrowser()
 
     local resultScroll = CreateFrame("ScrollFrame", "AzerothAdminCreatureResultScroll", frame, "UIPanelScrollFrameTemplate")
     resultScroll:SetPoint("TOPLEFT", frame, "TOPLEFT", filterX, -184)
-    resultScroll:SetWidth(416)
+    resultScroll:SetWidth(636)
     resultScroll:SetHeight(270)
     resultScroll:EnableMouseWheel(true)
     resultScroll:SetScript("OnMouseWheel", function(self, delta)
@@ -429,7 +414,7 @@ function addon:CreateCreatureBrowser()
         self:SetVerticalScroll(math.max(0, math.min(maxScroll, currentScroll - delta * (CREATURE_ROW_HEIGHT * 3))))
     end)
     local resultChild = CreateFrame("Frame", nil, resultScroll)
-    resultChild:SetWidth(388)
+    resultChild:SetWidth(608)
     resultChild:SetHeight(270)
     resultScroll:SetScrollChild(resultChild)
     self.creatureBrowserResultScroll = resultScroll
@@ -438,7 +423,7 @@ function addon:CreateCreatureBrowser()
     self.creatureBrowserRows = {}
     for i = 1, table.getn(self.FeaturedCreatures or {}) do
         local row = CreateFrame("Button", nil, resultChild)
-        row:SetWidth(384)
+        row:SetWidth(604)
         row:SetHeight(40)
         row:SetPoint("TOPLEFT", resultChild, "TOPLEFT", 2, -((i - 1) * CREATURE_ROW_HEIGHT))
         row:SetBackdrop({
@@ -456,12 +441,12 @@ function addon:CreateCreatureBrowser()
         rowIcon:SetHeight(34)
         rowIcon:SetPoint("LEFT", row, "LEFT", 6, 0)
         local name = makeText(row, "", GameFontHighlightSmall)
-        name:SetWidth(328)
+        name:SetWidth(548)
         name:SetJustifyH("LEFT")
         name:SetPoint("TOPLEFT", row, "TOPLEFT", 46, -6)
         row.name = name
         local meta = makeText(row, "", GameFontHighlightSmall)
-        meta:SetWidth(328)
+        meta:SetWidth(548)
         meta:SetJustifyH("LEFT")
         meta:SetPoint("BOTTOMLEFT", row, "BOTTOMLEFT", 46, 6)
         meta:SetTextColor(0.65, 0.82, 0.90)
@@ -489,50 +474,6 @@ function addon:CreateCreatureBrowser()
         row:SetScript("OnLeave", function() GameTooltip:Hide() end)
         self.creatureBrowserRows[i] = row
     end
-
-    local modelPanel = CreateFrame("Frame", nil, frame)
-    modelPanel:SetWidth(196)
-    modelPanel:SetHeight(270)
-    modelPanel:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -18, -184)
-    modelPanel:SetBackdrop({
-        bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-        tile = true, tileSize = 12, edgeSize = 8,
-        insets = { left = 2, right = 2, top = 2, bottom = 2 },
-    })
-    modelPanel:SetBackdropColor(0.01, 0.02, 0.025, 1)
-    modelPanel:SetBackdropBorderColor(0.48, 0.43, 0.31, 1)
-    local modelTitle = makeText(modelPanel, "클라이언트 3D 외형", GameFontHighlightSmall)
-    modelTitle:SetPoint("TOP", modelPanel, "TOP", 0, -8)
-    modelTitle:SetTextColor(1, 0.82, 0.18)
-    local model = CreateFrame("PlayerModel", "AzerothAdminCreatureModelPreview", modelPanel)
-    model:SetPoint("TOPLEFT", modelPanel, "TOPLEFT", 8, -25)
-    model:SetPoint("BOTTOMRIGHT", modelPanel, "BOTTOMRIGHT", -8, 34)
-    if model.SetCamDistanceScale then pcall(model.SetCamDistanceScale, model, 1.05) end
-    self.creatureBrowserModel = model
-    self.creatureBrowserModelRotation = 0
-    local fallback = modelPanel:CreateTexture(nil, "ARTWORK")
-    fallback:SetTexture(CREATURE_ICON)
-    fallback:SetWidth(64)
-    fallback:SetHeight(64)
-    fallback:SetPoint("CENTER", modelPanel, "CENTER", 0, 2)
-    self.creatureBrowserModelFallback = fallback
-    local rotateLeft = makeButton(modelPanel, 76, 22, "◀ 회전")
-    rotateLeft:SetPoint("BOTTOMLEFT", modelPanel, "BOTTOMLEFT", 10, 8)
-    rotateLeft:SetScript("OnClick", function()
-        addon.creatureBrowserModelRotation = (addon.creatureBrowserModelRotation or 0) - 0.35
-        if addon.creatureBrowserModel and addon.creatureBrowserModel.SetRotation then
-            pcall(addon.creatureBrowserModel.SetRotation, addon.creatureBrowserModel, addon.creatureBrowserModelRotation)
-        end
-    end)
-    local rotateRight = makeButton(modelPanel, 76, 22, "회전 ▶")
-    rotateRight:SetPoint("BOTTOMRIGHT", modelPanel, "BOTTOMRIGHT", -10, 8)
-    rotateRight:SetScript("OnClick", function()
-        addon.creatureBrowserModelRotation = (addon.creatureBrowserModelRotation or 0) + 0.35
-        if addon.creatureBrowserModel and addon.creatureBrowserModel.SetRotation then
-            pcall(addon.creatureBrowserModel.SetRotation, addon.creatureBrowserModel, addon.creatureBrowserModelRotation)
-        end
-    end)
 
     local selectedText = makeText(frame, "크리처를 선택하세요.", GameFontNormal)
     selectedText:SetWidth(636)

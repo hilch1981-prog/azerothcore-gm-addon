@@ -185,28 +185,31 @@ class FeaturedCreatureBrowserTests(unittest.TestCase):
         ):
             self.assertIn(marker, browser)
 
-    def test_selected_creature_uses_native_335_model_preview(self):
+    def test_unreliable_player_model_preview_is_not_shipped(self):
         browser = BROWSER_PATH.read_text(encoding="utf-8-sig")
-        self.assertIn('CreateFrame("PlayerModel", "AzerothAdminCreatureModelPreview"', browser)
-        self.assertIn("self.creatureBrowserModel.SetCreature", browser)
-        self.assertIn("self.creatureBrowserModel.SetRotation", browser)
-        self.assertNotIn("SetPortraitTextureFromCreatureDisplayID", browser)
-
-    def test_r81_runtime_uses_native_npcscan_model_lifecycle(self):
         runtime = RUNTIME_PATH.read_text(encoding="utf-8-sig")
+        combined = browser + runtime
         for marker in (
-            'addon.CreatureBrowserRuntimeRevision = "IME R6 / MODEL R8.1 PRECHECK"',
-            'model:Show()',
-            'model.ClearModel',
-            'model:SetScript("OnUpdateModel"',
-            'safeCall(model.SetCreature, model, entry)',
-            'safeCall(model.SetUnit, model, "target")',
-            'string.sub(guid, 8, 12)',
+            'CreateFrame("PlayerModel"',
+            ".SetCreature",
+            ".SetUnit",
+            ".SetModelScale",
+            ".SetCamDistanceScale",
+            ".SetRotation",
+            "OnUpdateModel",
+            "UNIT_MODEL_CHANGED",
+            "PLAYER_TARGET_CHANGED",
         ):
-            self.assertIn(marker, runtime)
-        self.assertNotIn('sendPreviewCommand(".morph target ', runtime)
-        self.assertNotIn('sendPreviewCommand(".morph reset")', runtime)
-        self.assertNotIn("SetDisplayInfo", runtime)
+            self.assertNotIn(marker, combined)
+        self.assertIn('resultScroll:SetWidth(636)', browser)
+        self.assertIn('row:SetWidth(604)', browser)
+
+    def test_runtime_keeps_ime_fix_without_model_lifecycle(self):
+        runtime = RUNTIME_PATH.read_text(encoding="utf-8-sig")
+        self.assertIn('addon.CreatureBrowserRuntimeRevision = "IME R6 / NO PLAYERMODEL"', runtime)
+        self.assertIn("installCreatureSearchImeR6()", runtime)
+        self.assertNotIn("MODEL_CAMERAS", runtime)
+        self.assertNotIn("loadModelNative", runtime)
 
     def test_game_verified_r6_korean_ime_release_is_restored_without_chat_submit(self):
         runtime = RUNTIME_PATH.read_text(encoding="utf-8-sig")
