@@ -17,12 +17,12 @@ CRAFT_UI = ADDON / "Modules/ProfessionInfo/UI.lua"
 ORDER_RULES = (
     ("Locale.lua", "CommandMeta.lua"),
     ("CommandMeta.lua", "Commands.lua"),
-    ("KoKRSearchData.lua", r"Modules\Search\Module.lua"),
-    ("KoKRSearchData.lua", "FeaturedCreatures.lua"),
-    ("FeaturedCreatures.lua", r"Modules\Search\Module.lua"),
+    ("KoKRSearchData.lua", r"Modules\Creatures\Data.lua"),
+    (r"Modules\Creatures\Data.lua", r"Modules\Creatures\ExpandedData.lua"),
+    (r"Modules\Creatures\ExpandedData.lua", r"Modules\Search\Module.lua"),
     (r"Modules\Search\Module.lua", r"Modules\Search\Registration.lua"),
-    (r"Modules\Search\Registration.lua", "CreatureBrowser.lua"),
-    ("CreatureBrowser.lua", "Core.lua"),
+    (r"Modules\Search\Registration.lua", r"Modules\Creatures\Browser.lua"),
+    (r"Modules\Creatures\Browser.lua", "Core.lua"),
     ("Teleports.lua", r"Modules\Teleports\Module.lua"),
     (r"Modules\Teleports\Module.lua", r"Modules\Teleports\Registration.lua"),
     (r"Modules\Teleports\Registration.lua", "Commands.lua"),
@@ -40,6 +40,9 @@ ORDER_RULES = (
     (r"Modules\ItemBrowser\Registration.lua", r"Modules\ProfessionInfo\UI.lua"),
     (r"Modules\ProfessionInfo\UI.lua", r"Modules\ProfessionInfo\Registration.lua"),
     (r"Modules\ProfessionInfo\Registration.lua", "Integrations.lua"),
+    ("Integrations.lua", r"Modules\Creatures\Fixes.lua"),
+    (r"Modules\Creatures\Fixes.lua", r"Modules\Creatures\RuntimeFixes.lua"),
+    (r"Modules\Creatures\RuntimeFixes.lua", r"Modules\Creatures\Registration.lua"),
 )
 
 RETAIL_ONLY_TOKENS = ("C_Container","C_Item","C_QuestLog","ScrollBox","ScrollUtil","CreateFramePool","BackdropTemplate","Settings.","Enum.")

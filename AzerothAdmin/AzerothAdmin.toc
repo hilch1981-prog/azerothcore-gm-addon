@@ -30,10 +30,11 @@ Modules\LegacyManifest.lua
 Modules\Language\Module.lua
 CommandMeta.lua
 KoKRSearchData.lua
-FeaturedCreatures.lua
+Modules\Creatures\Data.lua
+Modules\Creatures\ExpandedData.lua
 Modules\Search\Module.lua
 Modules\Search\Registration.lua
-CreatureBrowser.lua
+Modules\Creatures\Browser.lua
 Teleports.lua
 Modules\Teleports\Module.lua
 Modules\Teleports\Registration.lua
@@ -64,6 +65,9 @@ Modules\ItemBrowser\Registration.lua
 Modules\ProfessionInfo\UI.lua
 Modules\ProfessionInfo\Registration.lua
 Integrations.lua
+Modules\Creatures\Fixes.lua
+Modules\Creatures\RuntimeFixes.lua
+Modules\Creatures\Registration.lua
 Modules\Bank\Locales\enUS.lua
 Modules\Bank\Locales\koKR.lua
 Modules\Bank\Locales\zhCN.lua
