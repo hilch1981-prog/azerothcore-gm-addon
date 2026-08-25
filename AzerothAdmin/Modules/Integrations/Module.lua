@@ -83,7 +83,7 @@ function addon:ToggleCraftInfo()
         return
     end
     self:HideAddonPopups(nil)
-    if not AzerothAdminCraftInfoFrame then self:Print("전문기술 정보 UI를 찾지 못했습니다.", true); return end
+    if not AzerothAdminCraftInfoFrame then self:Print(self:T("INTEGRATIONS_CRAFT_UI_MISSING"), true); return end
     if not AzerothAdminCraftInfoFrame.enable and AzerothAdminCraftInfoFrame.ADDON_LOADED then pcall(AzerothAdminCraftInfoFrame.ADDON_LOADED, AzerothAdminCraftInfoFrame) end
     if AzerothAdminCraftInfoFrame.ResetGMProfessionView then AzerothAdminCraftInfoFrame:ResetGMProfessionView() end
     local opened
@@ -109,10 +109,10 @@ function addon:ToggleItemInfo()
         return
     end
     if not BlueItemInfo3 or not BlueItemInfo3.OnClick then
-        self:Print("통합 아이템 정보 모듈을 찾지 못했습니다.", true)
+        self:Print(self:T("INTEGRATIONS_ITEM_MODULE_MISSING"), true)
         return
     end
     self:HideAddonPopups(nil)
     local ok, err = pcall(BlueItemInfo3.OnClick, BlueItemInfo3, "LeftButton")
-    if not ok then self:Print("아이템 정보 창을 열지 못했습니다: " .. tostring(err), true) end
+    if not ok then self:Print(self:T("INTEGRATIONS_ITEM_OPEN_FAILED", tostring(err)), true) end
 end
