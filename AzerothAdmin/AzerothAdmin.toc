@@ -48,6 +48,7 @@ Modules\Teleports\Registration.lua
 Modules\Commands\Module.lua
 Modules\Commands\Registration.lua
 Modules\Shell\Core.lua
+Modules\Language\Output.lua
 Modules\QuestHelper\Module.lua
 Modules\QuestHelper\Registration.lua
 Modules\Shell\UI.lua
