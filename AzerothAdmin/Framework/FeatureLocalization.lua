@@ -103,6 +103,31 @@ function addon:LocalizeAddonPopups()
     end
 end
 
+local function isDescendantOf(frame, ancestor)
+    if not frame or not ancestor then return false end
+    local current, guard = frame, 0
+    while current and guard < 24 do
+        if current == ancestor then return true end
+        current = current.GetParent and current:GetParent() or nil
+        guard = guard + 1
+    end
+    return false
+end
+
+function addon:IsLocalizationOwnedFrame(frame)
+    if not frame then return false end
+    local roots = {
+        self.frame, self.toolbar, self.argumentFrame, self.teleportFrame, self.favoriteFrame,
+        self.localeSearchFrame, self.questHelperFrame, self.questHelperSearchResultFrame,
+        self.creatureBrowserFrame, _G.AzerothAdminCraftInfoFrame, _G.BlueItemInfo3,
+    }
+    local i
+    for i = 1, table.getn(roots) do
+        if roots[i] and isDescendantOf(frame, roots[i]) then return true end
+    end
+    return false
+end
+
 local function hookFrame(frame)
     if not frame or frame.aaeLocalizationHooked then return end
     frame.aaeLocalizationHooked = true
@@ -130,6 +155,15 @@ function addon:InstallRuntimeLocalizationHooks()
     }
     local i
     for i = 1, table.getn(frames) do hookFrame(frames[i]) end
+    if GameTooltip and not GameTooltip.aaeLocalizationHooked then
+        GameTooltip.aaeLocalizationHooked = true
+        GameTooltip:HookScript("OnShow", function(self)
+            local owner = self.GetOwner and self:GetOwner() or nil
+            if addon.ActiveLocale ~= "koKR" and addon:IsLocalizationOwnedFrame(owner) then
+                addon:LocalizeFrame(self)
+            end
+        end)
+    end
 end
 
 local events = CreateFrame("Frame")
@@ -144,15 +178,14 @@ events:SetScript("OnEvent", function(self, event, name)
         self:UnregisterEvent("ADDON_LOADED")
     elseif event == "PLAYER_LOGIN" then
         local driver = CreateFrame("Frame")
-        local elapsedTotal, attempts = 0, 0
-        driver:SetScript("OnUpdate", function(frame, elapsed)
+        local elapsedTotal = 0
+        driver:SetScript("OnUpdate", function(_, elapsed)
+            if addon.ActiveLocale == "koKR" then return end
             elapsedTotal = elapsedTotal + (elapsed or 0)
-            if elapsedTotal < 0.5 then return end
+            if elapsedTotal < 1.0 then return end
             elapsedTotal = 0
-            attempts = attempts + 1
             addon:InstallRuntimeLocalizationHooks()
             addon:LocalizeVisibleFrames()
-            if attempts >= 12 then frame:SetScript("OnUpdate", nil) end
         end)
         self:UnregisterEvent("PLAYER_LOGIN")
     end
