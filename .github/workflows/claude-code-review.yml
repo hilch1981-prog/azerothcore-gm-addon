@@ -3,21 +3,9 @@ name: Claude Code Review
 on:
   pull_request:
     types: [opened, synchronize, ready_for_review, reopened]
-    # Optional: Only run on specific file changes
-    # paths:
-    #   - "src/**/*.ts"
-    #   - "src/**/*.tsx"
-    #   - "src/**/*.js"
-    #   - "src/**/*.jsx"
 
 jobs:
   claude-review:
-    # Optional: Filter by PR author
-    # if: |
-    #   github.event.pull_request.user.login == 'external-contributor' ||
-    #   github.event.pull_request.user.login == 'new-developer' ||
-    #   github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR'
-
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -29,8 +17,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          # Stacked feature PRs need origin/main and their non-main base branch.
-          # The Claude review plugin compares origin/main...HEAD internally.
+          # Stacked feature PRs need complete history and their non-main base branch.
           fetch-depth: 0
 
       - name: Run Claude Code Review
@@ -40,12 +27,24 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
           plugins: 'code-review@claude-code-plugins'
-          prompt: '/code-review:code-review --comment ${{ github.repository }}/pull/${{ github.event.pull_request.number }}'
-          # Keep automated reviews read-only while allowing the review plugin to
-          # inspect the checkout and PR diff without interactive permission prompts.
+          prompt: >-
+            Read CLAUDE.md, CHATGPT_PROJECT_INSTRUCTIONS.md, AGENTS.md,
+            PROJECT_STATUS.md, TASKS.md, DEVELOPMENT_RULES.md,
+            CONTRIBUTING.md, MODULE_MANIFEST.json, and
+            docs/project/AI_COLLABORATION.md before reviewing.
+            Then run /code-review:code-review --comment
+            ${{ github.repository }}/pull/${{ github.event.pull_request.number }}.
+            Review this as a WoW WotLK 3.3.5a Build 12340 + AzerothCore
+            addon change. Explicitly check Lua 5.1 compatibility, Interface
+            30300/WotLK API compatibility, absence of Retail-only APIs,
+            existing UI/UX preservation, TOC load order, AzerothCore command
+            correctness, localization data-vs-display boundaries, bundled
+            third-party provenance, stacked-PR base assumptions, and whether
+            any claim incorrectly implies in-game validation. Do not propose
+            MoP/SkyFire guidance. Prefer concrete inline comments on changed
+            lines; do not modify repository files.
+          # Automated Claude review is intentionally read-only. ChatGPT/Codex
+          # owns implementation and responds to review findings in follow-up commits.
           claude_args: >-
             --allowedTools
             "Read,Glob,Grep,Bash(git diff:*),Bash(git status:*),Bash(git log:*),Bash(git show:*),mcp__github_inline_comment__create_inline_comment"
-          # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
-          # or https://code.claude.com/docs/en/cli-reference for available options
-
