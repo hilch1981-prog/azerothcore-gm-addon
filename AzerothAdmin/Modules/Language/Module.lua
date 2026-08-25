@@ -3,20 +3,28 @@ local addon = AzerothAdminEasy
 
 if addon.RegisterModule and not addon:GetModule("language") then
     addon:RegisterModule("language", {
-        status = "foundation-active",
+        status = "foundation-active-runtime-ui-localization",
         dependencies = {},
         runtimeFiles = {
             "Framework/Localization.lua",
+            "Framework/UILocalization.lua",
+            "Framework/FeatureLocalization.lua",
             "Locale.lua",
             "Modules/Language/Module.lua",
+            "Modules/Language/Output.lua",
         },
         dataFiles = {
             "Locales/enUS.lua",
             "Locales/koKR.lua",
             "Locales/zhCN.lua",
             "Locales/zhTW.lua",
+            "Locales/UI",
         },
-        tests = { "tools/test_module_architecture.py", "tools/test_language_minibar.py" },
+        tests = {
+            "tools/test_module_architecture.py",
+            "tools/test_language_minibar.py",
+            "tools/test_runtime_ui_localization.py",
+        },
         futurePath = "AzerothAdmin/Modules/Language",
     })
 end
