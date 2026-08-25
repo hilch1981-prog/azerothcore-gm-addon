@@ -68,6 +68,14 @@ jobs:
       - name: Build and verify release ZIP
         run: python tools/build_release_zip.py --output "${RUNNER_TEMP}/AzerothAdmin.zip"
 
+      - name: Upload verified release ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: AzerothAdmin-release-candidate
+          path: ${{ runner.temp }}/AzerothAdmin.zip
+          if-no-files-found: error
+          retention-days: 14
+
       - name: Test Python audit tools
         run: >-
           python -m unittest
