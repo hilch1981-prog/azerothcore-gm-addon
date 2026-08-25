@@ -29,6 +29,7 @@ Locales\zhTW.lua
 Locales\UI\enUS.lua
 Locales\UI\zhCN.lua
 Locales\UI\zhTW.lua
+Locales\UI\Features\enUS.lua
 Locale.lua
 Framework\FeatureLocalization.lua
 Modules\Language\Module.lua
