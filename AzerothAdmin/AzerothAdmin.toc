@@ -26,8 +26,8 @@ Locales\koKR.lua
 Locales\zhCN.lua
 Locales\zhTW.lua
 Locale.lua
-Modules\LegacyManifest.lua
 Modules\Language\Module.lua
+Modules\Shell\Registration.lua
 Modules\Commands\CommandMeta.lua
 KoKRSearchData.lua
 Modules\Creatures\Data.lua
@@ -40,10 +40,10 @@ Modules\Teleports\Module.lua
 Modules\Teleports\Registration.lua
 Modules\Commands\Module.lua
 Modules\Commands\Registration.lua
-Core.lua
+Modules\Shell\Core.lua
 Modules\QuestHelper\Module.lua
 Modules\QuestHelper\Registration.lua
-UI.lua
+Modules\Shell\UI.lua
 Embedded\InvenCraftInfo\libs\LibStub\LibStub.lua
 Embedded\InvenCraftInfo\libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
 Embedded\InvenCraftInfo\libs\LibItemTooltip-1.0\LibItemTooltip-1.0.lua

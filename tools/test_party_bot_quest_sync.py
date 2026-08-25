@@ -63,10 +63,10 @@ class PartyBotQuestSyncTests(unittest.TestCase):
     def test_module_move_preserves_load_position_and_registration(self):
         self.assertFalse((ROOT / "AzerothAdmin/QuestHelper.lua").exists())
         toc = (ROOT / "AzerothAdmin/AzerothAdmin.toc").read_text(encoding="utf-8-sig")
-        core = toc.index("Core.lua")
+        core = toc.index("Modules\\Shell\\Core.lua")
         module = toc.index("Modules\\QuestHelper\\Module.lua")
         registration = toc.index("Modules\\QuestHelper\\Registration.lua")
-        ui = toc.index("UI.lua")
+        ui = toc.index("Modules\\Shell\\UI.lua")
         self.assertLess(core, module)
         self.assertLess(module, registration)
         self.assertLess(registration, ui)

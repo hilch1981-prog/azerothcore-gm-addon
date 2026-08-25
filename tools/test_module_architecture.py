@@ -15,7 +15,7 @@ def locale_keys(path: Path) -> set[str]:
 
 
 class ModuleArchitectureTests(unittest.TestCase):
-    def test_framework_and_locales_load_before_legacy_files(self):
+    def test_framework_and_locales_load_before_modules(self):
         toc = (ADDON / "AzerothAdmin.toc").read_text(encoding="utf-8-sig")
         ordered = [
             "Framework\\Bootstrap.lua",
@@ -26,13 +26,15 @@ class ModuleArchitectureTests(unittest.TestCase):
             "Locales\\zhCN.lua",
             "Locales\\zhTW.lua",
             "Locale.lua",
-            "Modules\\LegacyManifest.lua",
             "Modules\\Language\\Module.lua",
-            "CommandMeta.lua",
-            "Core.lua",
+            "Modules\\Shell\\Registration.lua",
+            "Modules\\Commands\\CommandMeta.lua",
+            "Modules\\Shell\\Core.lua",
         ]
         positions = [toc.index(item) for item in ordered]
         self.assertEqual(positions, sorted(positions))
+        self.assertNotIn("Modules\\LegacyManifest.lua", toc)
+        self.assertFalse((ADDON / "Modules/LegacyManifest.lua").exists())
 
     def test_locale_pack_keys_match_enus(self):
         locale_dir = ADDON / "Locales"
@@ -71,6 +73,7 @@ class ModuleArchitectureTests(unittest.TestCase):
         self.assertEqual("enUS", manifest["rules"]["default_locale"])
         self.assertIn("AzerothAdmin/KoKRSearchData.lua", manifest["ignore_by_default"])
         self.assertIn("AzerothAdmin/Embedded/BlueItemInfo3/Data.lua", manifest["ignore_by_default"])
+        self.assertIn("AzerothAdmin/Modules/Creatures/ExpandedData.lua", manifest["ignore_by_default"])
         for relative in manifest.get("shared_context", []):
             self.assertTrue((ROOT / relative).exists(), relative)
         for module in manifest["modules"].values():

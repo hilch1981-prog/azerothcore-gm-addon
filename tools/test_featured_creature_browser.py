@@ -10,6 +10,8 @@ EXPANDED_DATA_PATH = ADDON / "Modules/Creatures/ExpandedData.lua"
 BROWSER_PATH = ADDON / "Modules/Creatures/Browser.lua"
 FIXES_PATH = ADDON / "Modules/Creatures/Fixes.lua"
 RUNTIME_PATH = ADDON / "Modules/Creatures/RuntimeFixes.lua"
+SHELL_CORE = ADDON / "Modules/Shell/Core.lua"
+COMMANDS_PATH = ADDON / "Modules/Commands/Module.lua"
 
 
 def parse_featured_records(path=DATA_PATH):
@@ -71,7 +73,6 @@ class FeaturedCreatureBrowserTests(unittest.TestCase):
         catalog = parse_kokr_creatures()
         self.assertEqual(catalog[29307], "드라카리 거대골렘")
         self.assertEqual(catalog[29573], "드라카리 정령")
-
         expanded = {
             entry: (name, place)
             for entry, name, _group, _expansion, place, _restricted
@@ -80,7 +81,6 @@ class FeaturedCreatureBrowserTests(unittest.TestCase):
         self.assertEqual(expanded[29307], ("드라카리 거대골렘", "군드락"))
         self.assertNotIn(29573, expanded)
         self.assertIn(29307, parse_all_featured_entries())
-
         fixes = FIXES_PATH.read_text(encoding="utf-8-sig")
         self.assertNotIn("correctGundrakEntry", fixes)
         self.assertNotIn("table.insert(list, { 29307", fixes)
@@ -165,7 +165,6 @@ class FeaturedCreatureBrowserTests(unittest.TestCase):
                 self.assertTrue(restricted)
             elif group in {"leader", "utility"}:
                 self.assertFalse(restricted)
-
         browser = BROWSER_PATH.read_text(encoding="utf-8-sig")
         self.assertIn("지역 제한 가능", browser)
         self.assertIn("인스턴스·조우 스크립트", browser)
@@ -173,7 +172,7 @@ class FeaturedCreatureBrowserTests(unittest.TestCase):
 
     def test_item_info_style_layout_and_filters_exist(self):
         browser = BROWSER_PATH.read_text(encoding="utf-8-sig")
-        required = [
+        for marker in (
             'frame:SetWidth(900)',
             'frame:SetHeight(610)',
             '"UIPanelScrollFrameTemplate"',
@@ -183,8 +182,7 @@ class FeaturedCreatureBrowserTests(unittest.TestCase):
             'creatureBrowserExpansionChecks',
             'creatureBrowserRestrictedCheck',
             'creatureBrowserOpenCheck',
-        ]
-        for marker in required:
+        ):
             self.assertIn(marker, browser)
 
     def test_selected_creature_uses_native_335_model_preview(self):
@@ -196,7 +194,7 @@ class FeaturedCreatureBrowserTests(unittest.TestCase):
 
     def test_r81_runtime_uses_native_npcscan_model_lifecycle(self):
         runtime = RUNTIME_PATH.read_text(encoding="utf-8-sig")
-        required = [
+        for marker in (
             'addon.CreatureBrowserRuntimeRevision = "IME R6 / MODEL R8.1 PRECHECK"',
             'model:Show()',
             'model.ClearModel',
@@ -204,8 +202,7 @@ class FeaturedCreatureBrowserTests(unittest.TestCase):
             'safeCall(model.SetCreature, model, entry)',
             'safeCall(model.SetUnit, model, "target")',
             'string.sub(guid, 8, 12)',
-        ]
-        for marker in required:
+        ):
             self.assertIn(marker, runtime)
         self.assertNotIn('sendPreviewCommand(".morph target ', runtime)
         self.assertNotIn('sendPreviewCommand(".morph reset")', runtime)
@@ -213,7 +210,7 @@ class FeaturedCreatureBrowserTests(unittest.TestCase):
 
     def test_game_verified_r6_korean_ime_release_is_restored_without_chat_submit(self):
         runtime = RUNTIME_PATH.read_text(encoding="utf-8-sig")
-        required = [
+        for marker in (
             "function addon:ReleaseKoreanSearchInput(edit)",
             "edit.ToggleInputLanguage",
             'language == "ROMAN"',
@@ -223,16 +220,14 @@ class FeaturedCreatureBrowserTests(unittest.TestCase):
             "ChatEdit_DeactivateChat",
             "hookSubmitButton",
             "hookEnter",
-        ]
-        for marker in required:
+        ):
             self.assertIn(marker, runtime)
-        forbidden = [
+        for marker in (
             "ChatEdit_OnEnterPressed",
             "ChatEdit_SendText",
             "ChatEdit_ActivateChat",
             'edit:SetText("  ")',
-        ]
-        for marker in forbidden:
+        ):
             self.assertNotIn(marker, runtime)
 
     def test_unused_private_model_map_is_not_shipped_or_loaded(self):
@@ -246,15 +241,14 @@ class FeaturedCreatureBrowserTests(unittest.TestCase):
         self.assertIn('".npc add " .. tostring(entry)', browser)
         self.assertRegex(browser, r'creatureDefinition\("\.npc add temp .*?label, true, false\)')
         self.assertRegex(browser, r'creatureDefinition\("\.npc add .*?label, true, true\)')
-
         search = (ADDON / "Modules/Search/Module.lua").read_text(encoding="utf-8-sig")
         self.assertIn("현재 위치에 임시 소환 (DB 미저장)", search)
         self.assertIn("현재 위치에 영구 생성 (DB 저장)", search)
         self.assertIn("전체 DB 검색 항목은 지역·인스턴스 스크립트 여부가 분류되지 않았습니다.", search)
 
     def test_browser_routes_from_existing_creature_search_action(self):
-        core = (ADDON / "Core.lua").read_text(encoding="utf-8-sig")
-        commands = (ADDON / "Modules/Commands/Module.lua").read_text(encoding="utf-8-sig")
+        core = SHELL_CORE.read_text(encoding="utf-8-sig")
+        commands = COMMANDS_PATH.read_text(encoding="utf-8-sig")
         self.assertIn('definition.action == "kr_creature_search"', core)
         self.assertIn("self:ToggleCreatureBrowser()", core)
         self.assertIn("주요 크리처 / 한글·ID 검색", commands)
@@ -263,9 +257,9 @@ class FeaturedCreatureBrowserTests(unittest.TestCase):
         toc = (ADDON / "AzerothAdmin.toc").read_text(encoding="utf-8-sig")
         self.assertLess(toc.index("Modules\\Creatures\\Data.lua"), toc.index("Modules\\Creatures\\Browser.lua"))
         self.assertLess(toc.index("Modules\\Creatures\\ExpandedData.lua"), toc.index("Modules\\Creatures\\RuntimeFixes.lua"))
-        self.assertLess(toc.index("Modules\\Creatures\\Browser.lua"), toc.index("Core.lua"))
+        self.assertLess(toc.index("Modules\\Creatures\\Browser.lua"), toc.index("Modules\\Shell\\Core.lua"))
         self.assertLess(toc.index("Modules\\Creatures\\RuntimeFixes.lua"), toc.index("Modules\\Creatures\\Registration.lua"))
-        core = (ADDON / "Core.lua").read_text(encoding="utf-8-sig")
+        core = SHELL_CORE.read_text(encoding="utf-8-sig")
         self.assertIn("add(self.creatureBrowserFrame)", core)
 
     def test_full_database_search_remains_available(self):

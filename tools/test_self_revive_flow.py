@@ -4,7 +4,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-CORE = ROOT / "AzerothAdmin/Core.lua"
+CORE = ROOT / "AzerothAdmin/Modules/Shell/Core.lua"
 MODULE = ROOT / "AzerothAdmin/Modules/Revive/Module.lua"
 
 
@@ -76,7 +76,7 @@ class SelfReviveFlowTests(unittest.TestCase):
 
     def test_module_load_order_and_registration(self):
         toc = (ROOT / "AzerothAdmin/AzerothAdmin.toc").read_text(encoding="utf-8-sig")
-        self.assertLess(toc.index("Core.lua"), toc.index("Modules\\Revive\\Module.lua"))
+        self.assertLess(toc.index("Modules\\Shell\\Core.lua"), toc.index("Modules\\Revive\\Module.lua"))
         self.assertIn('addon:RegisterModule("revive"', self.source)
         self.assertIn('status = "module-active-legacy-fallback"', self.source)
         self.assertIn('addon.ReviveModuleRevision = "1.0.0-fallback"', self.source)
