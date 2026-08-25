@@ -65,6 +65,10 @@ Modules\ItemBrowser\Module.lua
 Modules\ItemBrowser\Registration.lua
 Modules\ProfessionInfo\UI.lua
 Modules\ProfessionInfo\Registration.lua
+Modules\Integrations\Locales\enUS.lua
+Modules\Integrations\Locales\koKR.lua
+Modules\Integrations\Locales\zhCN.lua
+Modules\Integrations\Locales\zhTW.lua
 Modules\Integrations\Module.lua
 Modules\Integrations\Registration.lua
 Modules\Creatures\Fixes.lua
