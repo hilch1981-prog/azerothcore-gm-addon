@@ -65,7 +65,8 @@ Modules\ItemBrowser\Module.lua
 Modules\ItemBrowser\Registration.lua
 Modules\ProfessionInfo\UI.lua
 Modules\ProfessionInfo\Registration.lua
-Integrations.lua
+Modules\Integrations\Module.lua
+Modules\Integrations\Registration.lua
 Modules\Creatures\Fixes.lua
 Modules\Creatures\RuntimeFixes.lua
 Modules\Creatures\Registration.lua

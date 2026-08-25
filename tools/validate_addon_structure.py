@@ -13,6 +13,7 @@ TOC = ADDON / "AzerothAdmin.toc"
 QUEST_HELPER = ADDON / "Modules/QuestHelper/Module.lua"
 ITEM_BROWSER = ADDON / "Modules/ItemBrowser/Module.lua"
 CRAFT_UI = ADDON / "Modules/ProfessionInfo/UI.lua"
+INTEGRATIONS = ADDON / "Modules/Integrations/Module.lua"
 
 ORDER_RULES = (
     ("Locale.lua", r"Modules\Commands\CommandMeta.lua"),
@@ -40,8 +41,9 @@ ORDER_RULES = (
     (r"Modules\ItemBrowser\Module.lua", r"Modules\ItemBrowser\Registration.lua"),
     (r"Modules\ItemBrowser\Registration.lua", r"Modules\ProfessionInfo\UI.lua"),
     (r"Modules\ProfessionInfo\UI.lua", r"Modules\ProfessionInfo\Registration.lua"),
-    (r"Modules\ProfessionInfo\Registration.lua", "Integrations.lua"),
-    ("Integrations.lua", r"Modules\Creatures\Fixes.lua"),
+    (r"Modules\ProfessionInfo\Registration.lua", r"Modules\Integrations\Module.lua"),
+    (r"Modules\Integrations\Module.lua", r"Modules\Integrations\Registration.lua"),
+    (r"Modules\Integrations\Registration.lua", r"Modules\Creatures\Fixes.lua"),
     (r"Modules\Creatures\Fixes.lua", r"Modules\Creatures\RuntimeFixes.lua"),
     (r"Modules\Creatures\RuntimeFixes.lua", r"Modules\Creatures\Registration.lua"),
 )
@@ -92,7 +94,7 @@ def validate() -> list[str]:
             if token.encode("ascii") in source: errors.append(f"Retail-only token {token} in {source_path.relative_to(ROOT)}")
     item_source=ITEM_BROWSER.read_text(encoding="utf-8-sig")
     craft_source=CRAFT_UI.read_text(encoding="utf-8-sig")
-    integration_source=(ADDON/"Integrations.lua").read_text(encoding="utf-8-sig")
+    integration_source=INTEGRATIONS.read_text(encoding="utf-8-sig")
     for snippet,label,source in (
         ('CreateFrame("Frame", "BlueItemInfo3", UIParent)',"item frame",item_source),
         ('"UIPanelScrollFrameTemplate"',"WotLK item ScrollFrame",item_source),

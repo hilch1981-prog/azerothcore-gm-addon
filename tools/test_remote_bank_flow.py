@@ -5,7 +5,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 MODULE = ROOT / "AzerothAdmin/Modules/Bank/Module.lua"
-INTEGRATIONS = ROOT / "AzerothAdmin/Integrations.lua"
+INTEGRATIONS = ROOT / "AzerothAdmin/Modules/Integrations/Module.lua"
 
 
 class RemoteBankFlowTests(unittest.TestCase):
@@ -68,7 +68,7 @@ class RemoteBankFlowTests(unittest.TestCase):
             "Modules\\Bank\\Locales\\zhCN.lua",
             "Modules\\Bank\\Locales\\zhTW.lua",
         ]
-        self.assertLess(toc.index("Integrations.lua"), toc.index(locale_paths[0]))
+        self.assertLess(toc.index("Modules\\Integrations\\Module.lua"), toc.index(locale_paths[0]))
         for path in locale_paths:
             self.assertLess(toc.index(path), toc.index("Modules\\Bank\\Module.lua"))
         self.assertIn('addon:RegisterModule("bank"', self.source)

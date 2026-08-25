@@ -5,7 +5,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 UI_SOURCE = ROOT / "AzerothAdmin/Modules/ProfessionInfo/UI.lua"
-INTEGRATIONS_SOURCE = ROOT / "AzerothAdmin/Integrations.lua"
+INTEGRATIONS_SOURCE = ROOT / "AzerothAdmin/Modules/Integrations/Module.lua"
 
 
 def function_body(source, function_name):
