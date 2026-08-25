@@ -5,6 +5,7 @@ ROOT = Path(__file__).resolve().parents[1]
 TOC = ROOT / "AzerothAdmin" / "AzerothAdmin.toc"
 UI = ROOT / "AzerothAdmin" / "Framework" / "UILocalization.lua"
 FEATURE = ROOT / "AzerothAdmin" / "Framework" / "FeatureLocalization.lua"
+OUTPUT = ROOT / "AzerothAdmin" / "Modules" / "Language" / "Output.lua"
 
 
 class RuntimeUILocalizationTests(unittest.TestCase):
@@ -16,9 +17,12 @@ class RuntimeUILocalizationTests(unittest.TestCase):
             r"Locales\UI\zhCN.lua",
             r"Locales\UI\zhTW.lua",
             r"Locales\UI\Features\enUS.lua",
+            r"Locales\UI\Messages\enUS.lua",
             r"Locale.lua",
             r"Framework\FeatureLocalization.lua",
             r"Modules\Commands\Module.lua",
+            r"Modules\Shell\Core.lua",
+            r"Modules\Language\Output.lua",
             r"Modules\Shell\UI.lua",
         ]
         positions = [lines.index(item) for item in required]
@@ -30,6 +34,7 @@ class RuntimeUILocalizationTests(unittest.TestCase):
         self.assertIn('self.ActiveLocale == "koKR"', source)
         self.assertIn("LocalizeFrame", source)
         self.assertIn('localizeField(frame, "aaeHint")', source)
+        self.assertIn('localizeField(frame, "aaeTitle")', source)
 
     def test_command_overlay_preserves_server_commands(self):
         source = FEATURE.read_text(encoding="utf-8-sig")
@@ -39,8 +44,30 @@ class RuntimeUILocalizationTests(unittest.TestCase):
         self.assertNotIn("def.permissionCommand =", source)
         self.assertIn("fallbackCommandHint", source)
 
+    def test_lazy_frames_and_owned_tooltips_are_localized(self):
+        source = FEATURE.read_text(encoding="utf-8-sig")
+        self.assertIn("InstallRuntimeLocalizationHooks", source)
+        self.assertIn('GameTooltip:HookScript("OnShow"', source)
+        self.assertIn("IsLocalizationOwnedFrame", source)
+        self.assertIn('driver:SetScript("OnUpdate"', source)
+        self.assertIn("self.teleportFrame", source)
+        self.assertIn("self.favoriteFrame", source)
+        self.assertIn("self.questHelperFrame", source)
+
+    def test_chat_output_wrapper_translates_display_text_only(self):
+        source = OUTPUT.read_text(encoding="utf-8-sig")
+        self.assertIn("aaeOriginalPrint", source)
+        self.assertIn("TranslateUI(text)", source)
+        self.assertIn('self.ActiveLocale ~= "koKR"', source)
+        self.assertNotIn("SendNow", source)
+        self.assertNotIn("command =", source)
+
     def test_runtime_localizer_uses_wotlk_safe_apis(self):
-        combined = UI.read_text(encoding="utf-8-sig") + FEATURE.read_text(encoding="utf-8-sig")
+        combined = (
+            UI.read_text(encoding="utf-8-sig")
+            + FEATURE.read_text(encoding="utf-8-sig")
+            + OUTPUT.read_text(encoding="utf-8-sig")
+        )
         for retail_api in ("C_Container", "C_Item", "ScrollBox", "C_QuestLog"):
             self.assertNotIn(retail_api, combined)
         self.assertIn('CreateFrame("Frame")', combined)
