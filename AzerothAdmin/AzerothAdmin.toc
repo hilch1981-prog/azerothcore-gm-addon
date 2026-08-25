@@ -21,11 +21,16 @@
 Framework\Bootstrap.lua
 Framework\ModuleRegistry.lua
 Framework\Localization.lua
+Framework\UILocalization.lua
 Locales\enUS.lua
 Locales\koKR.lua
 Locales\zhCN.lua
 Locales\zhTW.lua
+Locales\UI\enUS.lua
+Locales\UI\zhCN.lua
+Locales\UI\zhTW.lua
 Locale.lua
+Framework\FeatureLocalization.lua
 Modules\Language\Module.lua
 Modules\Shell\Registration.lua
 Modules\Commands\CommandMeta.lua
