@@ -8,6 +8,7 @@
 - `audits/`: 명령·데이터 감사 결과
 - `releases/`: 릴리스 노트
 - `project/`: 구조도, 기능 맵, 테스트 매트릭스, 참고자료, 작업 인계 문서
+  - `LOCALIZATION_ARCHITECTURE.md`: enUS/koKR/zhCN/zhTW 런타임 UI 현지화 구조와 koKR 동작 데이터 보존 규칙
 
 `AzerothAdmin/` 폴더에는 실제 애드온 실행에 필요한 Lua/TOC/리소스와 배포에 필요한 최소 고지 문서만 유지합니다.
 
