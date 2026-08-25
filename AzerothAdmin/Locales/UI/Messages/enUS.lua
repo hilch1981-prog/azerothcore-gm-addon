@@ -1,0 +1,40 @@
+AzerothAdminEasy = AzerothAdminEasy or {}
+local addon = AzerothAdminEasy
+if not addon.RegisterUILiterals then return end
+
+addon:RegisterUILiterals("enUS", {
+    ["서버가 이 명령의 권한을 거부했습니다."]="The server denied permission for this command.",
+    ["Console 보안 레벨(4) 전용 명령입니다."]="This command requires Console security level 4.",
+    ["실행 가능한 명령 또는 기능만 퀵슬롯에 등록할 수 있습니다."]="Only executable commands or actions can be assigned to quickslots.",
+    ["서버 응답 대기"]="Waiting for server response", ["서버 응답 확인"]="Server response confirmed",
+    ["서버 응답 미확인 · 시스템 채팅 확인"]="Server response not confirmed · check system chat",
+    ["GM 권한을 .account 응답에서 자동 확인합니다."]="GM access is detected automatically from the .account response.",
+    ["GM 레벨 자동 감지 응답을 확인하지 못했습니다. 권한 거부가 확인된 명령은 실행 후 자동 잠금됩니다."]="Could not confirm automatic GM-level detection. Commands rejected for permission will be locked after execution.",
+    ["여러 줄 명령은 실행할 수 없습니다."]="Multi-line commands cannot be executed.",
+    ["대상을 먼저 선택하세요."]="Select a target first.", ["플레이어 대상을 먼저 선택하세요."]="Select a player target first.",
+    ["크리쳐/NPC 대상을 먼저 선택하세요."]="Select a creature/NPC target first.", ["최근 명령을 지웠습니다."]="Recent commands cleared.",
+    ["UI 위치를 기본값으로 복구했습니다."]="UI position restored to default.", ["선택한 플레이어가 없습니다. 대상 플레이어 이름을 입력하세요."]="No player is selected. Enter the target player name.",
+    ["현재 캐릭터 식별자를 확인하지 못했습니다."]="Could not resolve the current character identifier.",
+    ["재료 정보를 확인할 수 없습니다. 주문 툴팁/전문기술 캐시가 준비되면 자동 갱신됩니다."]="Reagent information is unavailable. It will refresh when the spell/profession cache is ready.",
+    ["Item ID를 확인하지 못해 가방 추가를 사용할 수 없습니다."]="Item ID could not be resolved, so Add to Bag is unavailable.",
+    ["파티 또는 공격대에 참가한 뒤 봇 퀘스트 동기화를 사용하세요."]="Join a party or raid before using bot quest synchronization.",
+    ["오브젝트 이름을 확인할 수 없습니다."]="The object name could not be resolved.",
+    ["크리쳐 ID 또는 해당 목표의 퀘스트 POI를 확인할 수 없어 한글 검색을 엽니다."]="Creature ID or quest POI could not be resolved; opening the koKR search.",
+    ["드랍 원천 데이터와 퀘스트 POI를 확인하지 못했습니다. 아이템 검색을 엽니다."]="No drop-source data or quest POI was found; opening item search.",
+    ["오브젝트 entry 좌표가 클라이언트 로그에 없어 오브젝트 이름 조회를 실행합니다."]="Object entry coordinates are unavailable in the client log; looking up the object name.",
+    ["이 목표의 자동 위치를 확인할 수 없습니다."]="No automatic location is available for this objective.",
+    ["아이템 ID를 한글 Locale에서 자동 확인하지 못했습니다. 아이템 검색을 엽니다."]="Item ID could not be resolved from the koKR locale index; opening item search.",
+    ["이미 완료된 아이템 목표입니다."]="This item objective is already complete.",
+    ["우클릭 메뉴 API를 사용할 수 없습니다."]="The context-menu API is unavailable.",
+    ["전문기술 정보 UI를 찾지 못했습니다."]="Profession Info UI was not found.",
+    ["통합 아이템 정보 모듈을 찾지 못했습니다."]="Integrated Item Info module was not found.",
+    ["가방에 추가할 수량을 입력하세요.\n\n|cffffff00[%s] %s|r"]="Enter the quantity to add to your bag.\n\n|cffffff00[%s] %s|r",
+    ["이 퀘스트를 퀘스트 로그에 추가하시겠습니까?\n\n|cffffff00[%s] %s|r"]="Add this quest to your quest log?\n\n|cffffff00[%s] %s|r",
+    ["퀘스트 조건을 GM 완료 처리한 뒤 종료 위치로 이동하시겠습니까?\n\n|cffffff00[%s] %s|r\n\n보상은 자동 지급하지 않습니다. 종료 NPC/오브젝트에서 직접 선택하세요."]="Mark quest objectives complete and go to the end location?\n\n|cffffff00[%s] %s|r\n\nRewards are not granted automatically; choose them at the end NPC/object.",
+}, {
+    {"^필요 GM 레벨 ", "Required GM level "}, {" / 현재 ", " / current "}, {"^기능 퀵슬롯 해제: ", "Feature quickslot removed: "},
+    {"^기능 퀵슬롯 등록: ", "Feature quickslot assigned: "}, {"^GM 권한 자동 감지: 레벨 ", "GM access detected: level "},
+    {"^실행 불가: ", "Unavailable: "}, {"^아이템 정보 창을 열지 못했습니다: ", "Could not open Item Info: "},
+    {"^전문기술 도안 습득 요청: Spell ", "Profession recipe learn request: Spell "}, {" 습득 완료$", " learned"},
+    {"^재료 Item ID를 확인하지 못했습니다: ", "Could not resolve reagent Item ID: "},
+})
