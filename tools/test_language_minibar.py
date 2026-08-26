@@ -5,7 +5,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 ADDON = ROOT / "AzerothAdmin"
 LANGUAGE_MODULE = ADDON / "Modules" / "Language" / "Module.lua"
-LOCALES = ["enUS", "koKR", "zhCN", "zhTW"]
+LOCALES = ["enUS", "koKR", "zhCN", "zhTW", "ruRU"]
 
 
 class LanguageMinibarTests(unittest.TestCase):
@@ -18,11 +18,17 @@ class LanguageMinibarTests(unittest.TestCase):
         for retail_api in ("C_Container", "C_Item", "ScrollBox", "C_QuestLog"):
             self.assertNotIn(retail_api, text)
 
-    def test_language_cycle_contains_auto_and_four_supported_locales(self):
+    def test_language_cycle_contains_auto_and_five_supported_locales(self):
         text = LANGUAGE_MODULE.read_text(encoding="utf-8-sig")
-        self.assertIn('{ "auto", "koKR", "enUS", "zhCN", "zhTW" }', text)
+        self.assertIn('{ "auto", "koKR", "enUS", "zhCN", "zhTW", "ruRU" }', text)
         self.assertIn('AzerothAdminEasyDB.localeOverride', text)
         self.assertIn('addon:SetLocaleOverride(requested)', text)
+
+    def test_language_labels_cover_every_cycle_entry(self):
+        text = LANGUAGE_MODULE.read_text(encoding="utf-8-sig")
+        for label in ('auto = "AUTO"', 'koKR = "KO"', 'enUS = "EN"',
+                      'zhCN = "简"', 'zhTW = "繁"', 'ruRU = "RU"'):
+            self.assertIn(label, text)
 
     def test_all_locale_packs_have_minibar_strings(self):
         for locale in LOCALES:

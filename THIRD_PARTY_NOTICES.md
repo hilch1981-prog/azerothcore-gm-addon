@@ -10,6 +10,17 @@
 - 외부 번역문이나 기계 번역 데이터 파일을 가져오지 않았다.
 - 기존 기능 파일의 모듈 이동은 동일 저장소의 기존 blob을 우선 재사용했다.
 
+### Noto Sans CJK
+
+- 원본 프로젝트: Noto CJK (Adobe 및 Google)
+- 출처: `https://github.com/notofonts/noto-cjk/blob/main/Sans/Variable/TTF/NotoSansCJKkr-VF.ttf`
+- 라이선스: SIL Open Font License 1.1 (`AzerothAdmin/Fonts/OFL-NotoCJK.txt`)
+- 사용 범위: 한국어 클라이언트에서 중국어 간체·번체 및 러시아어 UI 글리프를 표시하는 애드온 전용 글꼴
+- 변경 사항: 공식 가변 TTF의 굵기 400을 정적 글꼴로 고정하고, 현재 애드온 문자열에 필요한 글리프만 남겼으며 OFL의 Reserved Font Name 조건에 따라 `AzerothAdmin Unicode`로 이름을 변경함
+- 재생성 도구: `tools/build_unicode_font.py`
+- 원본 SHA-256: `7715AF52F5FE77153CE5678546258993982D2DA61ABEA8D25FB89EB5AAEC5CA6`
+- 배포 글꼴 SHA-256: `F8466FFA2E6D8FBFF6256716D975F856257892201E6C65C56D91620D9893AD5F`
+
 ### AzerothCore WotLK
 
 - 출처: `https://github.com/azerothcore/azerothcore-wotlk`

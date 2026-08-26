@@ -7,6 +7,7 @@ if addon.RegisterModule and not addon:GetModule("language") then
         dependencies = {},
         runtimeFiles = {
             "Framework/Localization.lua",
+            "Framework/LocaleFont.lua",
             "Framework/UILocalization.lua",
             "Framework/FeatureLocalization.lua",
             "Locale.lua",
@@ -18,6 +19,7 @@ if addon.RegisterModule and not addon:GetModule("language") then
             "Locales/koKR.lua",
             "Locales/zhCN.lua",
             "Locales/zhTW.lua",
+            "Locales/ruRU.lua",
             "Locales/UI",
         },
         tests = {
@@ -42,13 +44,14 @@ local function trim(value)
     return string.gsub(value, "^%s*(.-)%s*$", "%1")
 end
 
-local LANGUAGE_ORDER = { "auto", "koKR", "enUS", "zhCN", "zhTW" }
+local LANGUAGE_ORDER = { "auto", "koKR", "enUS", "zhCN", "zhTW", "ruRU" }
 local LANGUAGE_LABELS = {
     auto = "AUTO",
     koKR = "KO",
     enUS = "EN",
     zhCN = "简",
     zhTW = "繁",
+    ruRU = "RU",
 }
 
 local function configuredLanguage()
@@ -74,6 +77,7 @@ local function refreshLanguageButton(button)
     local label = LANGUAGE_LABELS[configured] or string.upper(string.sub(configured, 1, 2))
     if button.aaeLabel then
         button.aaeLabel:SetText(label)
+        if addon.ApplyLocaleFont then addon:ApplyLocaleFont(button.aaeLabel) end
     end
     button.aaeConfiguredLocale = configured
 end
