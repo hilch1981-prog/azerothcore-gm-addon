@@ -1,0 +1,46 @@
+name: Recover Unicode Font
+
+on:
+  push:
+    branches:
+      - claude/cowork-recovery-staging
+    paths:
+      - .github/workflows/recover-unicode-font.yml
+
+permissions:
+  contents: write
+
+jobs:
+  recover-font:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout staging branch
+        uses: actions/checkout@v4
+
+      - name: Reconstruct and verify font
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .cowork-stage/part_*.b64 > /tmp/AzerothAdminUnicode.ttf.xz.b64
+          base64 -d /tmp/AzerothAdminUnicode.ttf.xz.b64 > /tmp/AzerothAdminUnicode.ttf.xz
+          xz -dc /tmp/AzerothAdminUnicode.ttf.xz > /tmp/AzerothAdminUnicode.ttf
+          echo "f8466ffa2e6d8fbff6256716d975f856257892201e6c65c56d91620d9893ad5f  /tmp/AzerothAdminUnicode.ttf" | sha256sum -c -
+          test "$(stat -c %s /tmp/AzerothAdminUnicode.ttf)" = "721024"
+
+      - name: Add verified font to recovery branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin claude/cowork-recovery
+          git checkout -B claude/cowork-recovery origin/claude/cowork-recovery
+          mkdir -p AzerothAdmin/Fonts
+          cp /tmp/AzerothAdminUnicode.ttf AzerothAdmin/Fonts/AzerothAdminUnicode.ttf
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add AzerothAdmin/Fonts/AzerothAdminUnicode.ttf
+          if git diff --cached --quiet; then
+            echo "Font already present; nothing to commit."
+            exit 0
+          fi
+          git commit -m "Add bundled Unicode locale font"
+          git push origin HEAD:claude/cowork-recovery
