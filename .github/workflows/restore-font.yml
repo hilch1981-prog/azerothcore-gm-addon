@@ -1,0 +1,44 @@
+name: Restore verified Unicode font
+
+on:
+  push:
+    branches:
+      - claude/cowork-recovery-staging
+    paths:
+      - '.github/workflows/restore-font.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  restore-font:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout staging branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Restore and verify TTF
+        shell: bash
+        run: |
+          set -euo pipefail
+          base64 -d .cowork-stage/part_08.b64 > /tmp/AzerothAdminUnicode.ttf.xz
+          xz -dc /tmp/AzerothAdminUnicode.ttf.xz > /tmp/AzerothAdminUnicode.ttf
+          test "$(sha256sum /tmp/AzerothAdminUnicode.ttf | awk '{print $1}')" = "f8466ffa2e6d8fbff6256716d975f856257892201e6c65c56d91620d9893ad5f"
+          test "$(wc -c < /tmp/AzerothAdminUnicode.ttf | tr -d ' ')" = "721024"
+
+      - name: Commit font to recovery branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin claude/cowork-recovery
+          git checkout -B claude/cowork-recovery origin/claude/cowork-recovery
+          mkdir -p AzerothAdmin/Fonts
+          cp /tmp/AzerothAdminUnicode.ttf AzerothAdmin/Fonts/AzerothAdminUnicode.ttf
+          test "$(git hash-object AzerothAdmin/Fonts/AzerothAdminUnicode.ttf)" = "8a307cb6dc84a8ed4d4772465f01bce65bb9ecb6"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add AzerothAdmin/Fonts/AzerothAdminUnicode.ttf
+          git commit -m "Add verified Unicode font asset"
+          git push origin HEAD:claude/cowork-recovery
