@@ -23,10 +23,16 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          base64 -d .cowork-stage/part_08.b64 > /tmp/AzerothAdminUnicode.ttf.xz
-          xz -dc /tmp/AzerothAdminUnicode.ttf.xz > /tmp/AzerothAdminUnicode.ttf
-          test "$(sha256sum /tmp/AzerothAdminUnicode.ttf | awk '{print $1}')" = "f8466ffa2e6d8fbff6256716d975f856257892201e6c65c56d91620d9893ad5f"
-          test "$(wc -c < /tmp/AzerothAdminUnicode.ttf | tr -d ' ')" = "721024"
+          python3 - <<'PY'
+          import base64, hashlib, lzma, pathlib
+          src = pathlib.Path('.cowork-stage/part_08.b64').read_text(encoding='utf-8').strip()
+          packed = base64.b64decode(src, validate=True)
+          assert packed[:6] == b'\xfd7zXZ\x00', packed[:8]
+          data = lzma.decompress(packed)
+          assert len(data) == 721024, len(data)
+          assert hashlib.sha256(data).hexdigest() == 'f8466ffa2e6d8fbff6256716d975f856257892201e6c65c56d91620d9893ad5f'
+          pathlib.Path('/tmp/AzerothAdminUnicode.ttf').write_bytes(data)
+          PY
 
       - name: Commit font to recovery branch
         shell: bash
