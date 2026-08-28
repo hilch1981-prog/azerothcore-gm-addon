@@ -120,6 +120,7 @@ addon:RegisterUILiterals("enUS", {
     ["평판 · 오리지널"]="Reputation · Classic",
     ["계승 아이템"]="Heirlooms", ["보석"]="Gems",
     ["아이템 강화"]="Item enhancements", ["퀘스트 보상"]="Quest rewards",
+    ["아이템명·효과·툴팁: 클라이언트/서버 국가·언어 리전(locale) 데이터"]="Item names, effects, and tooltips: client/server locale data",
 }, {
     {"^진영 제한: 얼라이언스$", "Faction restriction: Alliance"},
     {"^진영 제한: 호드$", "Faction restriction: Horde"},

@@ -76,6 +76,9 @@ class RuntimeUILocalizationTests(unittest.TestCase):
         self.assertIn("Faction restriction: Alliance", english)
         self.assertIn("Set/Exchange: ", english)
         self.assertIn("The bag icon number %1 is item level, not quantity.", english)
+        locale_notice = "아이템명·효과·툴팁: 클라이언트/서버 국가·언어 리전(locale) 데이터"
+        self.assertIn(locale_notice, source)
+        self.assertIn(f'["{locale_notice}"]=', english)
 
     def test_chat_output_wrapper_translates_display_text_only(self):
         source = OUTPUT.read_text(encoding="utf-8-sig")
