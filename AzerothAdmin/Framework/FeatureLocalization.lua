@@ -12,6 +12,8 @@ local function fallbackCommandHint(def)
         return command and ("AzerothCore GM命令：" .. command) or "AzerothCore GM功能"
     elseif addon.ActiveLocale == "zhTW" then
         return command and ("AzerothCore GM命令：" .. command) or "AzerothCore GM功能"
+    elseif addon.ActiveLocale == "ruRU" then
+        return command and ("GM-команда AzerothCore: " .. command) or "Функция GM AzerothCore"
     end
     return command and ("AzerothCore GM command: " .. command) or "AzerothCore GM action"
 end
@@ -21,6 +23,7 @@ local function fallbackActionLabel(action)
         enUS = { revive="Revive", godToggle="God Mode", visibilityToggle="Visibility", flightToggle="GM Flight", waterwalkToggle="Water Walk", speedToggle="Speed", questhelper="Quest Helper", bankToggle="Bank", craftInfo="Profession Info", itemInfo="Item Info", teleports="Teleports", favorites="Favorites", probeSecurity="Check GM Access", screenshot="Screenshot" },
         zhCN = { revive="复活", godToggle="无敌模式", visibilityToggle="隐身", flightToggle="GM飞行", waterwalkToggle="水上行走", speedToggle="移动速度", questhelper="任务助手", bankToggle="银行", craftInfo="专业技能信息", itemInfo="物品信息", teleports="传送", favorites="收藏", probeSecurity="检查GM权限", screenshot="截图" },
         zhTW = { revive="復活", godToggle="無敵模式", visibilityToggle="隱形", flightToggle="GM飛行", waterwalkToggle="水上行走", speedToggle="移動速度", questhelper="任務助手", bankToggle="銀行", craftInfo="專業技能資訊", itemInfo="物品資訊", teleports="傳送", favorites="最愛", probeSecurity="檢查GM權限", screenshot="截圖" },
+        ruRU = { revive="Воскресить", godToggle="Режим бога", visibilityToggle="Невидимость", flightToggle="Полёт GM", waterwalkToggle="Хождение по воде", speedToggle="Скорость", questhelper="Помощник заданий", bankToggle="Банк", craftInfo="Профессии", itemInfo="Предметы", teleports="Телепорты", favorites="Избранное", probeSecurity="Проверить права GM", screenshot="Снимок экрана" },
     }
     local pack = names[addon.ActiveLocale] or names.enUS
     return pack[action] or action or "Action"
@@ -95,16 +98,38 @@ function addon:LocalizeTeleportDefinitions()
     localizeTeleportEntries(self.Teleports)
 end
 
+function addon:LocalizePopupDefinition(key)
+    if self.ActiveLocale == "koKR" or type(StaticPopupDialogs) ~= "table" then return end
+    if type(key) ~= "string" or string.find(key, "AZEROTHADMIN_", 1, true) ~= 1 then return end
+    local dialog = StaticPopupDialogs[key]
+    if type(dialog) ~= "table" then return end
+    local fields = { "text", "button1", "button2", "button3" }
+    local i
+    for i = 1, table.getn(fields) do
+        local field = fields[i]
+        local sourceField = "_aaeSource_" .. field
+        if dialog[sourceField] == nil and type(dialog[field]) == "string" then
+            dialog[sourceField] = dialog[field]
+        end
+        if type(dialog[sourceField]) == "string" then
+            dialog[field] = self:TranslateUI(dialog[sourceField])
+        end
+    end
+end
+
 function addon:LocalizeAddonPopups()
     if self.ActiveLocale == "koKR" or type(StaticPopupDialogs) ~= "table" then return end
-    local key, dialog
-    for key, dialog in pairs(StaticPopupDialogs) do
-        if type(key) == "string" and string.find(key, "AZEROTHADMIN_", 1, true) == 1 and type(dialog) == "table" then
-            if type(dialog.text) == "string" then dialog.text = self:TranslateUI(dialog.text) end
-            if type(dialog.button1) == "string" then dialog.button1 = self:TranslateUI(dialog.button1) end
-            if type(dialog.button2) == "string" then dialog.button2 = self:TranslateUI(dialog.button2) end
-            if type(dialog.button3) == "string" then dialog.button3 = self:TranslateUI(dialog.button3) end
-        end
+    local key
+    for key in pairs(StaticPopupDialogs) do self:LocalizePopupDefinition(key) end
+end
+
+function addon:InstallPopupLocalizationHook()
+    if self.aaeStaticPopupShowHooked or type(StaticPopup_Show) ~= "function" then return end
+    self.aaeStaticPopupShowHooked = true
+    self.aaeOriginalStaticPopupShow = StaticPopup_Show
+    StaticPopup_Show = function(which, ...)
+        addon:LocalizePopupDefinition(which)
+        return addon.aaeOriginalStaticPopupShow(which, ...)
     end
 end
 
@@ -169,6 +194,17 @@ function addon:InstallRuntimeLocalizationHooks()
             end
         end)
     end
+    local popupIndex
+    for popupIndex = 1, 4 do
+        local popup = _G["StaticPopup" .. tostring(popupIndex)]
+        if popup and not popup.aaeLocalizationHooked then
+            popup.aaeLocalizationHooked = true
+            popup:HookScript("OnShow", function(self)
+                local which = tostring(self.which or "")
+                if string.find(which, "AZEROTHADMIN_", 1, true) == 1 then addon:LocalizeFrame(self) end
+            end)
+        end
+    end
 end
 
 local events = CreateFrame("Frame")
@@ -180,6 +216,7 @@ events:SetScript("OnEvent", function(self, event, name)
         addon:LocalizeCommandDefinitions()
         addon:LocalizeTeleportDefinitions()
         addon:LocalizeAddonPopups()
+        addon:InstallPopupLocalizationHook()
         self:UnregisterEvent("ADDON_LOADED")
     elseif event == "PLAYER_LOGIN" then
         local driver = CreateFrame("Frame")

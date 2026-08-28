@@ -34,9 +34,9 @@ addon:RegisterLocale("enUS", {
     STATUS_IDLE = "Hover over a button to view its description and command.",
     HISTORY = "Recent Commands",
     EMPTY_HISTORY = "No commands have been run recently.",
-    LANGUAGE_USAGE = "Language: %s / Usage: /aalang auto|enUS|koKR|zhCN|zhTW",
-    LANGUAGE_UNSUPPORTED = "Unsupported language. Use: auto, enUS, koKR, zhCN, or zhTW.",
+    LANGUAGE_USAGE = "Language: %s / Usage: /aalang auto|enUS|koKR|zhCN|zhTW|ruRU",
+    LANGUAGE_UNSUPPORTED = "Unsupported language. Use: auto, enUS, koKR, zhCN, zhTW, or ruRU.",
     LANGUAGE_SAVED = "Language setting saved: %s. Reloading UI...",
     LANGUAGE_BUTTON_TITLE = "Language",
-    LANGUAGE_BUTTON_HINT = "Current display language: %s\nClick: Auto → Korean → English → Simplified Chinese → Traditional Chinese",
+    LANGUAGE_BUTTON_HINT = "Current display language: %s\nClick: Auto → Korean → English → Simplified Chinese → Traditional Chinese → Russian",
 })

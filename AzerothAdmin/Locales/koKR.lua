@@ -34,9 +34,9 @@ addon:RegisterLocale("koKR", {
     STATUS_IDLE = "버튼에 마우스를 올리면 설명과 실제 명령을 확인할 수 있습니다.",
     HISTORY = "최근 명령",
     EMPTY_HISTORY = "최근 실행한 명령이 없습니다.",
-    LANGUAGE_USAGE = "현재 언어: %s / 사용법: /aalang auto|enUS|koKR|zhCN|zhTW",
-    LANGUAGE_UNSUPPORTED = "지원하지 않는 언어입니다. auto, enUS, koKR, zhCN, zhTW 중 하나를 사용하세요.",
+    LANGUAGE_USAGE = "현재 언어: %s / 사용법: /aalang auto|enUS|koKR|zhCN|zhTW|ruRU",
+    LANGUAGE_UNSUPPORTED = "지원하지 않는 언어입니다. auto, enUS, koKR, zhCN, zhTW, ruRU 중 하나를 사용하세요.",
     LANGUAGE_SAVED = "언어 설정 저장: %s. UI를 다시 불러옵니다...",
     LANGUAGE_BUTTON_TITLE = "언어 전환",
-    LANGUAGE_BUTTON_HINT = "현재 표시 언어: %s\n클릭: 자동 → 한국어 → 영어 → 중국어 간체 → 중국어 번체",
+    LANGUAGE_BUTTON_HINT = "현재 표시 언어: %s\n클릭: 자동 → 한국어 → 영어 → 중국어 간체 → 중국어 번체 → 러시아어",
 })

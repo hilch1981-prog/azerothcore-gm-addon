@@ -57,6 +57,7 @@ end
 
 local function localizeRegions(frame)
     if not frame then return end
+    if addon.ApplyLocaleFont then addon:ApplyLocaleFont(frame) end
     localizeField(frame, "aaeHint")
     localizeField(frame, "aaeTitle")
     localizeField(frame, "tooltipText")
@@ -68,6 +69,7 @@ local function localizeRegions(frame)
         local region = regions[i]
         if region and region.GetObjectType and region:GetObjectType() == "FontString"
             and region.GetText and region.SetText then
+            if addon.ApplyLocaleFont then addon:ApplyLocaleFont(region) end
             local current = region:GetText()
             if current and current ~= "" then
                 local translated = addon:TranslateUI(current)

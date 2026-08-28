@@ -10,6 +10,7 @@ local SUPPORTED_LOCALES = {
     koKR = true,
     zhCN = true,
     zhTW = true,
+    ruRU = true,
 }
 
 local function merge(target, source)
@@ -37,7 +38,7 @@ function addon:RegisterLocale(locale, values)
 end
 
 function addon:GetSupportedLocales()
-    return { "enUS", "koKR", "zhCN", "zhTW" }
+    return { "enUS", "koKR", "zhCN", "zhTW", "ruRU" }
 end
 
 function addon:SetLocaleOverride(locale)

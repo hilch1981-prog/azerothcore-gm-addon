@@ -15,7 +15,7 @@
     "one_feature_per_pr": true,
     "preserve_existing_behavior_during_move": true,
     "read_data_files_only_when_data_changes": true,
-    "locales_required": ["enUS", "koKR", "zhCN", "zhTW"],
+    "locales_required": ["enUS", "koKR", "zhCN", "zhTW", "ruRU"],
     "default_locale": "enUS",
     "locale_selection": "automatic-with-manual-override",
     "runtime_ui_fallback": "enUS",
@@ -35,6 +35,7 @@
       "status": "foundation-active-runtime-ui-localization",
       "runtime_files": [
         "AzerothAdmin/Framework/Localization.lua",
+        "AzerothAdmin/Framework/LocaleFont.lua",
         "AzerothAdmin/Framework/UILocalization.lua",
         "AzerothAdmin/Framework/FeatureLocalization.lua",
         "AzerothAdmin/Locale.lua",

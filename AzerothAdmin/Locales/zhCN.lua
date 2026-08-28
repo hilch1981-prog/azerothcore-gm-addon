@@ -34,9 +34,9 @@ addon:RegisterLocale("zhCN", {
     STATUS_IDLE = "将鼠标悬停在按钮上可查看说明和实际命令。",
     HISTORY = "最近命令",
     EMPTY_HISTORY = "没有最近执行的命令。",
-    LANGUAGE_USAGE = "当前语言：%s / 用法：/aalang auto|enUS|koKR|zhCN|zhTW",
-    LANGUAGE_UNSUPPORTED = "不支持该语言。请使用 auto、enUS、koKR、zhCN 或 zhTW。",
+    LANGUAGE_USAGE = "当前语言：%s / 用法：/aalang auto|enUS|koKR|zhCN|zhTW|ruRU",
+    LANGUAGE_UNSUPPORTED = "不支持该语言。请使用 auto、enUS、koKR、zhCN、zhTW 或 ruRU。",
     LANGUAGE_SAVED = "语言设置已保存：%s。正在重新加载界面...",
     LANGUAGE_BUTTON_TITLE = "语言切换",
-    LANGUAGE_BUTTON_HINT = "当前显示语言：%s\n点击：自动 → 韩语 → 英语 → 简体中文 → 繁体中文",
+    LANGUAGE_BUTTON_HINT = "当前显示语言：%s\n点击：自动 → 韩语 → 英语 → 简体中文 → 繁体中文 → 俄语",
 })

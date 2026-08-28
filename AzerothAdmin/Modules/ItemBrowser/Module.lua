@@ -853,6 +853,7 @@ if addon and addon.RegisterEscapeFrame then addon:RegisterEscapeFrame(BII3) end
 
 local icon=BII3:CreateTexture(nil,"ARTWORK"); icon:SetTexture("Interface\\AddOns\\AzerothAdmin\\Embedded\\BlueItemInfo3\\Icon"); icon:SetWidth(32); icon:SetHeight(32); icon:SetPoint("TOPLEFT",14,-10)
 local title=makeText(BII3,"아이템 정보 · WotLK 3.3.5a","GameFontNormalLarge"); title:SetPoint("TOPLEFT",54,-17); title:SetTextColor(1,0.78,0.25)
+local localeSource=makeText(BII3,"아이템명·효과·툴팁: 클라이언트/서버 국가·언어 리전(locale) 데이터","GameFontHighlightSmall"); localeSource:SetWidth(430); localeSource:SetJustifyH("RIGHT"); localeSource:SetPoint("TOPRIGHT",-42,-20); localeSource:SetTextColor(0.62,0.68,0.74)
 local close=CreateFrame("Button",nil,BII3,"UIPanelCloseButton"); close:SetPoint("TOPRIGHT",-5,-5)
 local hint=makeText(BII3,"왼쪽 분류 선택 → 상단 종류/등급 필터 → 아이템 클릭 시 수량 입력 후 가방 추가","GameFontHighlightSmall"); hint:SetPoint("TOPLEFT",18,-47); hint:SetTextColor(0.55,0.88,0.92)
 
