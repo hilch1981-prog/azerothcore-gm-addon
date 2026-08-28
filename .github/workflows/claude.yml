@@ -44,8 +44,8 @@ jobs:
           additional_permissions: |
             actions: read
 
-          # Only allow the release-related shell commands needed for an owner-triggered release task.
+          # Restrict shell access to the owner-triggered release workflow only.
           claude_args: >-
             --allowed-tools
-            "Bash(git tag:*),Bash(git push origin refs/tags/*),Bash(gh release create:*),Bash(gh release upload:*),Bash(sha256sum:*)"
+            "Bash(git tag:*),Bash(git push origin refs/tags/*),Bash(git ls-remote --tags:*),Bash(gh release view:*),Bash(gh run list:*),Bash(gh run download:*),Bash(gh release create:*),Bash(gh release upload:*),Bash(sha256sum:*)"
 
