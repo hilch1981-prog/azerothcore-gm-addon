@@ -10,7 +10,7 @@
 ## Notes-zhTW: AzerothCore 3.3.5a GM管理插件 · 作者：Hobbyist
 ## Notes-ruRU: GM-аддон для AzerothCore 3.3.5a · Автор: Hobbyist
 ## Author: 취미연구가
-## Version: 3.4.0-335a
+## Version: 3.5.0-335a
 ## X-Client: WoW 3.3.5a (12340)
 ## X-Core: AzerothCore
 ## X-Module-API: 1
