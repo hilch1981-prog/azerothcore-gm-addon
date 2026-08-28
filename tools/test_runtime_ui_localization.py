@@ -61,6 +61,17 @@ class RuntimeUILocalizationTests(unittest.TestCase):
         self.assertIn("addon:LocalizePopupDefinition(which)", source)
         self.assertIn('"_aaeSource_" .. field', source)
 
+    def test_addon_popup_dynamic_arguments_and_client_locale_buttons_are_guarded(self):
+        source = FEATURE.read_text(encoding="utf-8-sig")
+        self.assertIn("SanitizePopupArguments", source)
+        self.assertIn('string.find(which, "AZEROTHADMIN_", 1, true) ~= 1', source)
+        self.assertIn('localizedPopupFallback("item", arg1)', source)
+        self.assertIn('localizedPopupFallback("quest", arg1)', source)
+        self.assertIn('localizedPopupFallback("spell", arg2)', source)
+        self.assertIn('dialog.button1, dialog.button2 = pack.yes, pack.no', source)
+        self.assertIn('dialog.button1, dialog.button2 = pack.addItem, pack.cancel', source)
+        self.assertIn('addon:SanitizePopupArguments(which, arg1, arg2)', source)
+
     def test_item_browser_ui_categories_have_non_korean_fallbacks(self):
         source = ITEM_BROWSER.read_text(encoding="utf-8-sig")
         english = EN_FEATURES.read_text(encoding="utf-8-sig")
