@@ -1,30 +1,61 @@
 ## Interface: 30300
-## Title: |cffffd24aGM에드온[3.3.5a 아제로스코어 전용]|r
-## Notes: AzerothCore 3.3.5a exclusive GM addon - Creator: Hobby Researcher
+## Title: |cffffd24aAzerothAdmin [AzerothCore 3.3.5a]|r
+## Title-koKR: |cffffd24aGM에드온[3.3.5a 아제로스코어 전용]|r
+## Title-zhCN: |cffffd24aGM插件[AzerothCore 3.3.5a专用]|r
+## Title-zhTW: |cffffd24aGM插件[AzerothCore 3.3.5a專用]|r
+## Notes: AzerothCore 3.3.5a GM administration addon - Creator: Hobbyist
 ## Notes-koKR: 아제로스코어 전용버전 · WoW WotLK 3.3.5a GM 관리 애드온 · 제작자: 취미연구가
+## Notes-zhCN: AzerothCore 3.3.5a GM管理插件 · 作者：Hobbyist
+## Notes-zhTW: AzerothCore 3.3.5a GM管理插件 · 作者：Hobbyist
 ## Author: 취미연구가
 ## Version: 3.4.0-335a
 ## X-Client: WoW 3.3.5a (12340)
 ## X-Core: AzerothCore
+## X-Module-API: 1
+## X-Locale-Packs: enUS, koKR, zhCN, zhTW
 ## SavedVariables: AzerothAdminEasyDB, InvenCraftInfoDB, InvenCraftInfoDataDB, InvenCraftInfoUIDB, BlueItemInfo3DB
 ## SavedVariablesPerCharacter: InvenCraftInfoCharDB, InvenCraftInfoUICharDB, BlueItemInfo3CharDB
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
 
+Framework\Bootstrap.lua
+Framework\ModuleRegistry.lua
+Framework\Localization.lua
+Framework\UILocalization.lua
+Locales\enUS.lua
+Locales\koKR.lua
+Locales\zhCN.lua
+Locales\zhTW.lua
+Locales\UI\enUS.lua
+Locales\UI\zhCN.lua
+Locales\UI\zhTW.lua
+Locales\UI\Features\enUS.lua
+Locales\UI\Features\zhCN.lua
+Locales\UI\Features\zhTW.lua
+Locales\UI\Messages\enUS.lua
+Locales\UI\Messages\zhCN.lua
+Locales\UI\Messages\zhTW.lua
 Locale.lua
-CommandMeta.lua
+Framework\FeatureLocalization.lua
+Modules\Language\Module.lua
+Modules\Shell\Registration.lua
+Modules\Commands\CommandMeta.lua
 KoKRSearchData.lua
-FeaturedCreatures.lua
-KoKRSearch.lua
-CreatureBrowser.lua
+Modules\Creatures\Data.lua
+Modules\Creatures\ExpandedData.lua
+Modules\Search\Module.lua
+Modules\Search\Registration.lua
+Modules\Creatures\Browser.lua
 Teleports.lua
-FavoriteTeleports.lua
-Commands.lua
-Core.lua
-QuestHelper.lua
-UI.lua
-
-# Embedded profession database (3.3.5a)
+Modules\Teleports\Module.lua
+Modules\Teleports\Registration.lua
+Modules\Commands\Module.lua
+Modules\Commands\Registration.lua
+Modules\Shell\Core.lua
+Modules\Language\Output.lua
+Modules\QuestHelper\Module.lua
+Modules\QuestHelper\Registration.lua
+Modules\Shell\UI.lua
 Embedded\InvenCraftInfo\libs\LibStub\LibStub.lua
 Embedded\InvenCraftInfo\libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
 Embedded\InvenCraftInfo\libs\LibItemTooltip-1.0\LibItemTooltip-1.0.lua
@@ -39,14 +70,25 @@ Embedded\InvenCraftInfoData\UseDB.lua
 Embedded\InvenCraftInfoData\DropDB.lua
 Embedded\InvenCraftInfoData\NpcDB.lua
 Embedded\InvenCraftInfoData\RecipeDB.lua
-
-# Integrated item information data/browser
 Embedded\BlueItemInfo3\Data.lua
 Embedded\BlueItemInfo3\CategoryIndex.lua
 Embedded\BlueItemInfo3\QuestRewards335.lua
-Embedded\BlueItemInfo3\Integrated.lua
-
-# Profession information UI
-Embedded\InvenCraftInfoUI\Rebuilt.lua
-
-Integrations.lua
+Modules\ItemBrowser\Module.lua
+Modules\ItemBrowser\Registration.lua
+Modules\ProfessionInfo\UI.lua
+Modules\ProfessionInfo\Registration.lua
+Modules\Integrations\Locales\enUS.lua
+Modules\Integrations\Locales\koKR.lua
+Modules\Integrations\Locales\zhCN.lua
+Modules\Integrations\Locales\zhTW.lua
+Modules\Integrations\Module.lua
+Modules\Integrations\Registration.lua
+Modules\Creatures\Fixes.lua
+Modules\Creatures\RuntimeFixes.lua
+Modules\Creatures\Registration.lua
+Modules\Bank\Locales\enUS.lua
+Modules\Bank\Locales\koKR.lua
+Modules\Bank\Locales\zhCN.lua
+Modules\Bank\Locales\zhTW.lua
+Modules\Bank\Module.lua
+Modules\Revive\Module.lua

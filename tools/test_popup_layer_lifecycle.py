@@ -4,10 +4,10 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-CORE = ROOT / "AzerothAdmin/Core.lua"
-QUEST = ROOT / "AzerothAdmin/QuestHelper.lua"
-SEARCH = ROOT / "AzerothAdmin/KoKRSearch.lua"
-CRAFT = ROOT / "AzerothAdmin/Embedded/InvenCraftInfoUI/Rebuilt.lua"
+CORE = ROOT / "AzerothAdmin/Modules/Shell/Core.lua"
+QUEST = ROOT / "AzerothAdmin/Modules/QuestHelper/Module.lua"
+SEARCH = ROOT / "AzerothAdmin/Modules/Search/Module.lua"
+CRAFT = ROOT / "AzerothAdmin/Modules/ProfessionInfo/UI.lua"
 
 
 def popup_block(source, key):

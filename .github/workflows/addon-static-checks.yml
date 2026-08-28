@@ -68,6 +68,14 @@ jobs:
       - name: Build and verify release ZIP
         run: python tools/build_release_zip.py --output "${RUNNER_TEMP}/AzerothAdmin.zip"
 
+      - name: Upload verified release ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: AzerothAdmin-release-candidate
+          path: ${{ runner.temp }}/AzerothAdmin.zip
+          if-no-files-found: error
+          retention-days: 14
+
       - name: Test Python audit tools
         run: >-
           python -m unittest
@@ -77,12 +85,16 @@ jobs:
           tools/test_craft_frame_lifecycle.py
           tools/test_featured_creature_browser.py
           tools/test_generate_quest_reward_335.py
+          tools/test_language_minibar.py
+          tools/test_locale_teleport_integrity.py
+          tools/test_module_architecture.py
           tools/test_party_bot_quest_sync.py
           tools/test_popup_layer_lifecycle.py
           tools/test_profession_enhancement_categories.py
           tools/test_quickslot_actions.py
           tools/test_quest_drop_source_cycle.py
           tools/test_remote_bank_flow.py
+          tools/test_runtime_ui_localization.py
           tools/test_self_revive_flow.py
 
       - name: Audit AzerothCore command metadata
@@ -90,3 +102,6 @@ jobs:
 
       - name: Audit faction formatter tokens
         run: python tools/audit_faction_tokens.py
+
+      - name: Report canonical Hangul source inventory
+        run: python tools/audit_localization_literals.py

@@ -4,7 +4,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-INTEGRATED = ROOT / "AzerothAdmin/Embedded/BlueItemInfo3/Integrated.lua"
+INTEGRATED = ROOT / "AzerothAdmin/Modules/ItemBrowser/Module.lua"
 ITEMS = ROOT / "AzerothAdmin/KoKRSearchData.lua"
 RECIPES = ROOT / "AzerothAdmin/Embedded/InvenCraftInfoData/RecipeDB.lua"
 SPELLS = ROOT / "AzerothAdmin/Embedded/InvenCraftInfoData/SpellDB.lua"

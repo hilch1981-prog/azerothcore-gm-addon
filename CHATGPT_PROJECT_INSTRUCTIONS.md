@@ -16,9 +16,12 @@
 2. `PROJECT_STATUS.md`
 3. `TASKS.md`
 4. `DEVELOPMENT_RULES.md`
-5. `REFERENCES.md`
-6. `CONTRIBUTING.md`
-7. `COLLABORATION.md`
+5. `MODULE_MANIFEST.json`
+6. `MODULE_ARCHITECTURE.md`
+7. `REFERENCES.md`
+8. `THIRD_PARTY_NOTICES.md`
+9. `CONTRIBUTING.md`
+10. `COLLABORATION.md`
 
 ## 절대 조건
 
@@ -32,14 +35,39 @@
 - 게임 내 테스트를 수행하지 않았다면 검증 완료라고 표현하지 않는다.
 - API 키, OAuth 토큰, 계정 정보, DB 접속 정보 및 개인 로컬 경로를 저장소에 기록하지 않는다.
 
+## 최소 토큰·모듈 작업 규칙
+
+1. 사용자 요청을 `MODULE_MANIFEST.json`의 한 모듈로 먼저 분류한다.
+2. `python tools/module_context.py <module>`가 출력하는 파일만 우선 읽는다.
+3. 데이터 자체를 변경하는 요청이 아니면 `--include-data`를 사용하지 않는다.
+4. `KoKRSearchData.lua`, `Teleports.lua`, BlueItemInfo3 및 InvenCraftInfo 대용량 데이터는 기본 컨텍스트에서 제외한다.
+5. 한 브랜치와 PR에서는 한 기능 모듈 또는 한 공통 기반만 수정한다.
+6. 다른 모듈 수정이 필요하면 공개 인터페이스가 부족한 이유를 먼저 기록한다.
+7. 전체 파일 재작성보다 작은 함수·파일 단위 패치를 우선한다.
+
+## 다국어 규칙
+
+- enUS를 기본 fallback 언어로 사용한다.
+- koKR, zhCN, zhTW 언어팩을 유지한다.
+- 새 사용자 표시 문자열은 로직에 직접 넣지 않고 기능별 locale 파일에 등록한다.
+- 모든 언어팩은 동일한 키 집합을 가져야 한다.
+- 번역이 없으면 nil이나 빈 문자열 대신 enUS를 표시한다.
+- 기존 하드코딩 문자열은 기능 모듈을 이동할 때 해당 모듈 언어팩으로 함께 이전한다.
+
+## 출처 및 라이선스
+
+- 타인의 코드·번역·애드온·데이터·UI 리소스를 사용하면 프로젝트명, 저작자, 원본 주소, 라이선스, 사용 범위, 수정 여부를 PR과 `THIRD_PARTY_NOTICES.md`에 기록한다.
+- 원본 저작권 고지와 NOTICE가 필요하면 그대로 보존한다.
+- 출처 또는 재배포 조건을 확인할 수 없는 리소스는 새로 포함하지 않는다.
+
 ## 작업 절차
 
 1. 현재 `main`과 열린 PR을 확인한다.
-2. 관련 Lua/XML/TOC와 로드 순서를 먼저 분석한다.
+2. 대상 모듈의 최소 컨텍스트와 관련 Lua/XML/TOC 로드 순서를 먼저 분석한다.
 3. 원인, 수정 대상 파일, 예상 영향, 검증 계획을 설명한다.
 4. Codex 작업은 `codex/<기능명>`, Claude 작업은 `claude/<기능명>` 브랜치를 사용한다.
-5. 한 PR에는 가능한 한 한 기능만 포함한다.
-6. Lua 5.1 문법, TOC 경로, Retail API, XML 참조와 로드 순서를 검사한다.
+5. 한 PR에는 한 기능 모듈 또는 한 공통 기반만 포함한다.
+6. Lua 5.1 문법, TOC 경로, Retail API, XML 참조, 모듈 경계와 locale key를 검사한다.
 7. 다른 AI가 PR을 교차 검토하도록 한다.
 8. 사용자가 게임 안에서 검증한 뒤에만 `main` 병합을 권고한다.
 

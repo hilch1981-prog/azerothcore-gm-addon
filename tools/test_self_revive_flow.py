@@ -4,21 +4,31 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-CORE = ROOT / "AzerothAdmin/Core.lua"
+CORE = ROOT / "AzerothAdmin/Modules/Shell/Core.lua"
+MODULE = ROOT / "AzerothAdmin/Modules/Revive/Module.lua"
+
+
+def revive_body(text: str, trailer: str) -> str:
+    match = re.search(
+        rf"function addon:ReviveSmart\(definition\)(.*?)\nend\n\n{trailer}",
+        text,
+        re.DOTALL,
+    )
+    if not match:
+        raise AssertionError("missing addon:ReviveSmart")
+    return match.group(1)
 
 
 class SelfReviveFlowTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.source = CORE.read_text(encoding="utf-8")
-        match = re.search(
-            r"function addon:ReviveSmart\(definition\)(.*?)\nend\n\nfunction addon:ExecuteDefinition",
-            cls.source,
-            re.DOTALL,
-        )
-        if not match:
-            raise AssertionError("missing addon:ReviveSmart")
-        cls.body = match.group(1)
+        cls.core = CORE.read_text(encoding="utf-8")
+        cls.source = MODULE.read_text(encoding="utf-8")
+        cls.body = revive_body(cls.source, "if addon.RegisterModule")
+        cls.core_body = revive_body(cls.core, "function addon:ExecuteDefinition")
+
+    def test_module_matches_game_verified_fallback_byte_for_byte(self):
+        self.assertEqual(self.core_body, self.body)
 
     def test_all_wotlk_death_states_are_checked(self):
         self.assertIn('UnitIsDeadOrGhost("player")', self.body)
@@ -49,7 +59,7 @@ class SelfReviveFlowTests(unittest.TestCase):
     def test_send_now_supports_self_whisper_transport(self):
         match = re.search(
             r"function addon:SendNow\(command, definition, chatType, chatTarget\)(.*?)\nend\n\nfunction addon:GetSelfLowGUID",
-            self.source,
+            self.core,
             re.DOTALL,
         )
         self.assertIsNotNone(match)
@@ -59,6 +69,17 @@ class SelfReviveFlowTests(unittest.TestCase):
             'SendChatMessage(command, "WHISPER", nil, chatTarget or UnitName("player"))',
             body,
         )
+
+    def test_core_dispatches_to_runtime_module_function(self):
+        self.assertIn('elseif definition.action == "revive" then', self.core)
+        self.assertIn("self:ReviveSmart(definition)", self.core)
+
+    def test_module_load_order_and_registration(self):
+        toc = (ROOT / "AzerothAdmin/AzerothAdmin.toc").read_text(encoding="utf-8-sig")
+        self.assertLess(toc.index("Modules\\Shell\\Core.lua"), toc.index("Modules\\Revive\\Module.lua"))
+        self.assertIn('addon:RegisterModule("revive"', self.source)
+        self.assertIn('status = "module-active-legacy-fallback"', self.source)
+        self.assertIn('addon.ReviveModuleRevision = "1.0.0-fallback"', self.source)
 
 
 if __name__ == "__main__":

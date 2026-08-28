@@ -120,7 +120,7 @@ def main() -> int:
     parser.add_argument(
         "--manifest", default="tools/command_metadata_source.json"
     )
-    parser.add_argument("--metadata", default="AzerothAdmin/CommandMeta.lua")
+    parser.add_argument("--metadata", default="AzerothAdmin/Modules/Commands/CommandMeta.lua")
     parser.add_argument(
         "--source",
         help="Local command.sql path. Defaults to the pinned HTTPS URL in the manifest.",

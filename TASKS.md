@@ -8,7 +8,7 @@
 - [x] TOC 등록 파일 존재 여부, 대소문자 및 핵심 로드 순서 자동검증
 - [x] Lua 5.1 문법 기준선 검사
 - [x] Retail 전용 API 검색
-- [x] 기존 기능과 보강 기능의 실제 구현 위치 기록(`FEATURE_MAP.md`)
+- [x] 기존 기능과 보강 기능의 실제 구현 위치 기록(`docs/project/FEATURE_MAP.md`)
 
 ## P1 - 핵심 기능 수정
 
@@ -32,11 +32,18 @@
 - [x] 퀘스트 도우미 선택 상태, 상세, 하이라이트 갱신 경로 정적검증(게임 내 회귀 테스트 대기)
 - [x] 3.3.5a 기본 Frame/ScrollFrame 사용 및 Retail 전용 API 부재 정적검증(게임 내 회귀 테스트 대기)
 - [x] Lua/TOC/XML 정적 검사(Lua 5.1, TOC 경로·대소문자·로드 순서, XML 구문 GitHub Actions 검증)
-- [x] 게임 내 기능별 테스트 절차와 현재 결과 기록(`GAME_TEST_MATRIX.md`; 미실행 항목은 대기 유지)
+- [x] 게임 내 기능별 테스트 절차와 현재 결과 기록(`docs/project/GAME_TEST_MATRIX.md`; 미실행 항목은 대기 유지)
 - [x] 전체 애드온 ZIP 재생성 및 무결성 검사(3.3.0 기준 파일 수·SHA-256과 재현 가능한 생성기 검증)
-- [x] 변경 내역과 알려진 제한 문서화(`RELEASE_NOTES_3.2.8.md`)
+- [x] 변경 내역과 알려진 제한 문서화(`docs/releases/`)
+- [x] 언어 기반(enUS/koKR/zhCN/zhTW), enUS fallback, `/aalang` 수동 선택 정적 구현
+- [x] 하단 미니바 언어 버튼 `AUTO / KO / EN / 简 / 繁` 정적 구현(PR #39; 게임 내 위치/클릭 확인 대기)
+- [x] 런타임 UI 현지화 계층 정적 구현(PR #42): Shell/Commands/Search/QuestHelper/Creatures/ItemBrowser/ProfessionInfo/Teleports/Favorites/팝업/툴팁/상태 출력
+- [x] koKR 검색 색인·퀘스트 파싱어·아이템 분류 키워드·미확인 고유지명은 동작 데이터로 분리하여 번역 대상에서 제외
+- [x] GM 명령 본문과 `permissionCommand`를 번역하지 않는 회귀 검사 추가
+- [ ] 언어 전환 후 주요 창/팝업/툴팁/상태출력 게임 내 회귀 테스트
+- [ ] enUS/koKR/zhCN/zhTW별 UI 잘림·폰트 표시·미니바 배치 확인
 
-각 항목은 분석과 검증 없이 완료 처리하지 않는다.
+각 항목은 분석과 검증 없이 완료 처리하지 않는다. 정적검증 성공은 게임 내 검증을 의미하지 않는다.
 
 ## 기능 고도화 이력
 
