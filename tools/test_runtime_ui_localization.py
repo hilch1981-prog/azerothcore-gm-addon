@@ -7,6 +7,8 @@ UI = ROOT / "AzerothAdmin" / "Framework" / "UILocalization.lua"
 FEATURE = ROOT / "AzerothAdmin" / "Framework" / "FeatureLocalization.lua"
 OUTPUT = ROOT / "AzerothAdmin" / "Modules" / "Language" / "Output.lua"
 AUDIT = ROOT / "tools" / "audit_localization_literals.py"
+ITEM_BROWSER = ROOT / "AzerothAdmin" / "Modules" / "ItemBrowser" / "Module.lua"
+EN_FEATURES = ROOT / "AzerothAdmin" / "Locales" / "UI" / "Features" / "enUS.lua"
 
 
 class RuntimeUILocalizationTests(unittest.TestCase):
@@ -58,6 +60,22 @@ class RuntimeUILocalizationTests(unittest.TestCase):
         self.assertIn("aaeOriginalStaticPopupShow", source)
         self.assertIn("addon:LocalizePopupDefinition(which)", source)
         self.assertIn('"_aaeSource_" .. field', source)
+
+    def test_item_browser_ui_categories_have_non_korean_fallbacks(self):
+        source = ITEM_BROWSER.read_text(encoding="utf-8-sig")
+        english = EN_FEATURES.read_text(encoding="utf-8-sig")
+        labels = (
+            "연금술", "주문각인", "낚시 도안/교본/학습 아이템",
+            "마법부여 전용 강화", "가죽세공 전용 강화", "기계공학 전용 강화",
+            "공격대 · 리치 왕의 분노", "5인 던전 · 리치 왕의 분노",
+            "화폐 / 교환", "PvP 아이템", "계승 아이템", "아이템 강화", "퀘스트 보상",
+        )
+        for label in labels:
+            self.assertIn(label, source)
+            self.assertIn(f'["{label}"]=', english)
+        self.assertIn("Faction restriction: Alliance", english)
+        self.assertIn("Set/Exchange: ", english)
+        self.assertIn("The bag icon number %1 is item level, not quantity.", english)
 
     def test_chat_output_wrapper_translates_display_text_only(self):
         source = OUTPUT.read_text(encoding="utf-8-sig")
