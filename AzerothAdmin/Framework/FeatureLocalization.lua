@@ -98,16 +98,38 @@ function addon:LocalizeTeleportDefinitions()
     localizeTeleportEntries(self.Teleports)
 end
 
+function addon:LocalizePopupDefinition(key)
+    if self.ActiveLocale == "koKR" or type(StaticPopupDialogs) ~= "table" then return end
+    if type(key) ~= "string" or string.find(key, "AZEROTHADMIN_", 1, true) ~= 1 then return end
+    local dialog = StaticPopupDialogs[key]
+    if type(dialog) ~= "table" then return end
+    local fields = { "text", "button1", "button2", "button3" }
+    local i
+    for i = 1, table.getn(fields) do
+        local field = fields[i]
+        local sourceField = "_aaeSource_" .. field
+        if dialog[sourceField] == nil and type(dialog[field]) == "string" then
+            dialog[sourceField] = dialog[field]
+        end
+        if type(dialog[sourceField]) == "string" then
+            dialog[field] = self:TranslateUI(dialog[sourceField])
+        end
+    end
+end
+
 function addon:LocalizeAddonPopups()
     if self.ActiveLocale == "koKR" or type(StaticPopupDialogs) ~= "table" then return end
-    local key, dialog
-    for key, dialog in pairs(StaticPopupDialogs) do
-        if type(key) == "string" and string.find(key, "AZEROTHADMIN_", 1, true) == 1 and type(dialog) == "table" then
-            if type(dialog.text) == "string" then dialog.text = self:TranslateUI(dialog.text) end
-            if type(dialog.button1) == "string" then dialog.button1 = self:TranslateUI(dialog.button1) end
-            if type(dialog.button2) == "string" then dialog.button2 = self:TranslateUI(dialog.button2) end
-            if type(dialog.button3) == "string" then dialog.button3 = self:TranslateUI(dialog.button3) end
-        end
+    local key
+    for key in pairs(StaticPopupDialogs) do self:LocalizePopupDefinition(key) end
+end
+
+function addon:InstallPopupLocalizationHook()
+    if self.aaeStaticPopupShowHooked or type(StaticPopup_Show) ~= "function" then return end
+    self.aaeStaticPopupShowHooked = true
+    self.aaeOriginalStaticPopupShow = StaticPopup_Show
+    StaticPopup_Show = function(which, ...)
+        addon:LocalizePopupDefinition(which)
+        return addon.aaeOriginalStaticPopupShow(which, ...)
     end
 end
 
@@ -194,6 +216,7 @@ events:SetScript("OnEvent", function(self, event, name)
         addon:LocalizeCommandDefinitions()
         addon:LocalizeTeleportDefinitions()
         addon:LocalizeAddonPopups()
+        addon:InstallPopupLocalizationHook()
         self:UnregisterEvent("ADDON_LOADED")
     elseif event == "PLAYER_LOGIN" then
         local driver = CreateFrame("Frame")
