@@ -115,6 +115,62 @@ function addon:LocalizePopupDefinition(key)
             dialog[field] = self:TranslateUI(dialog[sourceField])
         end
     end
+
+    -- Blizzard's YES/NO/CANCEL globals follow the client locale, not the
+    -- AzerothAdmin locale override.  Keep these overrides strictly scoped to
+    -- addon-owned popup keys so a koKR client can still display an enUS/zh/ru
+    -- AzerothAdmin confirmation without leaking Korean button labels.
+    local labels = {
+        enUS = { yes = "Yes", no = "No", cancel = "Cancel", addItem = "Add to Bag", addQuest = "Add Quest", learn = "Learn" },
+        zhCN = { yes = "是", no = "否", cancel = "取消", addItem = "加入背包", addQuest = "添加任务", learn = "学习" },
+        zhTW = { yes = "是", no = "否", cancel = "取消", addItem = "加入背包", addQuest = "加入任務", learn = "學習" },
+        ruRU = { yes = "Да", no = "Нет", cancel = "Отмена", addItem = "Добавить в сумку", addQuest = "Добавить задание", learn = "Изучить" },
+    }
+    local pack = labels[self.ActiveLocale] or labels.enUS
+    if key == "AZEROTHADMIN_EASY_CONFIRM" or key == "AZEROTHADMIN_QUEST_COMPLETE_AND_GO" then
+        dialog.button1, dialog.button2 = pack.yes, pack.no
+    elseif key == "AZEROTHADMIN_ITEM_ADD_QUANTITY" then
+        dialog.button1, dialog.button2 = pack.addItem, pack.cancel
+    elseif key == "AZEROTHADMIN_QUEST_ADD_SEARCH" then
+        dialog.button1, dialog.button2 = pack.addQuest, pack.cancel
+    elseif key == "AZEROTHADMIN_CRAFT_LEARN" then
+        dialog.button1, dialog.button2 = pack.learn, pack.cancel
+    end
+end
+
+local function localizedPopupFallback(kind, id)
+    local labels = {
+        enUS = { item = "Item", quest = "Quest", spell = "Spell", action = "GM action" },
+        zhCN = { item = "物品", quest = "任务", spell = "法术", action = "GM操作" },
+        zhTW = { item = "物品", quest = "任務", spell = "法術", action = "GM操作" },
+        ruRU = { item = "Предмет", quest = "Задание", spell = "Заклинание", action = "Действие GM" },
+    }
+    local pack = labels[addon.ActiveLocale] or labels.enUS
+    local label = pack[kind] or pack.action
+    id = tostring(id or "")
+    return id ~= "" and (label .. " #" .. id) or label
+end
+
+function addon:SanitizePopupArguments(which, arg1, arg2)
+    if self.ActiveLocale == "koKR" or type(which) ~= "string"
+        or string.find(which, "AZEROTHADMIN_", 1, true) ~= 1 then
+        return arg1, arg2
+    end
+
+    if which == "AZEROTHADMIN_ITEM_ADD_QUANTITY" and hasHangul(arg2) then
+        arg2 = localizedPopupFallback("item", arg1)
+    elseif (which == "AZEROTHADMIN_QUEST_ADD_SEARCH" or which == "AZEROTHADMIN_QUEST_COMPLETE_AND_GO")
+        and hasHangul(arg2) then
+        arg2 = localizedPopupFallback("quest", arg1)
+    elseif which == "AZEROTHADMIN_CRAFT_LEARN" and hasHangul(arg1) then
+        arg1 = localizedPopupFallback("spell", arg2)
+    elseif which == "AZEROTHADMIN_EASY_CONFIRM" and hasHangul(arg1) then
+        -- arg2 is the canonical AzerothCore command and is preferable to a
+        -- Korean command label when no translated display label is available.
+        arg1 = (type(arg2) == "string" and not hasHangul(arg2) and arg2 ~= "")
+            and arg2 or localizedPopupFallback("action")
+    end
+    return arg1, arg2
 end
 
 function addon:LocalizeAddonPopups()
@@ -127,9 +183,10 @@ function addon:InstallPopupLocalizationHook()
     if self.aaeStaticPopupShowHooked or type(StaticPopup_Show) ~= "function" then return end
     self.aaeStaticPopupShowHooked = true
     self.aaeOriginalStaticPopupShow = StaticPopup_Show
-    StaticPopup_Show = function(which, ...)
+    StaticPopup_Show = function(which, arg1, arg2, data, insertedFrame)
         addon:LocalizePopupDefinition(which)
-        return addon.aaeOriginalStaticPopupShow(which, ...)
+        arg1, arg2 = addon:SanitizePopupArguments(which, arg1, arg2)
+        return addon.aaeOriginalStaticPopupShow(which, arg1, arg2, data, insertedFrame)
     end
 end
 
