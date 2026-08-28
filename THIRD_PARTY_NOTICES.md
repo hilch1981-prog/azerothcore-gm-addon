@@ -32,14 +32,6 @@
 - 사용 범위: 크리처 브라우저의 던전/레이드 보스 분류와 목록 구성 비교
 - 사용 방식: 분류 구조와 대상 목록을 참고해 AzerothAdmin 데이터를 독립 작성. AtlasLootClassic Lua 코드, 이미지 또는 기타 리소스를 이 저장소에 복사하지 않음
 
-### _NPCScan 3.3.5 계열
-
-- 출처: CurseForge `NPCScan` 프로젝트의 `_NPCScan 3.3.5.4` 배포본
-- 프로젝트 페이지: `https://www.curseforge.com/wow/addons/npcscan`
-- 라이선스 표기: All Rights Reserved
-- 사용 범위: WotLK 3.3.5 `PlayerModel` 갱신 수명주기와 모델 재로딩 동작 비교
-- 사용 방식: 동작 방식만 참고하여 AzerothAdmin에서 독립 구현. `_NPCScan` 소스 코드, 번역, 이미지, 음원 또는 데이터 리소스를 복사·재배포하지 않음
-
 ## 기존 포함 라이브러리
 
 ### LibStub

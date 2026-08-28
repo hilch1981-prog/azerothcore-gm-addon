@@ -19,7 +19,7 @@ addon:RegisterUILiterals("enUS", {
     ["미확인 재료"] = "Unknown Reagent", ["미확인 주문"] = "Unknown Spell", ["한글/ID"] = "Name/ID",
     ["필터 적용"] = "Apply Filter", ["클래식"] = "Classic", ["불타는 성전"] = "The Burning Crusade", ["리치 왕의 분노"] = "Wrath of the Lich King",
     ["확장팩"] = "Expansion", ["소환 조건"] = "Spawn Conditions", ["지역 제한 가능"] = "Zone Restricted", ["일반 지역 NPC"] = "World NPC",
-    ["전체 DB 검색"] = "Search Full DB", ["클라이언트 3D 외형"] = "Client 3D Model", ["◀ 회전"] = "◀ Rotate", ["회전 ▶"] = "Rotate ▶",
+    ["전체 DB 검색"] = "Search Full DB",
     ["◀ 이전"] = "◀ Previous", ["다음 ▶"] = "Next ▶", ["가방에 추가"] = "Add to Bag", ["퀘스트 추가"] = "Add Quest",
     ["보유 목록 조회"] = "List Owned", ["통합 아이템 정보 열기"] = "Open Item Info", ["시작 위치로 이동"] = "Go to Start",
     ["종료 위치로 이동"] = "Go to End", ["퀘스트 도우미 열기"] = "Open Quest Helper", ["Entry 위치로 이동"] = "Go to Entry",

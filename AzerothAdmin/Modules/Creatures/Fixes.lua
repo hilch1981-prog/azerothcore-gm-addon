@@ -1,9 +1,8 @@
 AzerothAdminEasy = AzerothAdminEasy or {}
 local addon = AzerothAdminEasy
 
--- WotLK 3.3.5a / AzerothCore compatibility fixes that do NOT own keyboard or
--- PlayerModel state. Keyboard/model handling lives only in RuntimeFixes.lua so
--- the two layers cannot fight each other.
+-- WotLK 3.3.5a / AzerothCore compatibility fixes. Keyboard handling remains in
+-- RuntimeFixes.lua; the unsupported PlayerModel preview is intentionally absent.
 
 -- Safe instance positions from the pinned AzerothCore WotLK game_tele table.
 -- The command syntax is `.go xyz x y z [mapId [orientation]]`.
@@ -160,12 +159,12 @@ local function removeRepeatedCreatureRowIcons()
             end
             if row.name then
                 row.name:ClearAllPoints()
-                row.name:SetWidth(366)
+                row.name:SetWidth(586)
                 row.name:SetPoint("TOPLEFT", row, "TOPLEFT", 10, -6)
             end
             if row.meta then
                 row.meta:ClearAllPoints()
-                row.meta:SetWidth(366)
+                row.meta:SetWidth(586)
                 row.meta:SetPoint("BOTTOMLEFT", row, "BOTTOMLEFT", 10, 6)
             end
         end

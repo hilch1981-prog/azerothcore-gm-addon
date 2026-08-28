@@ -1,28 +1,18 @@
 AzerothAdminEasy = AzerothAdminEasy or {}
 local addon = AzerothAdminEasy
 
--- R8.1 precheck runtime corrections for WoW WotLK 3.3.5a Build 12340 + AzerothCore.
+-- Runtime input corrections for WoW WotLK 3.3.5a Build 12340 + AzerothCore.
 --
 -- Keyboard:
 --   Preserve the R6 koKR input-release sequence that was confirmed in game.
 --   It completes the input-language transition, clears any keyboard focus,
 --   disables keyboard capture on the finished search EditBox, and restores it
 --   when the player clicks the field again. It never submits chat text.
---
--- PlayerModel:
---   Follow the real 3.3.5 _NPCScan sequence: keep PlayerModel visible,
---   ClearModel -> reset scale/position/facing -> install OnUpdateModel ->
---   SetCreature(entry). Do not Hide/alpha-zero the model before loading.
-
-addon.CreatureBrowserRuntimeRevision = "IME R6 / MODEL R8.1 PRECHECK"
+addon.CreatureBrowserRuntimeRevision = "IME R6 / NO PLAYERMODEL"
 
 local function safeCall(method, object, ...)
     if not method or not object then return false end
     return pcall(method, object, ...)
-end
-
-local function runAfter(delay, callback)
-    if addon.RunAfter then addon:RunAfter(delay, callback) else callback() end
 end
 
 local function chatMessage(text)
@@ -31,7 +21,7 @@ local function chatMessage(text)
     end
 end
 
-chatMessage("|cffffd24aAzerothAdmin R8.1 PRECHECK · IME R6 로드됨|r")
+chatMessage("|cffffd24aAzerothAdmin · IME R6 로드됨|r")
 
 -- ---------------------------------------------------------------------------
 -- koKR IME release (R6: user game-tested and confirmed working)
@@ -254,197 +244,12 @@ end
 installBlueItemImeR6()
 installCreatureSearchImeR6()
 
--- ---------------------------------------------------------------------------
--- Creature PlayerModel: 3.3.5 _NPCScan-compatible load lifecycle
--- ---------------------------------------------------------------------------
-
-local MODEL_DEFAULT_SCALE = 0.75
-local MODEL_CAMERAS = {
-    ["creature\\dragon\\northrenddragon.m2"] = { 0.50, 0, 20, -14 },
-    ["creature\\protodragon\\protodragon.m2"] = { 1.30, 0, -3, 0 },
-    ["creature\\mammoth\\mammoth.m2"] = { 0.35, 0.9, 2.7, 0 },
-    ["creature\\northrendfleshgiant\\northrendfleshgiant.m2"] = { 1.0, 0, 2, 0 },
-}
-
-local function modelPath(model)
-    if not model or not model.GetModel then return nil end
-    local ok, path = pcall(model.GetModel, model)
-    if ok and type(path) == "string" and path ~= "" then return path end
-    return nil
-end
-
-local function ensureStatus()
-    if addon.creatureBrowserModelStatus or not addon.creatureBrowserModel then return end
-    local parent = addon.creatureBrowserModel:GetParent()
-    if not parent then return end
-    local status = parent:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-    status:SetPoint("CENTER", parent, "CENTER", 0, -4)
-    status:SetWidth(190)
-    status:SetJustifyH("CENTER")
-    status:SetTextColor(1, 0.78, 0.28)
-    status:SetText("")
-    status:Hide()
-    addon.creatureBrowserModelStatus = status
-end
-
-local function setStatus(text)
-    ensureStatus()
-    local status = addon.creatureBrowserModelStatus
-    if not status then return end
-    status:SetText(text or "")
-    if text and text ~= "" then status:Show() else status:Hide() end
-end
-
-local function applyModelCamera(model)
-    local path = modelPath(model)
-    if not path then return false end
-    local camera = MODEL_CAMERAS[string.lower(path)]
-    local scale = camera and camera[1] or 1
-    local x = camera and camera[2] or 0
-    local y = camera and camera[3] or 0
-    local z = camera and camera[4] or 0
-    if model.SetModelScale then safeCall(model.SetModelScale, model, MODEL_DEFAULT_SCALE * scale) end
-    if model.SetPosition then safeCall(model.SetPosition, model, z, x, y) end
-    if model.SetCamDistanceScale then safeCall(model.SetCamDistanceScale, model, 1.05) end
-    if model.SetRotation then safeCall(model.SetRotation, model, addon.creatureBrowserModelRotation or 0) end
-    if model.SetAlpha then safeCall(model.SetAlpha, model, 1) end
-    model:Show()
-    if addon.creatureBrowserModelFallback then addon.creatureBrowserModelFallback:Hide() end
-    setStatus("")
-    return true
-end
-
-local function resetModelVisible(model, keepFacing)
-    if not model then return end
-    -- _NPCScan keeps the PlayerModel active while SetCreature loads its mesh.
-    -- R7 hid/zeroed alpha before loading and regressed even known cached models.
-    model:Show()
-    if model.SetAlpha then safeCall(model.SetAlpha, model, 1) end
-    if model.ClearModel then safeCall(model.ClearModel, model) end
-    if model.SetModelScale then safeCall(model.SetModelScale, model, 1) end
-    if model.SetPosition then safeCall(model.SetPosition, model, 0, 0, 0) end
-    if not keepFacing and model.SetFacing then safeCall(model.SetFacing, model, 0) end
-end
-
--- _NPCScan 3.3.5 extracts the 20-bit NPC entry from GUID characters 8..12.
-local function targetCreatureEntry()
-    if not UnitExists or not UnitExists("target") then return nil end
-    if UnitIsPlayer and UnitIsPlayer("target") then return nil end
-    if not UnitGUID then return nil end
-    local guid = UnitGUID("target")
-    if type(guid) ~= "string" or string.len(guid) < 12 then return nil end
-    return tonumber(string.sub(guid, 8, 12), 16)
-end
-
-local modelSerial = 0
-
-local function finishModelLoad(model, record, serial)
-    if serial ~= modelSerial or addon.creatureBrowserSelected ~= record then return end
-    if applyModelCamera(model) then return end
-    if addon.creatureBrowserModelFallback then addon.creatureBrowserModelFallback:Show() end
-    setStatus("R8.1: Entry " .. tostring(record and record[1] or "?")
-        .. " 가 클라이언트 creaturecache에 없습니다.\n검증된 R8.1 캐시 병합 후 WoW를 완전히 재시작하세요.")
-end
-
-local function loadModelNative(record, useTarget)
-    local model = addon.creatureBrowserModel
-    local entry = tonumber(record and record[1])
-    if not model or not entry then return end
-
-    modelSerial = modelSerial + 1
-    local serial = modelSerial
-    setStatus("R8.1: Entry " .. tostring(entry) .. " 3D 외형 로드 중...")
-    if addon.creatureBrowserModelFallback then addon.creatureBrowserModelFallback:Hide() end
-    resetModelVisible(model, false)
-
-    local oldOnUpdate = model:GetScript("OnUpdate")
-    local oldOnUpdateModel = model:GetScript("OnUpdateModel")
-    local modelReady = false
-
-    local function restoreScripts()
-        if serial ~= modelSerial then return end
-        model:SetScript("OnUpdateModel", oldOnUpdateModel)
-        model:SetScript("OnUpdate", oldOnUpdate)
-    end
-
-    local function afterOneFrame(self)
-        if serial ~= modelSerial then return end
-        self:SetScript("OnUpdate", oldOnUpdate)
-        modelReady = applyModelCamera(self)
-        if modelReady then self:SetScript("OnUpdateModel", oldOnUpdateModel) end
-    end
-
-    model:SetScript("OnUpdateModel", function(self)
-        if serial ~= modelSerial then return end
-        self:SetScript("OnUpdateModel", nil)
-        self:SetScript("OnUpdate", afterOneFrame)
-    end)
-
-    local ok = false
-    if useTarget and targetCreatureEntry() == entry and model.SetUnit then
-        ok = safeCall(model.SetUnit, model, "target")
-    elseif model.SetCreature then
-        ok = safeCall(model.SetCreature, model, entry)
-    end
-
-    if not ok then
-        restoreScripts()
-        if addon.creatureBrowserModelFallback then addon.creatureBrowserModelFallback:Show() end
-        setStatus("R8.1: PlayerModel 호출 실패 · Entry " .. tostring(entry))
-        return
-    end
-
-    runAfter(0.08, function()
-        if serial ~= modelSerial or modelReady then return end
-        if modelPath(model) then
-            modelReady = applyModelCamera(model)
-            if modelReady then restoreScripts() end
-        end
-    end)
-
-    runAfter(1.00, function()
-        if serial ~= modelSerial or modelReady then return end
-        restoreScripts()
-        finishModelLoad(model, record, serial)
-    end)
-end
-
-if addon.SelectFeaturedCreature and not addon._aaeR81SelectWrapped then
-    addon._aaeR81SelectWrapped = true
-    local oldSelectFeaturedCreature = addon.SelectFeaturedCreature
-    addon.SelectFeaturedCreature = function(self, record)
-        local result = oldSelectFeaturedCreature(self, record)
-        if record then
-            loadModelNative(record, targetCreatureEntry() == tonumber(record[1]))
-        else
-            modelSerial = modelSerial + 1
-            if self.creatureBrowserModel then
-                self.creatureBrowserModel:Hide()
-                if self.creatureBrowserModel.ClearModel then safeCall(self.creatureBrowserModel.ClearModel, self.creatureBrowserModel) end
-            end
-            setStatus("")
-        end
-        return result
-    end
-end
-
-local modelEvents = CreateFrame("Frame")
-modelEvents:RegisterEvent("PLAYER_TARGET_CHANGED")
-modelEvents:RegisterEvent("UNIT_MODEL_CHANGED")
-modelEvents:SetScript("OnEvent", function(self, event, unit)
-    if event == "UNIT_MODEL_CHANGED" and unit and unit ~= "target" then return end
-    local record = addon.creatureBrowserSelected
-    if not record or not addon.creatureBrowserFrame or not addon.creatureBrowserFrame:IsShown() then return end
-    if targetCreatureEntry() == tonumber(record[1]) then loadModelNative(record, true) end
-end)
-
-if addon.CreateCreatureBrowser and not addon._aaeR81CreateWrapped then
-    addon._aaeR81CreateWrapped = true
+if addon.CreateCreatureBrowser and not addon._aaeImeCreateWrapped then
+    addon._aaeImeCreateWrapped = true
     local oldCreateCreatureBrowser = addon.CreateCreatureBrowser
     addon.CreateCreatureBrowser = function(self, ...)
         local result = oldCreateCreatureBrowser(self, ...)
         installCreatureSearchImeR6()
-        ensureStatus()
         return result
     end
 end
