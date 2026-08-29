@@ -9,6 +9,12 @@ OUTPUT = ROOT / "AzerothAdmin" / "Modules" / "Language" / "Output.lua"
 AUDIT = ROOT / "tools" / "audit_localization_literals.py"
 ITEM_BROWSER = ROOT / "AzerothAdmin" / "Modules" / "ItemBrowser" / "Module.lua"
 EN_FEATURES = ROOT / "AzerothAdmin" / "Locales" / "UI" / "Features" / "enUS.lua"
+UI_LOCALES = {
+    "enUS": ROOT / "AzerothAdmin" / "Locales" / "UI" / "enUS.lua",
+    "zhCN": ROOT / "AzerothAdmin" / "Locales" / "UI" / "zhCN.lua",
+    "zhTW": ROOT / "AzerothAdmin" / "Locales" / "UI" / "zhTW.lua",
+    "ruRU": ROOT / "AzerothAdmin" / "Locales" / "UI" / "ruRU.lua",
+}
 
 
 class RuntimeUILocalizationTests(unittest.TestCase):
@@ -79,6 +85,21 @@ class RuntimeUILocalizationTests(unittest.TestCase):
         locale_notice = "아이템명·효과·툴팁: 클라이언트/서버 국가·언어 리전(locale) 데이터"
         self.assertIn(locale_notice, source)
         self.assertIn(f'["{locale_notice}"]=', english)
+
+    def test_item_browser_type_filters_and_colored_raid_rows_are_localized(self):
+        type_labels = ("도안/주문", "무기", "방어구", "재료/보석", "소비품")
+        raid_labels = (
+            "낙스라마스", "흑요석 성소", "영원의 눈", "아카본 석실", "울두아르",
+            "십자군의 시험장", "오닉시아의 둥지", "얼음왕관 성채", "루비 성소",
+        )
+        for locale, path in UI_LOCALES.items():
+            source = path.read_text(encoding="utf-8-sig")
+            for label in type_labels:
+                self.assertIn(f'["{label}"]', source, f"{locale} missing type label {label}")
+            for label in raid_labels:
+                self.assertIn('{"' + label + '",', source, f"{locale} missing raid pattern {label}")
+            self.assertIn('{"%(25인%)",', source, f"{locale} missing 25-player suffix pattern")
+            self.assertIn('{"%(10인%)",', source, f"{locale} missing 10-player suffix pattern")
 
     def test_chat_output_wrapper_translates_display_text_only(self):
         source = OUTPUT.read_text(encoding="utf-8-sig")

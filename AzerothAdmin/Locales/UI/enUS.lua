@@ -13,6 +13,7 @@ addon:RegisterUILiterals("enUS", {
     ["☆ 즐겨찾기"] = "☆ Favorite", ["★ 해제"] = "★ Remove", ["조건완료"] = "Objectives Complete", ["진행중"] = "In Progress",
     ["미진행"] = "Not Started", ["완료"] = "Complete", ["이동"] = "Go", ["찾기"] = "Find", ["아이템 생성"] = "Create Item",
     ["몹"] = "Mob", ["드롭"] = "Drop", ["이벤트"] = "Event", ["대상"] = "Target", ["재료"] = "Reagents",
+    ["도안/주문"] = "Recipes/Spells", ["무기"] = "Weapons", ["방어구"] = "Armor", ["재료/보석"] = "Materials/Gems", ["소비품"] = "Consumables",
     ["결과물"] = "Result", ["제작 아이템"] = "Crafted Item", ["요구 숙련"] = "Required Skill", ["숙련↓"] = "Skill ↓",
     ["희귀↓"] = "Rarity ↓", ["숙련+희귀"] = "Skill + Rarity", ["습득"] = "Learn", ["습득 완료"] = "Learned",
     ["확인 중"] = "Checking", ["충족"] = "Met", ["부족"] = "Insufficient", ["미확인 아이템"] = "Unknown Item",
@@ -38,7 +39,7 @@ addon:RegisterUILiterals("enUS", {
     ["스톰윈드"] = "Stormwind", ["아이언포지"] = "Ironforge", ["다르나서스"] = "Darnassus", ["엑소다르"] = "The Exodar",
     ["오그리마"] = "Orgrimmar", ["언더시티"] = "Undercity", ["썬더 블러프"] = "Thunder Bluff", ["실버문"] = "Silvermoon City",
     ["샤트라스"] = "Shattrath City", ["달라란"] = "Dalaran", ["오닉시아의 둥지"] = "Onyxia's Lair", ["낙스라마스"] = "Naxxramas",
-    ["흑요석 성소"] = "The Obsidian Sanctum", ["영원의 눈"] = "The Eye of Eternity", ["울두아르"] = "Ulduar",
+    ["흑요석 성소"] = "The Obsidian Sanctum", ["영원의 눈"] = "The Eye of Eternity", ["아카본 석실"] = "Vault of Archavon", ["울두아르"] = "Ulduar",
     ["십자군의 시험장"] = "Trial of the Crusader", ["얼음왕관 성채"] = "Icecrown Citadel", ["루비 성소"] = "The Ruby Sanctum",
     ["GM 섬 (AzerothCore GMIsland)"] = "GM Island (AzerothCore GMIsland)",
 }, {
@@ -46,4 +47,8 @@ addon:RegisterUILiterals("enUS", {
     {"^선택: ", "Selected: "}, {"^요구 숙련: ", "Required Skill: "}, {"^필요 ", "Need "}, {" · 보유 ", " · Owned "},
     {"^재료 ", "Reagent "}, {"^아이템 ", "Item "}, {"개 생성 요청", " requested"}, {"개 생성 명령 전송 완료", " creation command sent"},
     {"^예:%s*", "Example: "}, {"^인수:%s*", "Arguments: "}, {"권한 부족", "Insufficient permission"}, {"실행 불가", "Unavailable"},
+    {"낙스라마스", "Naxxramas"}, {"흑요석 성소", "The Obsidian Sanctum"}, {"영원의 눈", "The Eye of Eternity"},
+    {"아카본 석실", "Vault of Archavon"}, {"울두아르", "Ulduar"}, {"십자군의 시험장", "Trial of the Crusader"},
+    {"오닉시아의 둥지", "Onyxia's Lair"}, {"얼음왕관 성채", "Icecrown Citadel"}, {"루비 성소", "The Ruby Sanctum"},
+    {"%(25인%)", "(25-player)"}, {"%(10인%)", "(10-player)"},
 })
