@@ -1,10 +1,13 @@
 from pathlib import Path
+import re
 import unittest
 
 
 ROOT = Path(__file__).resolve().parents[1]
 FEATURE = ROOT / "AzerothAdmin" / "Framework" / "FeatureLocalization.lua"
 FIXES = ROOT / "AzerothAdmin" / "Modules" / "Creatures" / "Fixes.lua"
+TELEPORTS = ROOT / "AzerothAdmin" / "Teleports.lua"
+EN_UI = ROOT / "AzerothAdmin" / "Locales" / "UI" / "enUS.lua"
 
 
 class LocaleTeleportIntegrityTests(unittest.TestCase):
@@ -29,6 +32,14 @@ class LocaleTeleportIntegrityTests(unittest.TestCase):
         self.assertNotIn("entry.x =", source)
         self.assertNotIn("entry.y =", source)
         self.assertNotIn("entry.z =", source)
+
+    def test_silvermoon_destination_names_have_english_fallbacks(self):
+        teleports = TELEPORTS.read_text(encoding="utf-8-sig")
+        english = EN_UI.read_text(encoding="utf-8-sig")
+        names = re.findall(r'zone = "실버문", name = "([^"]+)"', teleports)
+        self.assertGreaterEqual(len(names), 14)
+        for name in names:
+            self.assertIn(f'["{name}"]', english, f"missing enUS fallback for Silvermoon destination: {name}")
 
 
 if __name__ == "__main__":
