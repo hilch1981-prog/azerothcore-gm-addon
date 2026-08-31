@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>AzerothAdmin UI/UX Lab</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="lab-topbar">
+    <div>
+      <strong>AzerothAdmin UI/UX Lab</strong>
+      <span>WotLK 3.3.5a · Interface 30300 · Lua 5.1 제약 기반</span>
+    </div>
+    <div class="controls">
+      <label>화면
+        <select id="screenSize">
+          <option value="1024">1024×768</option>
+          <option value="1366" selected>1366×768</option>
+          <option value="1920">1920×1080</option>
+        </select>
+      </label>
+      <label>언어
+        <select id="locale">
+          <option>KO</option><option>EN</option><option>简</option><option>繁</option><option>RU</option>
+        </select>
+      </label>
+      <button id="resetState">상태 초기화</button>
+    </div>
+  </header>
+
+  <main>
+    <aside class="lab-nav">
+      <button class="nav-button active" data-view="shell">GM 메인 + 툴바</button>
+      <button class="nav-button" data-view="teleport">순간이동</button>
+      <button class="nav-button" data-view="item">아이템 정보</button>
+      <button class="nav-button" data-view="craft">전문기술</button>
+      <button class="nav-button" data-view="quest">퀘스트 도우미</button>
+      <button class="nav-button" data-view="creature">크리처</button>
+      <hr>
+      <div class="note-card">
+        <b>검토 원칙</b>
+        <p>웹 전용 효과보다 실제 3.3.5a Frame/Button/FontString/ScrollFrame으로 옮길 수 있는 배치를 우선합니다.</p>
+      </div>
+    </aside>
+
+    <section class="stage-wrap">
+      <div id="stage" class="stage screen-1366">
+        <section class="view active" data-view-panel="shell">
+          <div class="wow-window shell-window">
+            <div class="window-title"><span class="title-icon">A</span><div><b>AzerothAdmin GM</b><small>WotLK 3.3.5a · AzerothCore</small></div><span class="security">GM 권한 3</span><button class="close">×</button></div>
+            <div class="accent"></div>
+            <div class="tabs"><button class="active">GM메뉴</button><button>GM</button><button>캐릭터</button><button>퀘스트</button><button>NPC</button><button>서버</button></div>
+            <div class="command-grid" id="commandGrid"></div>
+            <div class="pager"><button>&lt;</button><span>1 / 2</span><button>&gt;</button></div>
+          </div>
+
+          <div class="toolbar">
+            <div class="tool-group"><span class="group-label">상태</span><button data-toggle>🪽</button><button data-toggle>🛡</button><button data-toggle>👁</button><button data-toggle>⚡</button></div>
+            <div class="separator"></div>
+            <div class="tool-group"><span class="group-label">이동</span><button>🗺</button><button>★</button></div>
+            <div class="separator"></div>
+            <div class="tool-group"><span class="group-label">정보</span><button>📖</button><button>🎒</button><button>⚙</button><button>💎</button></div>
+            <button class="gm-menu">GM 메뉴</button>
+            <div class="quick"><button>1</button><button>2</button></div>
+            <div class="separator danger-sep"></div>
+            <button class="danger" id="killButton">☠</button>
+          </div>
+          <div class="callout danger-callout">제안: 즉시 처치는 일반 토글과 분리하고 맨 끝에 배치. 웹에서는 오클릭 위험만 검토하며 실제 명령은 실행하지 않습니다.</div>
+        </section>
+
+        <section class="view" data-view-panel="teleport">
+          <div class="wow-window medium-window">
+            <div class="window-title"><span class="title-icon">🗺</span><div><b>순간이동</b><small>검색 결과 1,761개</small></div><button class="close">×</button></div>
+            <div class="search-line"><label>검색</label><input value=""><button>지우기</button></div>
+            <div class="tabs six"><button class="active">전체</button><button>동부왕국</button><button>칼림도어</button><button>아웃랜드</button><button>노스렌드</button><button>인던·전장</button></div>
+            <div class="list simple" id="teleportList"></div>
+            <div class="pager"><button>&lt; 이전</button><span>1 / 147</span><button>다음 &gt;</button></div>
+          </div>
+        </section>
+
+        <section class="view" data-view-panel="item">
+          <div class="wow-window large-window">
+            <div class="window-title"><span class="title-icon">💎</span><div><b>아이템 정보 · WotLK 3.3.5a</b><small>분류 → 필터 → 검색 → 아이템 선택</small></div><button class="close">×</button></div>
+            <div class="three-layout item-layout">
+              <div class="left-panel"><h3>분류</h3><div class="category-list" id="itemCategories"></div></div>
+              <div class="content-panel wide">
+                <div class="filters"><b>종류</b><label><input type="checkbox" checked>도안/주문</label><label><input type="checkbox" checked>무기</label><label><input type="checkbox" checked>방어구</label><label><input type="checkbox" checked>재료</label><label><input type="checkbox" checked>소비품</label></div>
+                <div class="filters"><b>등급</b><label><input type="checkbox" checked>일반</label><label><input type="checkbox" checked>고급</label><label><input type="checkbox" checked>희귀</label><label><input type="checkbox" checked>영웅</label></div>
+                <div class="search-line compact"><label>한글/ID</label><input><select><option>전체 클래스</option><option>전사</option><option>마법사</option></select><button>검색</button><button>검색 해제</button></div>
+                <div class="inline-info">필터는 선택 즉시 적용되는 UX를 검토합니다.</div>
+                <div class="item-grid" id="itemGrid"></div>
+                <div class="pager"><button>&lt; 이전</button><span>분류 128개 · 1 / 10</span><button>다음 &gt;</button></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" data-view-panel="craft">
+          <div class="wow-window large-window">
+            <div class="window-title"><span class="title-icon">⚙</span><div><b>전문기술 정보 · WotLK 3.3.5a</b><small>제작 목록 · 결과물/재료 · 도안 습득</small></div><button class="close">×</button></div>
+            <div class="craft-layout">
+              <div class="panel"><h3>전문기술</h3><div class="category-list" id="craftCategories"></div></div>
+              <div class="panel recipes"><h3>제작 아이템</h3><div class="search-line compact"><input placeholder="제작 아이템 검색"><button>검색</button><button>정렬 ▾</button></div><div class="list" id="recipeList"></div></div>
+              <div class="panel details"><h3>결과물</h3><div class="output-card"><div class="fake-icon">⚙</div><div><b>티탄강철 방패 벽</b><small>요구 숙련 450 · 대장기술</small><em>클릭: 수량 선택 → 가방 추가</em></div></div><h3>재료</h3><div class="material">티탄강철 주괴 <span>0 / 8</span></div><div class="material">얼어붙은 보주 <span>2 / 1</span></div><button class="primary">도안 습득 / 제작 지원</button></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" data-view-panel="quest">
+          <div class="wow-window quest-window">
+            <div class="window-title"><span class="title-icon">📖</span><div><b>퀘스트 도우미</b><small>진행 중 퀘스트 · 목표 · 위치</small></div><button class="mini">⟳</button><button class="close">×</button></div>
+            <div class="quest-top"><div class="search-line compact"><label>퀘스트 추가</label><input value="얼음왕관"><button>검색</button></div><button class="bot-toggle" id="botToggle">봇 동기화 ▾</button></div>
+            <div class="bot-panel" id="botPanel"><label><input type="checkbox"> 없는 퀘스트 자동 추가</label><label><input type="checkbox"> 본캐 조건완료 시 봇 완료</label></div>
+            <div class="table quest-table"><div class="tr head"><span>ID</span><span>퀘스트</span><span>Lv</span><span>지역</span><span>상태</span><span>완료 처리</span><span>시작</span><span>종료</span></div><div id="questRows"></div></div>
+            <h3 class="selected-heading">목표 상세: [13157] 십자군의 시련</h3>
+            <div class="table objective-table"><div class="tr head"><span>유형</span><span>목표/드롭 내용</span><span>위치/드롭</span><span>찾기</span><span>아이템 생성</span></div><div id="objectiveRows"></div></div>
+          </div>
+        </section>
+
+        <section class="view" data-view-panel="creature">
+          <div class="wow-window large-window">
+            <div class="window-title"><span class="title-icon">🐉</span><div><b>크리처 정보 · WotLK 3.3.5a</b><small>분류 → 필터 → 선택 → 액션</small></div><button class="close">×</button></div>
+            <div class="three-layout creature-layout">
+              <div class="left-panel"><h3>분류</h3><div class="category-list" id="creatureCategories"></div></div>
+              <div class="content-panel wide"><div class="filters"><b>확장팩</b><label><input type="checkbox" checked>클래식</label><label><input type="checkbox" checked>불타는 성전</label><label><input type="checkbox" checked>리치 왕의 분노</label></div><div class="filters"><b>소환 조건</b><label><input type="checkbox" checked>지역 제한 가능</label><label><input type="checkbox" checked>일반 지역 NPC</label></div><div class="search-line compact"><label>한글/ID</label><input><button>검색</button><button>전체 DB 검색</button></div><div class="list creature-list" id="creatureList"></div><div class="selection-card" id="creatureSelection">크리처를 선택하세요.</div><div class="actions"><button>위치 이동</button><button>임시 소환</button><button class="danger" id="permanentButton" disabled>영구 생성</button><button>스폰 목록</button><button>☆ 즐겨찾기</button></div><div class="inline-info">필터가 바뀌면 자동으로 첫 결과를 선택하지 않고 명시적 선택 상태로 되돌리는 UX를 검토합니다.</div></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
