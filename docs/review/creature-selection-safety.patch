@@ -1,0 +1,96 @@
+# Creature Browser 선택 안전성 최소 변경 패치
+# 대상: AzerothAdmin/Modules/Creatures/Browser.lua
+# 기준: main @ aede9c206e8f33a8014d58b1f1f1c9bc37bfb029
+# 목적: 필터/검색 변경 후 첫 결과 자동 선택 제거 + 명시적 선택 전 액션 비활성
+# 주의: 이 파일 자체는 런타임에 로드되지 않음. 실제 Lua 적용 전 검토용.
+
+--- a/AzerothAdmin/Modules/Creatures/Browser.lua
++++ b/AzerothAdmin/Modules/Creatures/Browser.lua
+@@
+ local function setCategoryActive(button, active)
+@@
+ end
++
++local function setActionEnabled(button, enabled)
++    if not button then return end
++    if enabled then
++        button:Enable()
++        button.label:SetTextColor(1, 1, 1)
++    else
++        button:Disable()
++        button.label:SetTextColor(0.38, 0.40, 0.42)
++    end
++end
++
++function addon:RefreshCreatureBrowserActions()
++    local enabled = self.creatureBrowserSelected ~= nil
++    setActionEnabled(self.creatureBrowserGoButton, enabled)
++    setActionEnabled(self.creatureBrowserTempButton, enabled)
++    setActionEnabled(self.creatureBrowserPermanentButton, enabled)
++    setActionEnabled(self.creatureBrowserListButton, enabled)
++    setActionEnabled(self.creatureBrowserFavoriteButton, enabled)
++end
+@@
+ function addon:SelectFeaturedCreature(record)
+     self.creatureBrowserSelected = record
+     if not record then
+         if self.creatureBrowserSelectedText then self.creatureBrowserSelectedText:SetText("크리처를 선택하세요.") end
+         if self.creatureBrowserWarning then self.creatureBrowserWarning:SetText("") end
+         if self.creatureBrowserFavoriteButton then self.creatureBrowserFavoriteButton:SetText("☆ 즐겨찾기") end
++        self:RefreshCreatureBrowserActions()
+         self:RefreshCreatureBrowserRows()
+         return
+     end
+@@
+     if self.creatureBrowserFavoriteButton then
+         self.creatureBrowserFavoriteButton:SetText(self:IsFeaturedCreatureFavorite(entry) and "★ 해제" or "☆ 즐겨찾기")
+     end
++    self:RefreshCreatureBrowserActions()
+     self:RefreshCreatureBrowserRows()
+ end
+@@
+ function addon:RefreshCreatureBrowser()
+@@
+     if selectedFound then
+         self:RefreshCreatureBrowserRows()
+     else
+-        self:SelectFeaturedCreature(self.creatureBrowserResults[1])
++        self:SelectFeaturedCreature(nil)
+     end
+ end
+@@
+     local goButton = makeButton(frame, 88, 24, "위치 이동")
+@@
+     goButton:SetScript("OnClick", function() addon:RunFeaturedCreatureAction("go") end)
++    self.creatureBrowserGoButton = goButton
+@@
+     tempButton:SetScript("OnClick", function() addon:RunFeaturedCreatureAction("temp") end)
++    self.creatureBrowserTempButton = tempButton
+@@
+     permanentButton:SetScript("OnClick", function() addon:RunFeaturedCreatureAction("permanent") end)
++    self.creatureBrowserPermanentButton = permanentButton
+@@
+     listButton:SetScript("OnClick", function() addon:RunFeaturedCreatureAction("list") end)
++    self.creatureBrowserListButton = listButton
+@@
+     self.creatureBrowserFavoriteButton = favoriteButton
++    self:RefreshCreatureBrowserActions()
+@@
+     self.creatureBrowserCategory = "all"
+     self:SetCreatureBrowserCategory("all", "주요 크리처 전체")
+-    self:SelectFeaturedCreature(self.FeaturedCreatures and self.FeaturedCreatures[1] or nil)
++    self:SelectFeaturedCreature(nil)
+ end
+
+# 검토 결과
+# - 필터/검색/카테고리 변경 후 기존 선택이 결과에서 사라지면 자동 선택하지 않음
+# - 창 최초 생성 시에도 첫 Featured Creature 자동 선택하지 않음
+# - 명시적 선택 전: 위치 이동/임시 소환/영구 생성/스폰 목록/즐겨찾기 비활성
+# - 사용자가 행을 좌클릭해 SelectFeaturedCreature(record)를 호출하면 액션 재활성
+# - RunFeaturedCreatureAction()의 기존 nil 방어 로직은 그대로 유지
+# - .go creature / .list creature / .npc add temp / .npc add 명령 문자열 변경 없음
+# - 영구 생성 confirm=true, danger=true 유지
+# - SavedVariables 즐겨찾기 구조 변경 없음
+# - Lua 5.1 문법 범위만 사용
+# - Retail 전용 API 추가 없음
+# - 게임 내 시각/동작 검증은 아직 수행하지 않음
