@@ -1,0 +1,74 @@
+# QuestHelper 목표 상세 헤더 분리 + 다국어 최소 패치
+# 대상:
+# - AzerothAdmin/Modules/QuestHelper/Module.lua
+# - AzerothAdmin/Locales/UI/Features/enUS.lua
+# - AzerothAdmin/Locales/UI/Features/zhCN.lua
+# - AzerothAdmin/Locales/UI/Features/zhTW.lua
+# - AzerothAdmin/Locales/UI/Features/ruRU.lua
+# 기준: main @ aede9c206e8f33a8014d58b1f1f1c9bc37bfb029
+# 목적: 공백으로 맞춘 단일 FontString 헤더를 실제 5개 열로 분리
+# 주의: 이 파일 자체는 런타임에 로드되지 않음. 실제 Lua 적용 전 검토용.
+
+--- a/AzerothAdmin/Modules/QuestHelper/Module.lua
++++ b/AzerothAdmin/Modules/QuestHelper/Module.lua
+@@
+-    local objectiveHeader = qText(frame, "유형        목표/드롭 내용                                                     위치/드롭          찾기          아이템 생성", "small")
+-    objectiveHeader:SetPoint("TOPLEFT", frame, "TOPLEFT", 20, -420)
+-    objectiveHeader:SetTextColor(0.55, 0.88, 0.92)
++    local objectiveHeaders = {
++        { x = 20,  width = 64,  text = "종류", align = "CENTER" },
++        { x = 88,  width = 524, text = "목표/드롭 내용", align = "LEFT" },
++        { x = 618, width = 88,  text = "이동", align = "CENTER" },
++        { x = 712, width = 72,  text = "찾기", align = "CENTER" },
++        { x = 790, width = 88,  text = "아이템 생성", align = "CENTER" },
++    }
++    local oh
++    for oh = 1, table.getn(objectiveHeaders) do
++        local meta = objectiveHeaders[oh]
++        local label = qText(frame, meta.text, "small")
++        label:SetWidth(meta.width)
++        label:SetJustifyH(meta.align)
++        label:SetPoint("TOPLEFT", frame, "TOPLEFT", meta.x, -420)
++        label:SetTextColor(0.55, 0.88, 0.92)
++    end
+ 
+     self.questObjectiveRows = {}
+
+--- a/AzerothAdmin/Locales/UI/Features/enUS.lua
++++ b/AzerothAdmin/Locales/UI/Features/enUS.lua
+@@
+     ["AzerothCore 퀘스트 종료 relation(NPC/오브젝트) 위치로 이동합니다."]="Go to the AzerothCore quest ender relation (NPC/object).",
++    ["목표/드롭 내용"]="Objective / Drop",
+     ["유형        목표/드롭 내용                                                     위치/드롭          찾기          아이템 생성"]="Type        Objective/Drop                                                     Location/Drop          Find          Create Item",
+
+--- a/AzerothAdmin/Locales/UI/Features/zhCN.lua
++++ b/AzerothAdmin/Locales/UI/Features/zhCN.lua
+@@
+     ["AzerothCore 퀘스트 종료 relation(NPC/오브젝트) 위치로 이동합니다."]="前往AzerothCore任务结束关系（NPC/物体）位置。",
++    ["목표/드롭 내용"]="目标 / 掉落",
+     ["※ 드랍 아이템은 Questie/QuestieDB의 NPC·오브젝트 드랍 원천을 우선 사용하며, 없으면 3.3.5a 퀘스트 POI로 이동합니다."]="※ 掉落物品优先使用Questie/QuestieDB的NPC/物体来源；若无数据则前往3.3.5a任务POI。",
+
+--- a/AzerothAdmin/Locales/UI/Features/zhTW.lua
++++ b/AzerothAdmin/Locales/UI/Features/zhTW.lua
+@@
+     ["AzerothCore 퀘스트 종료 relation(NPC/오브젝트) 위치로 이동합니다."]="前往AzerothCore任務結束關聯（NPC/物件）位置。",
++    ["목표/드롭 내용"]="目標 / 掉落",
+     ["※ 드랍 아이템은 Questie/QuestieDB의 NPC·오브젝트 드랍 원천을 우선 사용하며, 없으면 3.3.5a 퀘스트 POI로 이동합니다."]="※ 掉落物品優先使用Questie/QuestieDB的NPC/物件來源；若無資料則前往3.3.5a任務POI。",
+
+--- a/AzerothAdmin/Locales/UI/Features/ruRU.lua
++++ b/AzerothAdmin/Locales/UI/Features/ruRU.lua
+@@
+     ["AzerothCore 퀘스트 종료 relation(NPC/오브젝트) 위치로 이동합니다."]="Перейти к NPC/объекту, завершающему задание в AzerothCore.",
++    ["목표/드롭 내용"]="Цель / добыча",
+     ["유형        목표/드롭 내용                                                     위치/드롭          찾기          아이템 생성"]="Тип        Цель/добыча                                                     Место/источник          Найти          Создать предмет",
+
+# 검토 결과
+# - 5개 헤더의 X/width는 아래 실제 행 열과 정렬됨:
+#   종류 20/64, 목표 88/524, 이동 618/88, 찾기 712/72, 아이템 790/88
+# - 공통 UI 사전의 기존 키 재사용: "종류", "이동", "찾기", "아이템 생성"
+# - 새 feature literal은 "목표/드롭 내용" 1개만 추가
+# - 기존 공백 기반 통합 literal은 삭제하지 않아 하위 호환 유지
+# - Questie/퀘스트/PlayerBot 로직 변경 없음
+# - Lua 5.1 문법 범위만 사용: local/table.getn/for/FontString
+# - Retail 전용 API 추가 없음
+# - 게임 내 시각 검증은 아직 수행하지 않음
