@@ -1,0 +1,31 @@
+const $=(s,r=document)=>r.querySelector(s); const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const commands=['대상 즉시 처치','부활','무적 전환','투명화 전환','GM 날기 전환','수면 걷기 전환','이동속도 3배 전환','퀘스트 도우미','은행 가방','전문기술 정보','아이템 정보','선택 대상 100골드','선택 대상 레벨 +1','선택 대상 레벨 -1','내 직업 주문 전체','내 트레이너 주문 전체','숙련도 최대','비행 경로 전체 해제','GPS','순간이동 목록'];
+const teleports=['동부왕국 > 스톰윈드','동부왕국 > 아이언포지','칼림도어 > 오그리마','칼림도어 > 썬더블러프','아웃랜드 > 샤트라스','노스렌드 > 달라란','노스렌드 > 얼음왕관 성채','인던·전장 > 울두아르','인던·전장 > 낙스라마스','인던·전장 > 십자군의 시험장','인던·전장 > 오닉시아의 둥지','인던·전장 > 루비 성소'];
+const itemCats=['공격대 · 리치 왕의 분노','5인 던전 · 리치 왕의 분노','퀘스트 보상','아이템 강화','마법부여 전용 강화','가죽세공 전용 강화','기계공학 전용 강화','재봉술 전용 강화','대장기술 관련 강화','전문기술','낚시 도안/교본/학습 아이템'];
+const crafts=['요리','연금술','재봉술','가죽세공','대장기술','기계공학','마법부여','보석세공','주문각인','응급치료'];
+const recipes=['티탄강철 방패 벽','얼어붙은 해골 열쇠','용의 눈','노움 군용칼','빙하의 가방','마법매듭 두루마리','강철 무기 사슬','대지의 공성포','북풍 가죽 방어구 키트'];
+const creatureCats=['주요 크리처 전체','즐겨찾기','레이드','  └ 클래식','  └ 불타는 성전','  └ 리치 왕의 분노','던전 · 클래식','던전 · 불타는 성전','던전 · 리치 왕의 분노','월드 보스','희귀','지도자'];
+const creatures=[['10184','오닉시아','오닉시아의 둥지',true],['15990','켈투자드','낙스라마스',true],['36597','리치 왕','얼음왕관 성채',true],['28860','살타리온','흑요석 성소',true],['31134','시아나고사','보랏빛 요새',true],['68','스톰윈드 근위병','스톰윈드',false]];
+function fill(){
+ $('#commandGrid').innerHTML=commands.map((x,i)=>`<button class="${i===0?'danger':''}">${x}<span style="float:right">☆</span></button>`).join('');
+ $('#teleportList').innerHTML=teleports.map(x=>`<div>${x}</div>`).join('');
+ $('#itemCategories').innerHTML=itemCats.map((x,i)=>`<button class="${i===0?'active':''}">${x}</button>`).join('');
+ $('#itemGrid').innerHTML=Array.from({length:14},(_,i)=>`<div class="item-card"><div class="fake-icon">${i%3===0?'⚔':'◆'}</div><div><b>[${40000+i}] 예시 아이템 ${i+1}</b><small>${i%2?'희귀':'영웅'} · iLv ${200+i}</small></div></div>`).join('');
+ $('#craftCategories').innerHTML=crafts.map((x,i)=>`<button class="${i===4?'active':''}">${x}</button>`).join('');
+ $('#recipeList').innerHTML=recipes.map(x=>`<div>${x}</div>`).join('');
+ $('#creatureCategories').innerHTML=creatureCats.map((x,i)=>`<button class="${i===0?'active':''}">${x}</button>`).join('');
+ $('#creatureList').innerHTML=creatures.map(x=>`<div class="creature-row" data-id="${x[0]}" data-name="${x[1]}" data-place="${x[2]}" data-restricted="${x[3]}"><b>[${x[0]}] ${x[1]}</b><small> ${x[2]} ${x[3]?'<span class="restriction">· 지역 제한</span>':''}</small></div>`).join('');
+ const quests=[['13157','십자군의 시련','80','얼음왕관','조건완료'],['24500','리치 왕의 몰락','80','얼음왕관','진행중'],['12801','빛의 인도','78','폭풍우 봉우리','미진행']];
+ $('#questRows').innerHTML=quests.map(q=>`<div class="tr"><span>${q[0]}</span><span>${q[1]}</span><span>${q[2]}</span><span>${q[3]}</span><span><i class="status-badge ${q[4]==='조건완료'?'done':q[4]==='진행중'?'progress':''}">${q[4]}</i></span><span><button class="row-button">완료 처리</button></span><span><button class="row-button">시작위치</button></span><span><button class="row-button">종료위치</button></span></div>`).join('');
+ const objectives=[['몹','아눕아락 0/1','몹 이동','찾기','—'],['아이템','십자군 인장 2/5','드랍처 이동','찾기','아이템 생성'],['오브젝트','대회 깃발 사용','위치 찾기','찾기','—']];
+ $('#objectiveRows').innerHTML=objectives.map(o=>`<div class="tr"><span>${o[0]}</span><span>${o[1]}</span><span><button class="row-button">${o[2]}</button></span><span><button class="row-button">${o[3]}</button></span><span>${o[4]==='—'?'—':`<button class="row-button">${o[4]}</button>`}</span></div>`).join('');
+}
+fill();
+$$('.nav-button').forEach(b=>b.onclick=()=>{ $$('.nav-button').forEach(x=>x.classList.remove('active')); b.classList.add('active'); $$('.view').forEach(v=>v.classList.toggle('active',v.dataset.viewPanel===b.dataset.view)); });
+$('#screenSize').onchange=e=>{const s=$('#stage'); s.className='stage screen-'+e.target.value};
+$$('[data-toggle]').forEach(b=>b.onclick=()=>b.classList.toggle('toggle-on'));
+$('#botToggle').onclick=()=>$('#botPanel').classList.toggle('show');
+$$('#creatureList .creature-row').forEach(r=>r.onclick=()=>{ $$('#creatureList .creature-row').forEach(x=>x.classList.remove('selected')); r.classList.add('selected'); $('#creatureSelection').innerHTML=`선택: [${r.dataset.id}] ${r.dataset.name} · ${r.dataset.place} ${r.dataset.restricted==='true'?'<span class="restriction">[지역 제한]</span>':''}`; $('#permanentButton').disabled=false; });
+$$('#creatureCategories button, .creature-layout input[type=checkbox]').forEach(x=>x.onchange=x.onclick=()=>{ $$('#creatureList .creature-row').forEach(r=>r.classList.remove('selected')); $('#creatureSelection').textContent='크리처를 선택하세요.'; $('#permanentButton').disabled=true; });
+$('#resetState').onclick=()=>location.reload();
+$('#killButton').onclick=()=>alert('UI Lab: 실제 .die 명령은 실행하지 않습니다. 위험 동작의 위치/색상/확인 UX만 검토합니다.');
