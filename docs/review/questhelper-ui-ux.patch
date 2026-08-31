@@ -1,0 +1,75 @@
+# QuestHelper UI/UX 최소 변경 패치
+# 대상: AzerothAdmin/Modules/QuestHelper/Module.lua
+# 기준: main @ aede9c206e8f33a8014d58b1f1f1c9bc37bfb029
+# 목적: 기능 로직 변경 없이 상태 표시와 실행 버튼 분리
+# 주의: 이 파일 자체는 런타임에 로드되지 않음. 실제 Lua 적용 전 검토용.
+
+--- a/AzerothAdmin/Modules/QuestHelper/Module.lua
++++ b/AzerothAdmin/Modules/QuestHelper/Module.lua
+@@
+-    local actionHeaders = {
+-        { x = 585, text = "상태", width = 70 },
+-        { x = 660, text = "시작위치", width = 90 },
+-        { x = 755, text = "종료위치", width = 90 },
+-    }
++    local actionHeaders = {
++        { x = 585, text = "상태", width = 62 },
++        { x = 651, text = "완료", width = 72 },
++        { x = 728, text = "시작위치", width = 72 },
++        { x = 805, text = "종료위치", width = 72 },
++    }
+@@
+-        local complete = qButton(row, 68, 22, "완료")
+-        complete:SetPoint("LEFT", row, "LEFT", 567, 0)
++        local status = qText(row, "", "small")
++        status:SetWidth(62)
++        status:SetJustifyH("CENTER")
++        status:SetPoint("LEFT", row, "LEFT", 567, 0)
++        status:SetTextColor(0.70, 0.72, 0.74)
++        row.status = status
++
++        local complete = qButton(row, 72, 22, "완료")
++        complete:SetPoint("LEFT", row, "LEFT", 633, 0)
+@@
+-        local startPos = qButton(row, 88, 22, "시작위치")
+-        startPos:SetPoint("LEFT", row, "LEFT", 642, 0)
++        local startPos = qButton(row, 72, 22, "시작위치")
++        startPos:SetPoint("LEFT", row, "LEFT", 710, 0)
+@@
+-        local endPos = qButton(row, 88, 22, "종료위치")
+-        endPos:SetPoint("LEFT", row, "LEFT", 737, 0)
++        local endPos = qButton(row, 72, 22, "종료위치")
++        endPos:SetPoint("LEFT", row, "LEFT", 787, 0)
+@@
+-            local progressStatus = self:GetQuestProgressStatus(quest)
+-            row.complete:SetText(progressStatus)
+-            if progressStatus == "조건완료" then
+-                row.complete.aaeHint = "조건이 완료되었습니다. 클릭하면 종료 위치로 이동합니다."
+-            else
+-                row.complete.aaeHint = progressStatus .. " · 클릭하면 GM 완료 처리 후 종료 위치로 이동합니다."
+-            end
++            local progressStatus = self:GetQuestProgressStatus(quest)
++            row.status:SetText(progressStatus)
++            if progressStatus == "조건완료" then
++                row.status:SetTextColor(0.45, 0.95, 0.55)
++                row.complete.aaeHint = "조건이 완료되었습니다. 클릭하면 종료 위치로 이동합니다."
++            elseif progressStatus == "진행중" then
++                row.status:SetTextColor(0.45, 0.90, 1.00)
++                row.complete.aaeHint = progressStatus .. " · 클릭하면 GM 완료 처리 후 종료 위치로 이동합니다."
++            else
++                row.status:SetTextColor(0.70, 0.72, 0.74)
++                row.complete.aaeHint = progressStatus .. " · 클릭하면 GM 완료 처리 후 종료 위치로 이동합니다."
++            end
+
+# 검토 결과
+# - QuestCompleteAndGo() 로직 변경 없음
+# - QuestGoStart()/QuestGoEnd() 로직 변경 없음
+# - PlayerBot 퀘스트 동기화 로직 변경 없음
+# - SavedVariables 구조 변경 없음
+# - 새 Retail API 없음
+# - 기존 문자열 "상태", "완료", "시작위치", "종료위치" 재사용
+# - 게임 내 시각 검증은 아직 수행하지 않음
+
+# 후속 패치(별도 검토 후 적용)
+# - 목표 상세 헤더의 공백 기반 단일 문자열을 5개 FontString 열로 분리
+# - 해당 변경은 enUS/zhCN/zhTW/ruRU 개별 literal 키를 함께 추가해야 함
