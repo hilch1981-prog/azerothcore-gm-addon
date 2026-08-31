@@ -20,12 +20,13 @@ function fill(){
  const objectives=[['몹','아눕아락 0/1','몹 이동','찾기','—'],['아이템','십자군 인장 2/5','드랍처 이동','찾기','아이템 생성'],['오브젝트','대회 깃발 사용','위치 찾기','찾기','—']];
  $('#objectiveRows').innerHTML=objectives.map(o=>`<div class="tr"><span>${o[0]}</span><span>${o[1]}</span><span><button class="row-button">${o[2]}</button></span><span><button class="row-button">${o[3]}</button></span><span>${o[4]==='—'?'—':`<button class="row-button">${o[4]}</button>`}</span></div>`).join('');
 }
+function setCreatureActions(enabled){ $$('[data-creature-action]').forEach(b=>b.disabled=!enabled); }
 fill();
 $$('.nav-button').forEach(b=>b.onclick=()=>{ $$('.nav-button').forEach(x=>x.classList.remove('active')); b.classList.add('active'); $$('.view').forEach(v=>v.classList.toggle('active',v.dataset.viewPanel===b.dataset.view)); });
 $('#screenSize').onchange=e=>{const s=$('#stage'); s.className='stage screen-'+e.target.value};
 $$('[data-toggle]').forEach(b=>b.onclick=()=>b.classList.toggle('toggle-on'));
 $('#botToggle').onclick=()=>$('#botPanel').classList.toggle('show');
-$$('#creatureList .creature-row').forEach(r=>r.onclick=()=>{ $$('#creatureList .creature-row').forEach(x=>x.classList.remove('selected')); r.classList.add('selected'); $('#creatureSelection').innerHTML=`선택: [${r.dataset.id}] ${r.dataset.name} · ${r.dataset.place} ${r.dataset.restricted==='true'?'<span class="restriction">[지역 제한]</span>':''}`; $('#permanentButton').disabled=false; });
-$$('#creatureCategories button, .creature-layout input[type=checkbox]').forEach(x=>x.onchange=x.onclick=()=>{ $$('#creatureList .creature-row').forEach(r=>r.classList.remove('selected')); $('#creatureSelection').textContent='크리처를 선택하세요.'; $('#permanentButton').disabled=true; });
+$$('#creatureList .creature-row').forEach(r=>r.onclick=()=>{ $$('#creatureList .creature-row').forEach(x=>x.classList.remove('selected')); r.classList.add('selected'); $('#creatureSelection').innerHTML=`선택: [${r.dataset.id}] ${r.dataset.name} · ${r.dataset.place} ${r.dataset.restricted==='true'?'<span class="restriction">[지역 제한]</span>':''}`; setCreatureActions(true); });
+$$('#creatureCategories button, .creature-layout input[type=checkbox]').forEach(x=>x.onchange=x.onclick=()=>{ $$('#creatureList .creature-row').forEach(r=>r.classList.remove('selected')); $('#creatureSelection').textContent='크리처를 선택하세요.'; setCreatureActions(false); });
 $('#resetState').onclick=()=>location.reload();
-$('#killButton').onclick=()=>alert('UI Lab: 실제 .die 명령은 실행하지 않습니다. 위험 동작의 위치/색상/확인 UX만 검토합니다.');
+$('#killButton').onclick=()=>confirm('UI Lab 검토용 확인창\n\n선택한 대상을 즉시 처치할까요?\n실제 .die 명령은 실행되지 않습니다.');
