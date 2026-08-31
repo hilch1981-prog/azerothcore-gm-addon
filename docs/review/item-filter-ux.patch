@@ -1,0 +1,110 @@
+# ItemBrowser 필터 UX 최소 변경 패치
+# 대상: AzerothAdmin/Modules/ItemBrowser/Module.lua + Locales/UI/Features/*.lua
+# 기준: main @ aede9c206e8f33a8014d58b1f1f1c9bc37bfb029
+# 목적: 종류/등급/클래스 필터를 짧은 지연 후 자동 반영하고, 검색어 입력은 기존 수동 검색 유지
+# 주의: 이 파일 자체는 런타임에 로드되지 않음. 실제 Lua 적용 전 검토용.
+
+--- a/AzerothAdmin/Modules/ItemBrowser/Module.lua
++++ b/AzerothAdmin/Modules/ItemBrowser/Module.lua
+@@
+ local selectedClass = nil
++local FILTER_REBUILD_DELAY = 0.15
+@@
+ local filterChecks={}
+ local qualityChecks={}
++local function queueFilterRebuild()
++    BII3.filterDirty=true
++    BII3._filterRebuildElapsed=0
++    BII3._filterRebuildPending=true
++end
+@@
+-    filterChecks[key]=makeCheck(BII3,x,-68,TYPE_LABELS[key],true,function(self) typeFilter[key]=self:GetChecked() and true or false; BII3.filterDirty=true end)
++    filterChecks[key]=makeCheck(BII3,x,-68,TYPE_LABELS[key],true,function(self)
++        typeFilter[key]=self:GetChecked() and true or false
++        queueFilterRebuild()
++    end)
+@@
+-    qualityChecks[q]=makeCheck(BII3,x,-97,label,true,function(self) qualityFilter[q]=self:GetChecked() and true or false; BII3.filterDirty=true end)
++    qualityChecks[q]=makeCheck(BII3,x,-97,label,true,function(self)
++        qualityFilter[q]=self:GetChecked() and true or false
++        queueFilterRebuild()
++    end)
+@@
+-                BII3.filterDirty=true
++                queueFilterRebuild()
+@@
+-local filterApply=makeButton(BII3,72,24,"필터 적용"); filterApply:SetPoint("LEFT",clearButton,"RIGHT",7,0)
+-local currentLabel=makeText(BII3,"분류를 선택하세요.  |cffaaaaaa※ 종류/등급/클래스 선택 후 '필터 적용'|r","GameFontHighlightSmall"); currentLabel:SetPoint("TOPLEFT",filterX,-190); currentLabel:SetTextColor(0.45,0.9,1)
++local filterApply=makeButton(BII3,72,24,"필터 적용"); filterApply:SetPoint("LEFT",clearButton,"RIGHT",7,0)
++local currentLabel=makeText(BII3,"분류를 선택하세요.  |cffaaaaaa※ 종류/등급/클래스는 자동 반영됩니다.|r","GameFontHighlightSmall"); currentLabel:SetPoint("TOPLEFT",filterX,-190); currentLabel:SetTextColor(0.45,0.9,1)
+@@
+ function BII3:OnClick()
+@@
+-    currentLabel:SetText("분류를 선택하세요.  |cffaaaaaa※ 종류/등급/클래스 선택 후 '필터 적용'|r")
++    currentLabel:SetText("분류를 선택하세요.  |cffaaaaaa※ 종류/등급/클래스는 자동 반영됩니다.|r")
+@@
+ BII3._itemRefreshElapsed = 0
+ BII3._itemRefreshCount = 0
++BII3._filterRebuildElapsed = 0
++BII3._filterRebuildPending = false
+ BII3:SetScript("OnUpdate", function(self, elapsed)
+-    if not self:IsShown() or (self._itemRefreshCount or 0) <= 0 then return end
+-    self._itemRefreshElapsed = (self._itemRefreshElapsed or 0) + (elapsed or 0)
+-    if self._itemRefreshElapsed >= 0.55 then
+-        self._itemRefreshElapsed = 0
+-        self._itemRefreshCount = self._itemRefreshCount - 1
+-        refresh()
++    if not self:IsShown() then return end
++
++    if self._filterRebuildPending then
++        self._filterRebuildElapsed = (self._filterRebuildElapsed or 0) + (elapsed or 0)
++        if self._filterRebuildElapsed >= FILTER_REBUILD_DELAY then
++            self._filterRebuildElapsed = 0
++            self._filterRebuildPending = false
++            self.filterDirty = nil
++            self:RebuildCurrent()
++        end
++    end
++
++    if (self._itemRefreshCount or 0) > 0 then
++        self._itemRefreshElapsed = (self._itemRefreshElapsed or 0) + (elapsed or 0)
++        if self._itemRefreshElapsed >= 0.55 then
++            self._itemRefreshElapsed = 0
++            self._itemRefreshCount = self._itemRefreshCount - 1
++            refresh()
++        end
+     end
+ end)
++
++--- a/AzerothAdmin/Locales/UI/Features/enUS.lua
+++++ b/AzerothAdmin/Locales/UI/Features/enUS.lua
++@@
+++    ["분류를 선택하세요.  |cffaaaaaa※ 종류/등급/클래스는 자동 반영됩니다.|r"]="Select a category. |cffaaaaaa※ Type/quality/class filters apply automatically.|r",
++
++--- a/AzerothAdmin/Locales/UI/Features/zhCN.lua
+++++ b/AzerothAdmin/Locales/UI/Features/zhCN.lua
++@@
+++    ["분류를 선택하세요.  |cffaaaaaa※ 종류/등급/클래스는 자동 반영됩니다.|r"]="请选择分类。|cffaaaaaa※ 类型/品质/职业筛选会自动生效。|r",
++
++--- a/AzerothAdmin/Locales/UI/Features/zhTW.lua
+++++ b/AzerothAdmin/Locales/UI/Features/zhTW.lua
++@@
+++    ["분류를 선택하세요.  |cffaaaaaa※ 종류/등급/클래스는 자동 반영됩니다.|r"]="請選擇分類。|cffaaaaaa※ 類型/品質/職業篩選會自動套用。|r",
++
++--- a/AzerothAdmin/Locales/UI/Features/ruRU.lua
+++++ b/AzerothAdmin/Locales/UI/Features/ruRU.lua
++@@
+++    ["분류를 선택하세요.  |cffaaaaaa※ 종류/등급/클래스는 자동 반영됩니다.|r"]="Выберите категорию. |cffaaaaaa※ Фильтры типа, качества и класса применяются автоматически.|r",
+
+# 검토 결과
+# - 종류/등급/클래스 클릭은 0.15초 debounce 후 현재 카테고리/검색 결과를 1회 재빌드
+# - 연속 체크 클릭은 마지막 클릭 기준으로 묶여 불필요한 반복 rebuild 감소
+# - 검색어 타이핑 자체는 자동 검색하지 않음: 기존 검색 버튼/Enter 동작 유지
+# - 클래스 필터는 itemAllowsSelectedClass()의 기존 classRestrictionCache 재사용
+# - 검색 결과는 기존 1000개 상한 유지
+# - visible page item-cache refresh 0.55초 x 최대 4회 로직 유지
+# - 기존 '필터 적용' 버튼은 호환/수동 재실행용으로 유지
+# - 새 안내 literal은 enUS/zhCN/zhTW/ruRU 동시 추가
+# - 새 Retail API 없음
+# - Lua 5.1 문법만 사용
+# - 게임 내 성능/시각 검증은 아직 수행하지 않음
