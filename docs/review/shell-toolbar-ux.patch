@@ -1,7 +1,7 @@
 # GM 메인창 + 툴바 UI/UX 검토 패치
-# 대상: AzerothAdmin/Modules/Shell/UI.lua
+# 대상: AzerothAdmin/Modules/Shell/UI.lua + Locales/UI/Features/*.lua
 # 기준: main @ aede9c206e8f33a8014d58b1f1f1c9bc37bfb029
-# 목적: 메인 타이틀 단순화, 툴바 기능 그룹화, 즉시 처치 안전경로 통일
+# 목적: 메인 타이틀 단순화, 기존 제작자 표시 보존, 툴바 기능 그룹화, 즉시 처치 안전경로 통일
 # 주의: PR #57이 같은 Shell/UI.lua를 수정 중이므로 실제 런타임 Lua는 아직 변경하지 않음.
 
 --- a/AzerothAdmin/Modules/Shell/UI.lua
@@ -12,7 +12,7 @@
      title:SetPoint("TOPLEFT", frame, "TOPLEFT", 48, -12)
      title:SetTextColor(1, 0.78, 0.25)
 -    local subtitle = makeText(frame, "아제로스코어 전용버전 · 제작자: 취미연구가", "small")
-+    local subtitle = makeText(frame, "WotLK 3.3.5a · AzerothCore", "small")
++    local subtitle = makeText(frame, "WotLK 3.3.5a · AzerothCore · 제작자: 취미연구가", "small")
      subtitle:SetPoint("TOPLEFT", frame, "TOPLEFT", 48, -34)
      subtitle:SetTextColor(0.30, 0.86, 0.86)
 @@
@@ -29,21 +29,21 @@
 -    self.bankButton = addIcon(245, ...)
 -    self.craftInfoButton = addIcon(275, ...)
 -    self.itemInfoButton = addIcon(305, ...)
-+    -- 그룹 1: 상태 토글
++    -- 그룹 1: 상태 토글 (GM 메뉴 뒤)
 +    self.flightButton = addIcon(95, ...)
-+    self.godButton = addIcon(125, ...)
-+    self.visibilityButton = addIcon(155, ...)
-+    self.speedButton = addIcon(185, ...)
++    self.godButton = addIcon(123, ...)
++    self.visibilityButton = addIcon(151, ...)
++    self.speedButton = addIcon(179, ...)
 +
 +    -- 그룹 2: 이동
-+    self.teleportButton = addIcon(225, ...)
-+    self.favoriteButton = addIcon(255, ...)
++    self.teleportButton = addIcon(213, ...)
++    self.favoriteButton = addIcon(241, ...)
 +
 +    -- 그룹 3: 관리/정보
-+    self.questHelperButton = addIcon(295, ...)
-+    self.bankButton = addIcon(325, ...)
-+    self.craftInfoButton = addIcon(355, ...)
-+    self.itemInfoButton = addIcon(385, ...)
++    self.questHelperButton = addIcon(275, ...)
++    self.bankButton = addIcon(303, ...)
++    self.craftInfoButton = addIcon(331, ...)
++    self.itemInfoButton = addIcon(359, ...)
 +
 +    -- 위험 명령은 다른 기능과 물리적으로 분리하고 메인 명령 정의의
 +    -- 대상 검사/RBAC/confirm/danger 경로를 그대로 재사용한다.
@@ -61,13 +61,44 @@
 +    gmMenu:SetPoint("LEFT", toolbar, "LEFT", 5, 0)
 @@
 -        slot:SetPoint("LEFT", toolbar, "LEFT", 430 + ((qi - 1) * 30), 0)
-+        slot:SetPoint("LEFT", toolbar, "LEFT", 425 + ((qi - 1) * 30), 0)
++        slot:SetPoint("LEFT", toolbar, "LEFT", 397 + ((qi - 1) * 28), 0)
++
++--- a/AzerothAdmin/Locales/UI/Features/enUS.lua
+++++ b/AzerothAdmin/Locales/UI/Features/enUS.lua
++@@
+++    ["AzerothAdmin GM"]="AzerothAdmin GM",
+++    ["WotLK 3.3.5a · AzerothCore · 제작자: 취미연구가"]="WotLK 3.3.5a · AzerothCore · Creator: Hobbyist",
+++    ["선택한 대상을 처치합니다. 메인 메뉴와 동일하게 확인 후 실행됩니다."]="Kill the selected target after the same confirmation used by the main menu.",
++
++--- a/AzerothAdmin/Locales/UI/Features/zhCN.lua
+++++ b/AzerothAdmin/Locales/UI/Features/zhCN.lua
++@@
+++    ["AzerothAdmin GM"]="AzerothAdmin GM",
+++    ["WotLK 3.3.5a · AzerothCore · 제작자: 취미연구가"]="WotLK 3.3.5a · AzerothCore · 作者：Hobbyist",
+++    ["선택한 대상을 처치합니다. 메인 메뉴와 동일하게 확인 후 실행됩니다."]="击杀选中的目标，并与主菜单相同先进行确认。",
++
++--- a/AzerothAdmin/Locales/UI/Features/zhTW.lua
+++++ b/AzerothAdmin/Locales/UI/Features/zhTW.lua
++@@
+++    ["AzerothAdmin GM"]="AzerothAdmin GM",
+++    ["WotLK 3.3.5a · AzerothCore · 제작자: 취미연구가"]="WotLK 3.3.5a · AzerothCore · 作者：Hobbyist",
+++    ["선택한 대상을 처치합니다. 메인 메뉴와 동일하게 확인 후 실행됩니다."]="擊殺選取的目標，並與主選單相同先進行確認。",
++
++--- a/AzerothAdmin/Locales/UI/Features/ruRU.lua
+++++ b/AzerothAdmin/Locales/UI/Features/ruRU.lua
++@@
+++    ["AzerothAdmin GM"]="AzerothAdmin GM",
+++    ["WotLK 3.3.5a · AzerothCore · 제작자: 취미연구가"]="WotLK 3.3.5a · AzerothCore · Автор: Hobbyist",
+++    ["선택한 대상을 처치합니다. 메인 메뉴와 동일하게 확인 후 실행됩니다."]="Убить выбранную цель после того же подтверждения, что и в главном меню.",
 
-# 참고용 최종 그룹 순서
-# GM 메뉴 | 비행 · 무적 · 투명 · 속도 | 순간이동 · 즐겨찾기 | 퀘스트 · 은행 · 전문기술 · 아이템 | 퀵슬롯 | 즉시처치
-#
-# 실제 반영 시 좌표는 500px 폭 안에서 아이콘/퀵슬롯/위험버튼 간격을 다시 실측해야 함.
-# 위 숫자는 UX 구조 검토용이며 최종 픽셀값은 UI Lab/게임 화면에서 조정 대상.
+# 최종 검토용 500px 배치
+# - GM 메뉴: x=5, width=84 -> 89
+# - 상태 토글: x=95/123/151/179, 각 28 -> 마지막 207
+# - 이동: x=213/241 -> 마지막 269
+# - 관리/정보: x=275/303/331/359 -> 마지막 387
+# - 퀵슬롯: x=397/425, 각 28 -> 마지막 453
+# - 위험 즉시처치: x=465, width=28 -> 493
+# - 우측 여백 7px, 퀵슬롯과 위험 버튼 사이 12px 확보
 #
 # 안전성 핵심
 # - 현재 툴바 즉시처치: addon:SendNow(".die") -> 확인 없이 실행
@@ -77,11 +108,14 @@
 # - 따라서 메인/툴바가 동일한 대상검사·권한검사·확인창·실행추적 경로 사용
 #
 # 보존 사항
+# - 기존 제작자 표시 보존
 # - toolbar 500x32, BOTTOM y=92, HIGH, movable 유지
 # - 기존 토글 함수 ToggleFlight/ToggleGod/ToggleVisibility/ToggleSpeed 변경 없음
 # - Teleport/Favorite/QuestHelper/Bank/Craft/Item 기능 변경 없음
 # - 퀵슬롯 2개 유지
 # - RefreshToolbarPermissions의 .die 권한 검사 유지
+# - 새 표시 문자열 enUS/zhCN/zhTW/ruRU 동시 추가
 # - Lua 5.1/WotLK 3.3.5a API만 사용
 # - Retail API 추가 없음
+# - PR #57 처리 후 실제 Shell/UI.lua에 반영할 것
 # - 게임 내 시각/동작 검증 아직 수행하지 않음
