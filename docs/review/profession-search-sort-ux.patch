@@ -1,0 +1,48 @@
+# Profession Info 검색/정렬 UI 최소 변경 패치
+# 대상: AzerothAdmin/Modules/ProfessionInfo/UI.lua
+# 기준: main @ aede9c206e8f33a8014d58b1f1f1c9bc37bfb029
+# 목적: 제작 목록 검색창 가독성 개선 + 정렬 버튼 분리
+# 주의: 이 파일 자체는 런타임에 로드되지 않음. 실제 Lua 적용 전 검토용.
+
+--- a/AzerothAdmin/Modules/ProfessionInfo/UI.lua
++++ b/AzerothAdmin/Modules/ProfessionInfo/UI.lua
+@@
+ local recipeTitle = makeText(recipePanel, "제작 아이템", "GameFontNormal")
+ recipeTitle:SetPoint("TOPLEFT", 10, -10)
+ recipeTitle:SetTextColor(1, 0.82, 0.18)
+ 
+-local searchBox = makeEdit(recipePanel, 142, 24)
++local sortMode = "skill"
++local sortButton = makeButton(recipePanel, 110, 22, "숙련↓")
++sortButton:SetPoint("TOPRIGHT", recipePanel, "TOPRIGHT", -8, -6)
++sortButton.aaeHint = "클릭: 요구 숙련 높은순 / 희귀도 높은순 / 숙련+희귀도 순환"
++
++local searchBox = makeEdit(recipePanel, 220, 24)
+ searchBox:SetPoint("TOPLEFT", 10, -30)
+ 
+ local searchButton = makeButton(recipePanel, 55, 24, "검색")
+ searchButton:SetPoint("LEFT", searchBox, "RIGHT", 6, 0)
+-
+-local sortMode = "skill"
+-local sortButton = makeButton(recipePanel, 75, 24, "숙련↓")
+-sortButton:SetPoint("LEFT", searchButton, "RIGHT", 5, 0)
+-sortButton.aaeHint = "클릭: 요구 숙련 높은순 / 희귀도 높은순 / 숙련+희귀도 순환"
+
+# 검토 결과
+# - Profession Info 전체 창 850x570 유지
+# - 3열 구조 유지: 전문기술 170 / 제작 목록 308 / 상세 324
+# - 제작 목록 행 시작 위치(-64), PAGE_SIZE=9, 페이지 버튼 위치 변경 없음
+# - 검색창 폭 142 -> 220
+# - 검색 버튼 55 유지
+# - 정렬 버튼을 제목 줄 오른쪽으로 이동하고 110px로 확장
+# - sortMode(skill/quality/skillquality) 전환 로직 변경 없음
+# - sortButton OnClick -> applySearch() 동작 변경 없음
+# - 검색 버튼/Enter/Escape 검색 로직 변경 없음
+# - allRecipes/filteredRecipes/selectedRecipe 상태 구조 변경 없음
+# - CraftData/InvenCraftInfo 데이터 공급 로직 변경 없음
+# - Spell 습득/숙련도 설정/재료 획득 로직 변경 없음
+# - 기존 공통 locale 키 재사용: "숙련↓", "희귀↓", "숙련+희귀", "검색", "제작 아이템"
+# - 새 표시 문자열 없음 -> locale 파일 수정 불필요
+# - Lua 5.1/WotLK 3.3.5a UI API 범위만 유지
+# - Retail 전용 API 추가 없음
+# - 게임 내 시각 검증은 아직 수행하지 않음
