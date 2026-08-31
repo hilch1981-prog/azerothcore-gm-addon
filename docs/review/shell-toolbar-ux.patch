@@ -1,0 +1,87 @@
+# GM 메인창 + 툴바 UI/UX 검토 패치
+# 대상: AzerothAdmin/Modules/Shell/UI.lua
+# 기준: main @ aede9c206e8f33a8014d58b1f1f1c9bc37bfb029
+# 목적: 메인 타이틀 단순화, 툴바 기능 그룹화, 즉시 처치 안전경로 통일
+# 주의: PR #57이 같은 Shell/UI.lua를 수정 중이므로 실제 런타임 Lua는 아직 변경하지 않음.
+
+--- a/AzerothAdmin/Modules/Shell/UI.lua
++++ b/AzerothAdmin/Modules/Shell/UI.lua
+@@
+-    local title = makeText(frame, "GM에드온[3.3.5a 아제로스코어 전용]", "large")
++    local title = makeText(frame, "AzerothAdmin GM", "large")
+     title:SetPoint("TOPLEFT", frame, "TOPLEFT", 48, -12)
+     title:SetTextColor(1, 0.78, 0.25)
+-    local subtitle = makeText(frame, "아제로스코어 전용버전 · 제작자: 취미연구가", "small")
++    local subtitle = makeText(frame, "WotLK 3.3.5a · AzerothCore", "small")
+     subtitle:SetPoint("TOPLEFT", frame, "TOPLEFT", 48, -34)
+     subtitle:SetTextColor(0.30, 0.86, 0.86)
+@@
+ function addon:CreateToolbar()
+@@
+-    self.flightButton = addIcon(5, ...)
+-    self.killButton = addIcon(35, ... function() addon:SendNow(".die") end)
+-    self.godButton = addIcon(65, ...)
+-    self.visibilityButton = addIcon(95, ...)
+-    self.speedButton = addIcon(125, ...)
+-    self.teleportButton = addIcon(155, ...)
+-    self.favoriteButton = addIcon(185, ...)
+-    self.questHelperButton = addIcon(215, ...)
+-    self.bankButton = addIcon(245, ...)
+-    self.craftInfoButton = addIcon(275, ...)
+-    self.itemInfoButton = addIcon(305, ...)
++    -- 그룹 1: 상태 토글
++    self.flightButton = addIcon(95, ...)
++    self.godButton = addIcon(125, ...)
++    self.visibilityButton = addIcon(155, ...)
++    self.speedButton = addIcon(185, ...)
++
++    -- 그룹 2: 이동
++    self.teleportButton = addIcon(225, ...)
++    self.favoriteButton = addIcon(255, ...)
++
++    -- 그룹 3: 관리/정보
++    self.questHelperButton = addIcon(295, ...)
++    self.bankButton = addIcon(325, ...)
++    self.craftInfoButton = addIcon(355, ...)
++    self.itemInfoButton = addIcon(385, ...)
++
++    -- 위험 명령은 다른 기능과 물리적으로 분리하고 메인 명령 정의의
++    -- 대상 검사/RBAC/confirm/danger 경로를 그대로 재사용한다.
++    self.killButton = addIcon(465, "Interface\\Icons\\Ability_Rogue_Eviscerate", "즉시 처치",
++        "선택한 대상을 처치합니다. 메인 메뉴와 동일하게 확인 후 실행됩니다.", function()
++            local definition = addon:FindDefinitionByKey("cmd:.die")
++            if definition then addon:ExecuteDefinition(definition) end
++        end)
++    self.killButton:SetBackdropColor(0.13, 0.045, 0.025, 1)
++    self.killButton:SetBackdropBorderColor(0.72, 0.25, 0.12, 1)
+@@
+-    local gmMenu = makeButton(toolbar, 84, 22, "GM 메뉴")
+-    gmMenu:SetPoint("LEFT", toolbar, "LEFT", 338, 0)
++    local gmMenu = makeButton(toolbar, 84, 22, "GM 메뉴")
++    gmMenu:SetPoint("LEFT", toolbar, "LEFT", 5, 0)
+@@
+-        slot:SetPoint("LEFT", toolbar, "LEFT", 430 + ((qi - 1) * 30), 0)
++        slot:SetPoint("LEFT", toolbar, "LEFT", 425 + ((qi - 1) * 30), 0)
+
+# 참고용 최종 그룹 순서
+# GM 메뉴 | 비행 · 무적 · 투명 · 속도 | 순간이동 · 즐겨찾기 | 퀘스트 · 은행 · 전문기술 · 아이템 | 퀵슬롯 | 즉시처치
+#
+# 실제 반영 시 좌표는 500px 폭 안에서 아이콘/퀵슬롯/위험버튼 간격을 다시 실측해야 함.
+# 위 숫자는 UX 구조 검토용이며 최종 픽셀값은 UI Lab/게임 화면에서 조정 대상.
+#
+# 안전성 핵심
+# - 현재 툴바 즉시처치: addon:SendNow(".die") -> 확인 없이 실행
+# - 메인 GM메뉴 정의: command=".die", requires="unit", confirm=true, danger=true
+# - 변경안: FindDefinitionByKey("cmd:.die") + ExecuteDefinition(definition)
+# - ExecuteDefinition은 IsDefinitionAllowed -> Build/ValidateCommand -> confirm 시 ConfirmCommand 경로 사용
+# - 따라서 메인/툴바가 동일한 대상검사·권한검사·확인창·실행추적 경로 사용
+#
+# 보존 사항
+# - toolbar 500x32, BOTTOM y=92, HIGH, movable 유지
+# - 기존 토글 함수 ToggleFlight/ToggleGod/ToggleVisibility/ToggleSpeed 변경 없음
+# - Teleport/Favorite/QuestHelper/Bank/Craft/Item 기능 변경 없음
+# - 퀵슬롯 2개 유지
+# - RefreshToolbarPermissions의 .die 권한 검사 유지
+# - Lua 5.1/WotLK 3.3.5a API만 사용
+# - Retail API 추가 없음
+# - 게임 내 시각/동작 검증 아직 수행하지 않음
