@@ -267,7 +267,7 @@ function addon:CreateUI()
         insets = { left = 4, right = 4, top = 4, bottom = 4 },
     })
     frame:SetBackdropColor(0.018, 0.025, 0.035, 0.97)
-    frame:SetBackdropBorderColor(0.72, 0.52, 0.18, 1)
+    frame:SetBackdropBorderColor(0.95, 0.58, 0.10, 1)
     frame:Hide()
     self.frame = frame
     if self.RegisterEscapeFrame then self:RegisterEscapeFrame(frame) end
@@ -298,7 +298,7 @@ function addon:CreateUI()
     securityText:SetTextColor(0.75, 0.75, 0.75)
     self.securityText = securityText
     local accent = frame:CreateTexture(nil, "ARTWORK")
-    accent:SetTexture(0.72, 0.52, 0.18, 0.85)
+    accent:SetTexture(0.95, 0.58, 0.10, 0.85)
     accent:SetPoint("TOPLEFT", frame, "TOPLEFT", 12, -53)
     accent:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -12, -53)
     accent:SetHeight(1)
@@ -1040,7 +1040,7 @@ function addon:CreateTeleportWindow()
         insets = { left = 4, right = 4, top = 4, bottom = 4 },
     })
     frame:SetBackdropColor(0.018, 0.025, 0.035, 0.98)
-    frame:SetBackdropBorderColor(0.72, 0.52, 0.18, 1)
+    frame:SetBackdropBorderColor(0.95, 0.58, 0.10, 1)
     frame:Hide()
     self.teleportFrame = frame
     if self.RegisterEscapeFrame then self:RegisterEscapeFrame(frame) end
