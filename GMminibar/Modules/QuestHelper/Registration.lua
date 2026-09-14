@@ -1,0 +1,2 @@
+local A = AzerothAdminAC335
+A:RegisterModule("quest_helper", { status = "module-active-static-verified-game-test-pending", dependencies = { "commands" }, runtimeFiles = { "Modules/QuestHelper/QuestCompanionObjectives.lua", "Modules/QuestHelper/Module.lua", "Modules/QuestHelper/QuestLogBridge.lua", "Modules/QuestHelper/Registration.lua" }, tests = { "tests/test_release_contract.py", "tools/verify_release.py" }, notes = "R8: Quest-ID selection guard + full-row selection + localized lookup/dialogue fallback + coordinate-first navigation; real-client retest pending" })

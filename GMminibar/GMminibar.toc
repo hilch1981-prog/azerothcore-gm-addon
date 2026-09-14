@@ -1,0 +1,171 @@
+## Interface: 30300
+## Title: GM MINI BAR[WotLK-AzerothCore]
+## Title-koKR: GM MINI BAR[WotLK-아제로스코어]
+## Title-zhCN: GM MINI BAR[WotLK-AzerothCore]
+## Title-zhTW: GM MINI BAR[WotLK-AzerothCore]
+## Title-ruRU: GM MINI BAR[WotLK-AzerothCore]
+## Notes: Created: 2026-09-14 · Author: 취미연구가
+## Notes-koKR: 제작 일자: 2026-09-14 · 제작자: 취미연구가
+## Author: 취미연구가
+## Notes-ruRU: Дата: 2026-09-14 · Автор: 취미연구가
+## Notes-zhTW: 製作日期: 2026-09-14 · 製作者: 취미연구가
+## Notes-zhCN: 制作日期: 2026-09-14 · 制作者: 취미연구가
+## Version: 1.0.0
+## X-Client: WoW WotLK 3.3.5a (12340)
+## X-Test-Build-Date: 2026-09-14
+## X-Core: AzerothCore
+## X-Server-Baseline: Legends 82d3bf237d51+ (Server.log)
+## X-Reference-Core: c0e6272af9a1a95aa0859a0cd95f7b70b273c9f4
+## X-Target-Repack: 260912_WOW_Legends_Repack1.5.3
+## X-UI-Contract: SharedWindow=1080x700, Toolbar=414x32, QuestCompanion=310x132, Lists=height-adaptive
+## X-Server-Security-Enum: PLAYER=0, MODERATOR=1, GAMEMASTER=2, ADMINISTRATOR=3, CONSOLE=4
+## X-Release-Channel: stable
+## X-Bootstrap-Schema: 7
+## X-Stable-Namespace: AzerothAdminAC335
+## X-UI-Fallback: Modules/Shell/UI.lua
+## X-Launcher-Recovery: /aaac repair
+## X-Reagent-Status: ready/partial/missing visual state
+## X-Locale-Packs: enUS, koKR, zhCN, zhTW, ruRU
+## SavedVariables: GMminibarAC335DB
+## DefaultState: Enabled
+## LoadOnDemand: 0
+
+Framework\Bootstrap.lua
+Framework\Compatibility335.lua
+Framework\ModuleRegistry.lua
+Framework\Localization.lua
+Framework\LocaleFont.lua
+Framework\UILocalization.lua
+Framework\FeatureLocalization.lua
+Framework\CommandRegistry.lua
+Framework\DataRegistry.lua
+Framework\UIComponents.lua
+Data\Generated\SourceInfo.lua
+Data\Generated\Items.lua
+Data\Generated\Quests.lua
+Data\Generated\Creatures.lua
+Data\Generated\Teleports.lua
+Locales\enUS.lua
+Locales\koKR.lua
+Locales\zhCN.lua
+Locales\zhTW.lua
+Locales\ruRU.lua
+Locales\Complete.lua
+Data\AC335\SourceInfo.lua
+Data\AC335\DatabaseCatalog.lua
+Data\AC335\Teleports.lua
+Data\AC335\ItemSources.lua
+Data\AC335\Professions.lua
+Data\AC335\ProfessionDetails.lua
+Data\AC335\LegacyItemCategories.lua
+Data\AC335\QuestLocations.lua
+Data\AC335\TeleportDbNames.lua
+Data\AC335\TeleportMeta.lua
+Data\AC335\ItemLimits.lua
+Data\AC335\Load.lua
+Modules\Language\Module.lua
+Modules\Language\Registration.lua
+Modules\Commands\CommandMeta.lua
+Modules\Commands\Module.lua
+Modules\Commands\Registration.lua
+Modules\Search\Module.lua
+Modules\Search\Registration.lua
+Modules\Creatures\Module.lua
+Modules\Creatures\Registration.lua
+Modules\Teleports\Module.lua
+Modules\Teleports\Registration.lua
+Modules\QuestHelper\Module.lua
+Modules\QuestHelper\Registration.lua
+Modules\ItemBrowser\Module.lua
+Modules\ItemBrowser\Registration.lua
+Modules\ProfessionInfo\Module.lua
+Modules\ProfessionInfo\Registration.lua
+Modules\Database\Module.lua
+Modules\Database\Registration.lua
+Modules\Integrations\Module.lua
+Modules\Integrations\Registration.lua
+Modules\Bank\Module.lua
+Modules\Bank\Registration.lua
+Modules\Revive\Module.lua
+Modules\Revive\Registration.lua
+Modules\PlayerBot\Module.lua
+Modules\PlayerBot\Registration.lua
+Modules\Verification\StaticChecks.lua
+Modules\Verification\Registration.lua
+Tests\RuntimeSelfTest.lua
+Modules\Shell\Core.lua
+Modules\Shell\Registration.lua
+Modules\Shell\UI.lua
+
+# Native UI workbench: shared presentation, separate core adapters
+Framework\NativeUI.lua
+Modules\Shell\CommandCatalog.lua
+Modules\Shell\WorkbenchAdapter.lua
+Modules\Shell\WorkbenchLocales.lua
+Modules\Shell\Workbench.lua
+Modules\QuestHelper\QuestLogBridge.lua
+
+## X-Native-UX: Workbench=compact feature windows; QuestCompanion=310x426; NativeUI=1; GameTest=pending
+
+Modules\Shell\UXLocales.lua
+Modules\Commands\ServerIndex.lua
+Modules\Commands\ServerCatalogAdapter.lua
+Modules\Shell\UXLayouts.lua
+Modules\Shell\CompactShell.lua
+Modules\Shell\QuickSlotPicker.lua
+Modules\QuestHelper\QuestCompanionObjectives.lua
+
+Modules\Shell\ReviewTables.lua
+Modules\Shell\CommandWorkbook.lua
+Modules\Shell\FullCommandMenu.lua
+Modules\Shell\ReviewQuestMaps.lua
+
+Modules\Shell\BagSort.lua
+
+Modules\Shell\UnifiedBags.lua
+
+Modules\Shell\FeedbackRC8.lua
+
+Modules\QuestHelper\QuestContextRC93.lua
+Modules\Integrations\MiniBarRC93.lua
+Modules\Shell\ContentLayoutRC93.lua
+
+Modules\Shell\GameplayRC94.lua
+Modules\Shell\BagControlsRC94.lua
+
+Modules\Shell\BankLabelsRC943.lua
+
+Locales\ExtrasRC9411.lua
+Modules\IDTips\config.lua
+Modules\IDTips\core.lua
+Modules\IDTips\quest.lua
+Data\Generated\PlayerSpells.lua
+Modules\SpellBrowser\Module.lua
+
+Locales\WorldAC335.lua
+
+Locales\FeedbackPair.lua
+Modules\Shell\ItemLevels.lua
+
+Locales\Repair153.lua
+Modules\Shell\MiniBarBindings.lua
+Modules\Shell\Repair153.lua
+
+Locales\UX154.lua
+Data\Generated\ProfessionTraining.lua
+Data\Generated\SpellRanks.lua
+Data\Generated\Destinations.lua
+Data\Generated\WorldMapRects.lua
+Data\Generated\UtilityTraining.lua
+Framework\PlayerActions.lua
+Modules\Shell\UX154.lua
+Modules\Shell\Utilities.lua
+Modules\Shell\Training154.lua
+
+Modules\QuestHelper\Party.lua
+
+Modules\Shell\DestinationUX.lua
+## X-Approved-Baseline: 6.0.0-335a-rc4
+## X-Validation: Lua51+native-secure-handler-contract; IN-GAME-PENDING
+
+Data\Generated\DestinationLocales.lua

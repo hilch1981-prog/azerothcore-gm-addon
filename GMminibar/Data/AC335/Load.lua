@@ -1,0 +1,10 @@
+local A = AzerothAdminAC335
+A.Data:RegisterItemSources(A.AC335ItemSources or {}, {["name"]="Supplied v5.1 item category data, filtered by live item_template",["interface"]=30300})
+A.Data:RegisterProfessions(A.AC335Professions or {}, {["name"]="Supplied recipes + Legends 3.3.5a Spell/SkillLineAbility DBC",["interface"]=30300})
+A.Data:RegisterTeleports(A.AC335Teleports or {}, {["name"]="Legends game_tele quick list",["count"]=32})
+A.Data:RegisterTeleportDbNames(A.AC335TeleportDbNames or {}, {["name"]="Legends additive Korean game_tele aliases",["count"]=1968})
+A.Data:RegisterTeleportMeta(A.AC335TeleportMeta or {}, {["name"]="Legends coordinates; Korean zone names; Wrath recommended levels",["count"]=1968})
+A.Data:RegisterQuestLocations(A.AC335QuestLocations or {}, {["name"]="Legends quest_template, quest relations and world spawns",["quests"]=8879})
+A.Data:RegisterDatabaseCatalog(A.AC335DatabaseCatalog or {}, {["name"]="Verified Legends database tables",["count"]=26})
+A.Data:RegisterProfessionDetails(A.AC335ProfessionDetails or {}, {["source"]="Legends Spell/SkillLineAbility DBC + supplied recipe requirements",["interface"]=30300,["detailRecipes"]=3552,["reagentLinks"]=8886})
+A.Data:RegisterLegacyItemCategories(A.AC335LegacyItemCategories or {}, {["source"]="Supplied v5.1 CategoryIndex; live item_template IDs; Cataclysm groups excluded",["displayedEntries"]=190})

@@ -1,0 +1,527 @@
+local A=AzerothAdminAC335
+A.CommandWorkbook={}
+A.CommandWorkbook[".account"]={group="계정 관리",name="귀하가 소유한 경우 계정의 액세스 수준과 이메일 주소를 표시합니다",feature="필요한 권한이 있는 경우 계정의 액세스 수준과 이메일 주소를 표시합니다.",method=".account"}
+A.CommandWorkbook[".account addon"]={group="계정 관리",name="확장 애드온 수준 설정이 허용됨",feature="확장 애드온 수준을 허용하도록 설정하세요. 애드온 값: 0 - 일반, 1 - tbc, 2 - wotlk, 3 - cata.",method=".account addon #addon"}
+A.CommandWorkbook[".account create"]={group="계정 관리",name="계정을 만들고 비밀번호를 설정하세요",feature="계정을 만들고 비밀번호를 설정하세요.",method=".account create $account $password"}
+A.CommandWorkbook[".account delete"]={group="계정 관리",name="모든 캐릭터가 포함된 계정 삭제",feature="모든 캐릭터가 포함된 계정을 삭제하세요.",method=".account delete $account"}
+A.CommandWorkbook[".account email"]={group="계정 관리",name="계정 이메일 변경",feature="계정 이메일을 변경하세요. 비밀번호 변경을 위해 이메일 입력이 필요한지 실제 보안 모드를 확인해야 할 수도 있습니다.",method=".account email $oldemail $currentpassword $newemail $newemailconfirmation"}
+A.CommandWorkbook[".account lock ip"]={group="계정 관리",name="현재 사용되는 IP로만 계정 로그인을 허용하거나 이 요구 사항을 제거하세요",feature="현재 사용되는 IP에서만 계정 로그인을 허용하거나 이 요구 사항을 제거하세요.",method=".account lock ip [on|off]"}
+A.CommandWorkbook[".account onlinelist"]={group="계정 관리",name="온라인 계정 목록 표시",feature="온라인 계정 목록을 표시합니다.",method=".account onlinelist"}
+A.CommandWorkbook[".account password"]={group="계정 관리",name="계정 비밀번호 변경",feature="계정 비밀번호를 변경하세요. 이메일 입력이 필요한지 확인하려면 실제 보안 모드를 확인해야 할 수도 있습니다.",method=".account password $old_password $new_password $new_password [$email]"}
+A.CommandWorkbook[".account set"]={group="계정 관리",name="가능한 하위 명령 목록 또는 .help account set을 보려면 .account set를 입력하세요",feature="가능한 하위 명령 목록을 보려면 .account set 를 입력하고, 하위 명령에 대한 정보를 보려면 .help account set $subcommand 를 입력하세요.",method=".account set $subcommand"}
+A.CommandWorkbook[".account set addon"]={group="계정 관리",name="사용자 설정(대상 지정 가능) 확장 애드온 수준 허용됨",feature="사용자 설정(가능한 대상) 확장 애드온 수준이 허용됩니다. 애드온 값: 0 - 일반, 1 - tbc, 2 - wotlk, 3 - cata.",method=".account set addon [$account] #addon"}
+A.CommandWorkbook[".account set gmlevel"]={group="계정 관리",name="대상 플레이어(자체에서는 사용할 수 없음) 또는 $name 계정에 대한 보안 수준을 설정합니다",feature="대상 플레이어(self에서는 사용할 수 없음) 또는 $name 계정의 보안 수준을 #realmID 영역의 #level 수준으로 설정합니다.  #level의 범위는 0에서 3까지입니다. #reamID는 모든 영역에 대해 -1일 수 있습니다.",method=".account set gmlevel [$account] #level [#realmid]"}
+A.CommandWorkbook[".account set password"]={group="계정 관리",name="계정 비밀번호 설정",feature="계정의 비밀번호를 설정하세요.",method=".account set password $account $password $password"}
+A.CommandWorkbook[".account set sec email"]={group="계정 관리",name="입력한 플레이어 계정의 이메일을 설정하세요",feature="입력한 플레이어 계정의 이메일을 설정합니다.",method=".account set sec email $accountname $email $emailconfirmation"}
+A.CommandWorkbook[".achievement"]={group="업적",name="가능한 하위 명령 목록을 보려면 .achievement를 입력하거나 .help achievement를 입력하세요",feature="가능한 하위 명령 목록을 보려면 .achievement를 입력하고, 하위 명령에 대한 정보를 보려면 .help achievement $subcommand를 입력하세요.",method=".achievement $subcommand"}
+A.CommandWorkbook[".achievement add"]={group="업적",name="대상 플레이어에게 업적을 추가합니다. $achievement: 업적 ID 또는",feature="대상 플레이어에게 업적을 추가합니다. $achievement: 업적 ID 또는 업적 링크일 수 있습니다.",method=".achievement add $achievement"}
+A.CommandWorkbook[".additem"]={group="아이템 지급",name="id #itemid(또는 정확한(!) 이름 $itemname)의 지정된 개수의 항목을 대괄호 안에 추가합니다",feature="지정된 개수의 ID #itemid(또는 괄호 안의 정확한 이름(!) 이름 $itemname, 인벤토리나 레시피의 아이템을 Shift-클릭하여 생성된 링크)를 귀하 또는 선택한 캐릭터 인벤토리에 추가합니다. #itemcount를 생략하면 하나의 항목만 추가됩니다. .",method=".additem #itemid/[#itemname]/#shift-click-item-link #itemcount"}
+A.CommandWorkbook[".additem set"]={group="아이템 세트 지급",name="ID가 #itemsetid인 아이템 세트의 아이템을 귀하 또는 선택한 캐릭터 인벤토리에 추가하세요",feature="ID가 #itemsetid인 아이템 세트의 아이템을 귀하 또는 선택한 캐릭터 인벤토리에 추가하세요. 항목 집합의 각 항목을 하나의 예시로 추가합니다.",method=".additem set #itemsetid"}
+A.CommandWorkbook[".announce"]={group="전체 공지",name="채팅 로그를 통해 온라인상의 모든 플레이어에게 글로벌 메시지 보내기",feature="채팅 로그를 통해 온라인상의 모든 플레이어에게 글로벌 메시지를 보냅니다.",method=".announce $MessageToBroadcast"}
+A.CommandWorkbook[".appear"]={group="대상에게 이동(관전)",name="해당 캐릭터로 텔레포트",feature="주어진 캐릭터로 순간이동합니다. 캐릭터 이름을 지정하거나 캐릭터의 초상화를 클릭하세요. 그룹에 있을 때. 캐릭터는 오프라인일 수 있습니다.",method=".appear [$charactername]"}
+A.CommandWorkbook[".arena disband"]={group="투기장",name="게임 내 아레나 팀 해체 명령",feature="게임 내 아레나 팀을 해체하는 명령입니다.",method=".arena disband #TeamID"}
+A.CommandWorkbook[".aura"]={group="오라(버프/디버프)",name="선택한 유닛에 주문 #spellid의 오라를 추가합니다",feature="선택한 유닛에 #spellid 주문의 오라를 추가합니다.",method=".aura #spellid"}
+A.CommandWorkbook[".ban"]={group="계정·캐릭터 차단",name="가능한 하위 명령 목록을 보려면 .ban을 입력하고 정보를 보려면 .help ban $subcommand를 입력하세요",feature="가능한 하위 명령 목록을 보려면 .ban을 입력하고, 하위 명령에 대한 정보를 보려면 .help ban $subcommand를 입력하세요.",method=".ban $subcommand"}
+A.CommandWorkbook[".ban account"]={group="계정·캐릭터 차단",name="계정 킥 플레이어를 금지합니다. $bantime: 음수 값은 permban으로 이어집니다",feature="계정 킥 플레이어를 금지합니다. $bantime: 음수 값은 permban으로 이어지며, 그렇지 않으면 \"4d20h3s\"와 같은 시간 문자열을 사용합니다.",method=".ban account $Name $bantime $reason"}
+A.CommandWorkbook[".ban character"]={group="계정·캐릭터 차단",name="캐릭터와 킥 플레이어를 금지합니다. $bantime: 음수 값은 permban으로 이어집니다",feature="캐릭터와 킥 플레이어를 금지합니다. $bantime: 음수 값은 permban으로 이어지며, 그렇지 않으면 \"4d20h3s\"와 같은 시간 문자열을 사용합니다.",method=".ban character $Name $bantime $reason"}
+A.CommandWorkbook[".ban ip"]={group="계정·캐릭터 차단",name="IP를 금지합니다. $bantime: 음수 값은 permban으로 이어집니다",feature="IP를 금지합니다. $bantime: 음수 값은 permban으로 이어지며, 그렇지 않으면 \"4d20h3s\"와 같은 시간 문자열을 사용합니다.",method=".ban ip $Ip $bantime $reason"}
+A.CommandWorkbook[".ban playeraccount"]={group="계정·캐릭터 차단",name="계정을 금지하고 플레이어를 추방합니다. $bantime: 음수 값은 permban으로 이어집니다",feature="계정을 금지하고 플레이어를 추방합니다. $bantime: 음수 값은 permban으로 이어지며, 그렇지 않으면 \"4d20h3s\"와 같은 시간 문자열을 사용합니다.",method=".ban playeraccount $Name $bantime $reason"}
+A.CommandWorkbook[".baninfo"]={group="차단 정보 조회",name="가능한 하위 명령 목록을 보려면 .baninfo를 입력하고, 보려면 .help baninfo $subcommand를 입력하세요",feature="가능한 하위 명령 목록을 보려면 .baninfo를 입력하고, 하위 명령에 대한 정보를 보려면 .help baninfo $subcommand를 입력하세요.",method=".baninfo $subcommand"}
+A.CommandWorkbook[".baninfo account"]={group="차단 정보 조회",name="특정 금지에 대한 전체 정보 보기",feature="특정 금지에 대한 전체 정보를 시청하세요.",method=".baninfo account $accountid"}
+A.CommandWorkbook[".baninfo character"]={group="차단 정보 조회",name="특정 금지에 대한 전체 정보 보기",feature="특정 금지에 대한 전체 정보를 시청하세요.",method=".baninfo character $charactername"}
+A.CommandWorkbook[".baninfo ip"]={group="차단 정보 조회",name="특정 금지에 대한 전체 정보 보기",feature="특정 금지에 대한 전체 정보를 시청하세요.",method=".baninfo ip $ip"}
+A.CommandWorkbook[".character check bank"]={group="은행",name="은행 재고를 보여주세요",feature="은행 재고를 보여주세요.",method=".character check bank"}
+A.CommandWorkbook[".banlist"]={group="차단 목록 조회",name="가능한 하위 명령 목록을 보려면 .banlist를 입력하고, 보려면 .help banlist $subcommand를 입력하세요",feature="가능한 하위 명령 목록을 보려면 .banlist를 입력하고, 하위 명령에 대한 정보를 보려면 .help banlist $subcommand를 입력하세요.",method=".banlist $subcommand"}
+A.CommandWorkbook[".banlist account"]={group="차단 목록 조회",name="금지 목록에서 계정 이름 패턴을 검색하거나 계정 금지 전체 목록을 표시합니다",feature="금지 목록에서 계정 이름 패턴을 검색하거나 전체 계정 금지 목록을 표시합니다.",method=".banlist account [$Name]"}
+A.CommandWorkbook[".banlist character"]={group="차단 목록 조회",name="금지 목록에서 캐릭터 이름 패턴을 검색합니다",feature="금지 목록에서 캐릭터 이름 패턴을 검색합니다. 패턴이 필요합니다.",method=".banlist character $Name"}
+A.CommandWorkbook[".banlist ip"]={group="차단 목록 조회",name="금지 목록에서 IP 패턴을 검색하거나 IP 금지 전체 목록을 표시합니다",feature="금지 목록에서 IP 패턴을 검색하거나 IP 금지 전체 목록을 표시합니다.",method=".banlist ip [$Ip]"}
+A.CommandWorkbook[".bf enable"]={group="전장(배틀필드)",name="BF 활성화",feature="",method=".bf enable #battleid"}
+A.CommandWorkbook[".bf start"]={group="전장(배틀필드)",name="BF 시작",feature="",method=".bf start #battleid"}
+A.CommandWorkbook[".bf stop"]={group="전장(배틀필드)",name="BF 중지",feature="",method=".bf stop #battleid"}
+A.CommandWorkbook[".bf switch"]={group="전장(배틀필드)",name="BF 스위치",feature="",method=".bf switch #battleid"}
+A.CommandWorkbook[".bf timer"]={group="전장(배틀필드)",name="BF 타이머",feature="",method=".bf timer #battleid #timer"}
+A.CommandWorkbook[".bindsight"]={group="시야 결속",name="선택한 유닛에 비전을 무기한으로 바인딩합니다",feature="선택한 유닛에게 시야를 무기한으로 결속시킵니다. 현재 대상을 보유하고 있는 동안에는 사용할 수 없습니다.",method=".bindsight"}
+A.CommandWorkbook[".bnetaccount"]={group="배틀넷 계정",name=".bnetaccount를 입력하여 가능한 하위 명령 목록 또는 .help 계정 세트를 확인하세요",feature=".bnetaccount를 입력하여 가능한 하위 명령 목록을 보거나 .help account set $subcommand를 입력하여 하위 명령에 대한 정보를 확인하세요.",method=".bnetaccount $subcommand"}
+A.CommandWorkbook[".bnetaccount create"]={group="배틀넷 계정",name="Battle.net 계정을 생성하고 비밀번호를 설정하세요",feature="Battle.net 계정을 생성하고 비밀번호를 설정하세요. 계정에는 @ 기호가 포함되어야 합니다.",method=".bnetaccount create $account $password"}
+A.CommandWorkbook[".bnetaccount set"]={group="배틀넷 계정",name=".bnetaccount set를 입력하여 가능한 하위 명령 목록을 확인하거나 .help bnetaccount set를 입력하세요",feature="가능한 하위 명령 목록을 보려면 .bnetaccount set 를 입력하고, 하위 명령에 대한 정보를 보려면 .help bnetaccount set $subcommand 를 입력하세요.",method=".bnetaccount set $subcommand"}
+A.CommandWorkbook[".bnetaccount set password"]={group="배틀넷 계정",name="계정 비밀번호 설정",feature="계정의 비밀번호를 설정하세요.",method=".bnetaccount set password $account $password $password"}
+A.CommandWorkbook[".cast"]={group="주문 시전",name="선택한 대상에게 #spellid 시전",feature="선택한 대상에게 #spellid를 시전합니다. 선택한 대상이 없으면 자신에게 시전합니다. '발동' 또는 부분이 제공되면 발동 플래그와 함께 주문이 시전됩니다.",method=".cast #spellid [triggered]"}
+A.CommandWorkbook[".cast back"]={group="주문 시전",name="선택한 대상이 캐릭터에게 #spellid를 시전합니다",feature="선택한 대상이 귀하의 캐릭터에게 #spellid를 시전합니다. '발동' 또는 부분이 제공되면 발동 플래그와 함께 주문이 시전됩니다.",method=".cast back #spellid [triggered]"}
+A.CommandWorkbook[".cast dest"]={group="주문 시전",name="선택한 대상은 제공된 대상에 #spellid를 시전합니다",feature="선택한 대상은 제공된 대상에 #spellid를 시전합니다. '발동' 또는 부분이 제공되면 발동 플래그와 함께 주문이 시전됩니다.",method=".cast dest #spellid #x #y #z [triggered]"}
+A.CommandWorkbook[".cast dist"]={group="주문 시전",name="#dist 거리에서 파인트 주문을 시전합니다",feature="#dist 거리에서 파인트 주문을 시전합니다. '발동' 또는 부분이 제공되면 발동 플래그와 함께 주문이 시전됩니다. 모든 주문을 지역 주문으로 시전할 수 있는 것은 아닙니다.",method=".cast dist #spellid [#dist [triggered]]"}
+A.CommandWorkbook[".cast self"]={group="주문 시전",name="대상 자체에 대상별로 #spellid 시전",feature="대상 자체에 대상별로 #spellid를 시전합니다. '발동' 또는 부분이 제공되면 발동 플래그와 함께 주문이 시전됩니다.",method=".cast self #spellid [triggered]"}
+A.CommandWorkbook[".cast target"]={group="주문 시전",name="선택된 대상은 피해자에게 #spellid를 시전합니다",feature="선택된 대상은 피해자에게 #spellid를 시전합니다. '발동' 또는 부분이 제공되면 발동 플래그와 함께 주문이 시전됩니다.",method=".cast target #spellid [triggered]"}
+A.CommandWorkbook[".channel set ownership"]={group="채팅 채널",name="채널에 처음으로 참여하는 사람에게 소유권 부여",feature="채널에 처음으로 참여하는 사람에게 소유권을 부여하세요.",method=".channel set ownership $channel [on/off]"}
+A.CommandWorkbook[".character changeaccount"]={group="캐릭터 관리",name="플레이어의 계정 변경 $name - 캐릭터 이름 $newaccount - 계정 이름",feature="플레이어 계정 변경 $name - 캐릭터 이름 $newaccount - 캐릭터가 이전될 계정 이름",method=".character changeaccount $name $newaccount"}
+A.CommandWorkbook[".character changeclass"]={group="캐릭터 관리",name="플레이어 $name $newClassID의 클래스 변경: 1-9, 11",feature="플레이어 $name $newClassID의 클래스 변경: 1-9, 11",method=".character changeclass [$name] [$newClassID]"}
+A.CommandWorkbook[".character changefaction"]={group="캐릭터 관리",name="캐릭터 세력 변경",feature="캐릭터 세력을 변경합니다.",method=".character changefaction $name"}
+A.CommandWorkbook[".character changerace"]={group="캐릭터 관리",name="캐릭터 종족 변경",feature="캐릭터 종족을 변경합니다.",method=".character changerace $name"}
+A.CommandWorkbook[".character customize"]={group="캐릭터 관리",name="게임에서 선택 표시하거나 다음 로그인 시 사용자 정의를 위해 명령 문자의 $name으로 표시",feature="다음 로그인 시 사용자 정의를 위해 게임에서 선택하거나 명령 문자의 $name으로 표시합니다.",method=".character customize [$name]"}
+A.CommandWorkbook[".character deleted delete"]={group="캐릭터 관리",name="선택한 문자를 완전히 삭제합니다",feature="선택한 문자를 완전히 삭제합니다. $name이 제공되면 이름에 해당 문자열이 포함된 문자만 삭제되고, #guid가 제공되면 해당 GUID가 포함된 문자만 삭제됩니다.",method=".character deleted delete #guid|$name"}
+A.CommandWorkbook[".character deleted list"]={group="캐릭터 관리",name="삭제된 모든 문자 목록을 표시합니다",feature="삭제된 모든 문자의 목록을 표시합니다. $name이 제공되면 이름에 해당 문자열이 포함된 문자만 선택되고, #guid가 제공되면 해당 GUID가 포함된 문자만 선택됩니다.",method=".character deleted list [#guid|$name]"}
+A.CommandWorkbook[".character deleted old"]={group="캐릭터 관리",name="삭제된 시간이 #keepDays 이상인 모든 문자를 완전히 삭제합니다",feature="삭제 시간이 #keepDays 이상인 모든 문자를 완전히 삭제합니다. #keepDays가 mangosd.conf 옵션 'CharDelete.KeepDays'에서 사용된 값을 제공하지 않은 경우. 참조된 구성 옵션이 비활성화된 경우(0 값 사용) #keepDays 없이 명령을 사용할 수 없습니다.",method=".character deleted old [#keepDays]"}
+A.CommandWorkbook[".character deleted restore"]={group="캐릭터 관리",name="삭제된 캐릭터를 복원합니다",feature="삭제된 문자를 복원합니다. $name이 제공되면 이름에 해당 문자열이 포함된 문자만 복원되고, $guid가 제공되면 해당 GUID가 포함된 문자만 복원됩니다. $newname을 설정하면 캐릭터는 원래 이름 대신 해당 이름으로 복원됩니다. #newaccount가 설정된 경우 해당 캐릭터는 특정 계정 캐릭터 목록으로 복원됩니다. 이것은 하나의 문자에만 작동합니다!",method=".character deleted restore #guid|$name [$newname] [#new account]"}
+A.CommandWorkbook[".character erase"]={group="캐릭터 관리",name="$name 캐릭터 삭제",feature="$name 캐릭터를 삭제합니다. 삭제 옵션이 있는 경우 캐릭터가 최종 삭제됩니다.",method=".character erase $name"}
+A.CommandWorkbook[".character level"]={group="캐릭터 관리",name="다음과 같이 $playername(또는 이름이 제공되지 않은 경우 선택한 이름)으로 캐릭터 레벨을 설정합니다",feature="$playername(또는 이름이 제공되지 않은 경우 선택한 이름)을 #numberoflevels로 설정하거나 #numberoflevels가 제공되지 않은 경우 +1)로 캐릭터 레벨을 설정합니다. #numberoflevels를 생략하면 레벨이 1씩 증가합니다. #numberoflevels가 0이면 같은 레벨이 다시 시작됩니다. 선택한 캐릭터가 없고 이름이 제공되지 않은 경우 레벨을 높이세요. 명령은 오프라인 캐릭터에 사용할 수 있습니다. 모든 통계 및 종속 값이 다시 계산되었습니다. 필요한 경우 레벨 감소 특성을 재설정할 수 있습니다. 또한 레벨 감소 시 레벨 요구 사항이 더 높은 장비 아이템이 손실될 수 있습니다.",method=".character level [$playername] [#level]"}
+A.CommandWorkbook[".character rename"]={group="캐릭터 관리",name="다음 로그인 시 이름을 바꾸려면 게임에서 선택했거나 명령 문자의 $name으로 표시하세요",feature="다음 로그인 시 이름을 바꾸려면 게임에서 선택했거나 명령 문자의 $name으로 표시하세요.  $newName이면 플레이어의 이름이 강제로 변경됩니다.",method=".character rename [$name] [$newName]"}
+A.CommandWorkbook[".character reputation"]={group="캐릭터 관리",name="선택한 플레이어에 대한 평판 정보 표시 또는 $player_name으로 찾은 플레이어",feature="$player_name으로 선택한 플레이어 또는 플레이어 찾기에 대한 평판 정보를 표시합니다.",method=".character reputation [$player_name]"}
+A.CommandWorkbook[".character titles"]={group="캐릭터 관리",name="선택한 플레이어에 대해 알려진 타이틀 목록 표시 또는 $player_name으로 찾은 플레이어",feature="$player_name으로 선택한 플레이어 또는 플레이어의 알려진 타이틀 목록을 표시합니다.",method=".character titles [$player_name]"}
+A.CommandWorkbook[".cheat"]={group="치트(GM 특수 상태)",name="가능한 하위 명령 목록을 보려면 .cheat를 입력하고, 보려면 .help cheat $subcommand를 입력하세요",feature="가능한 하위 명령 목록을 보려면 .cheat를 입력하고, 하위 명령에 대한 정보를 보려면 .help cheat $subcommand를 입력하세요.",method=".cheat $subcommand"}
+A.CommandWorkbook[".cheat casttime"]={group="치트(GM 특수 상태)",name="캐릭터의 주문 시전 시간을 활성화 또는 비활성화합니다",feature="캐릭터의 주문 시전 시간을 활성화하거나 비활성화합니다.",method=".cheat casttime [on/off]"}
+A.CommandWorkbook[".cheat cooldown"]={group="치트(GM 특수 상태)",name="캐릭터의 주문 쿨다운을 활성화 또는 비활성화합니다",feature="캐릭터의 주문 재사용 대기시간을 활성화하거나 비활성화합니다.",method=".cheat cooldown [on/off]"}
+A.CommandWorkbook[".cheat explore"]={group="치트(GM 특수 상태)",name="선택한 플레이어의 모든 지도를 표시하거나 숨깁니다",feature="선택한 플레이어의 모든 지도를 표시하거나 숨깁니다. 선택된 플레이어가 없으면 지도를 숨기거나 표시하세요. 공개하려면 #flag 값 1을 사용하고 모든 지도를 숨기려면 #flag 값 0을 사용합니다.",method=".cheat explore #flag"}
+A.CommandWorkbook[".cheat god"]={group="치트(GM 특수 상태)",name="캐릭터가 피해를 입는 능력을 활성화 또는 비활성화합니다",feature="캐릭터가 피해를 입는 능력을 활성화하거나 비활성화합니다.",method=".cheat god [on/off]"}
+A.CommandWorkbook[".cheat power"]={group="치트(GM 특수 상태)",name="캐릭터의 주문 비용(예: 마나)을 활성화 또는 비활성화합니다",feature="캐릭터의 주문 비용(예: 마나)을 활성화하거나 비활성화합니다.",method=".cheat power [on/off]"}
+A.CommandWorkbook[".cheat status"]={group="치트(GM 특수 상태)",name="현재 활성화된 치트를 표시합니다",feature="현재 활성화된 치트를 표시합니다.",method=".cheat status"}
+A.CommandWorkbook[".cheat taxi"]={group="치트(GM 특수 상태)",name="선택한 캐릭터의 모든 택시 경로에 대한 일시적인 접근 권한 부여 또는 제거",feature="선택한 캐릭터의 모든 택시 경로에 대한 임시 접근 권한을 부여하거나 제거합니다.  캐릭터를 선택하지 않은 경우 모든 경로를 숨기거나 표시합니다. 방문한 택시 노드는 접근 권한을 제거한 후에는 접근할 수 없습니다.",method=".cheat taxi on/off"}
+A.CommandWorkbook[".cheat waterwalk"]={group="치트(GM 특수 상태)",name="선택한 플레이어 또는 플레이어가 선택되지 않은 경우 자신의 워터워크 상태 켜기/끄기 설정",feature="선택한 플레이어 또는 플레이어가 선택되지 않은 경우 자신에 대한 워터워크 켜기/끄기 상태를 설정합니다.",method=".cheat waterwalk on/off"}
+A.CommandWorkbook[".combatstop"]={group="전투 강제 종료",name="선택한 캐릭터의 전투를 중지합니다",feature="선택한 캐릭터의 전투를 중지합니다. 플레이어가 아닌 사람을 선택하면 명령이 자신에게 적용됩니다. $playername이 제공되면 온라인 플레이어 $playername에 적용을 시도합니다.",method=".combatstop [$playername]"}
+A.CommandWorkbook[".cometome"]={group="대상 소환(내 위치로)",name="선택한 생물을 현재 위치로 오게 합니다. (새 위치는 DB에 저장되지 않습니다.)",feature="",method="SYntax: .cometome $parameter Make selected creature come to your current location (new position not saved to DB)."}
+A.CommandWorkbook[".commands"]={group="명령어 목록 조회",name="계정 수준에서 사용 가능한 명령 목록을 표시합니다",feature="계정 수준에서 사용 가능한 명령 목록을 표시합니다.",method=".commands"}
+A.CommandWorkbook[".cooldown"]={group="재사용대기시간 초기화",name="선택한 캐릭터에서 모두(spell_id가 제공되지 않은 경우) 또는 #spel_id 주문 재사용 대기시간을 제거합니다",feature="선택한 캐릭터 또는 귀하(선택하지 않은 경우)에서 모두(spell_id가 제공되지 않은 경우) 또는 #spel_id 주문 재사용 대기시간을 제거합니다.",method=".cooldown [#spell_id]"}
+A.CommandWorkbook[".damage"]={group="피해 적용",name="대상에게 $damage 적용",feature="대상에게 $damage를 적용합니다. $school 및 $spellid가 제공되지 않으면 어떠한 수정자도 없이 이 단순하고 깨끗한 근접 피해를 입힐 수 있습니다. $school이 제공되면 방어구 감소(학교 물리적인 경우)로 피해가 수정되고, 대상 흡수 수정자가 적용되어 대상에 대한 근접 피해로 적용됩니다. 주문이 제공되면 피해가 수정되어 주문 피해로 적용됩니다. $spellid는 시프트 링크일 수 있습니다.",method=".damage $damage_amount [$school [$spellid]]"}
+A.CommandWorkbook[".debug"]={group="디버그",name="가능한 하위 명령 목록을 보려면 .debug를 입력하고, 보려면 .help debug $subcommand를 입력하세요",feature=".debug를 입력하여 가능한 하위 명령 목록을 보거나 .help debug $subcommand를 입력하여 하위 명령에 대한 정보를 확인하세요.",method=".debug $subcommand"}
+A.CommandWorkbook[".debug areatriggers"]={group="디버그",name="영역 트리거에 대한 디버그 모드 전환",feature="영역 트리거에 대한 디버그 모드를 전환합니다. 디버그 모드에서 영역 트리거에 도달하면 GM에게 알림이 전송됩니다.",method=".debug areatriggers"}
+A.CommandWorkbook[".debug arena"]={group="디버그",name="경기장의 디버그 모드 전환",feature="경기장의 디버그 모드를 전환합니다. 디버그 모드에서 GM은 싱글 플레이어로 경기장을 시작할 수 있습니다.",method=".debug arena"}
+A.CommandWorkbook[".debug bg"]={group="디버그",name="전장의 디버그 모드 전환",feature="전장의 디버그 모드를 전환합니다. 디버그 모드에서 GM은 싱글 플레이어로 전장을 시작할 수 있습니다.",method=".debug bg"}
+A.CommandWorkbook[".debug Mod32Value"]={group="디버그",name="캐릭터의 #field 필드에 #value 추가",feature="캐릭터의 필드 #field에 #value를 추가합니다.",method=".debug Mod32Value #field #value"}
+A.CommandWorkbook[".debug moveflags"]={group="디버그",name="매개변수가 주어지지 않으면 대상의 현재 이동 플래그가 출력됩니다",feature="매개변수가 주어지지 않으면 대상의 현재 이동 플래그가 출력됩니다.",method=".debug moveflags [$newMoveFlags [$newMoveFlags2]]"}
+A.CommandWorkbook[".debug phase"]={group="디버그",name="플레이어의 단계 디버그 보고서를 사용자에게 보냅니다",feature="플레이어의 단계 디버그 보고서를 사용자에게 보냅니다.",method=".debug phase"}
+A.CommandWorkbook[".debug play cinematic"]={group="디버그",name="당신을 위해 시네마틱 #cinematicid를 재생해 보세요",feature="당신을 위해 시네마틱 #cinematicid를 플레이해 보세요. 마음이 날아가는 동안 당신은 그 자리에 머물러 있습니다.",method=".debug play cinematic #cinematicid"}
+A.CommandWorkbook[".debug play movie"]={group="디버그",name="당신을 위해 영화 #movieid를 재생해 주세요",feature="영화 #movieid를 재생해 주세요.",method=".debug play movie #movieid"}
+A.CommandWorkbook[".debug play sound"]={group="디버그",name="#soundid로 소리 재생",feature="#soundid를 사용하여 사운드를 재생합니다. 당신만을 위한 사운드가 재생됩니다. 다른 플레이어들은 이 말을 듣지 못합니다. 경고: 클라이언트에는 5000개 이상의 소리가 있을 수 있습니다...",method=".debug play sound #soundid"}
+A.CommandWorkbook[".debug ratedbg"]={group="디버그",name="평점제 전장의 디버그 모드를 전환합니다",feature="평점제 전장의 디버그 모드를 전환합니다.",method=".debug ratedbg"}
+A.CommandWorkbook[".debug transport"]={group="디버그",name="가장 가까운 대기 지점에서 운송을 중지하고 중지된 운송의 이동을 시작할 수 있습니다",feature="가장 가까운 대기 지점에서 운송을 중지하고 중지된 운송의 이동을 시작할 수 있습니다. 모든 전송을 시작하거나 중지할 수 있는 것은 아닙니다.",method=".debug transport [start/stop]"}
+A.CommandWorkbook[".deleteditem"]={group="삭제된 아이템 관리",name="가능한 하위 명령 목록을 보려면 .help deleteitem을 입력하거나 .help deleteitem을 입력하세요",feature="가능한 하위 명령 목록을 보려면 .help deleteitem을 입력하고, 하위 명령에 대한 정보를 보려면 .help deleteitem $subcommand를 입력하세요.",method=".deleteditem $subcommand"}
+A.CommandWorkbook[".deleteditem list"]={group="삭제된 아이템 관리",name="입장한 플레이어의 삭제된 항목을 표시합니다",feature="입장한 플레이어의 삭제된 항목을 표시합니다.",method=".deleteditem list $name."}
+A.CommandWorkbook[".deleteditem restore"]={group="삭제된 아이템 관리",name="이 명령은 삭제된 항목을 복원할 수 있으며 두 가지 유형이 있습니다",feature="이 명령은 삭제된 항목을 복원할 수 있으며 두 가지 유형, 즉 ID 복원(삭제된 항목의 ID 기준) 또는 플레이어의 모든 항목을 복원할 수 있습니다. 예: .deleteditem 모두 복원.",method=".deleteditem restore $name $type."}
+A.CommandWorkbook[".morph reset"]={group="변신 해제",name="선택한 플레이어의 변형",feature="선택한 플레이어를 변형합니다.",method=".morph reset"}
+A.CommandWorkbook[".deserter bg add"]={group="탈영 디버프 관리",name="$time 지속 시간으로 대상에게 bg 탈영병 디버프를 추가합니다",feature="$time 지속 시간으로 대상에게 bg 탈영병 디버프를 추가합니다.",method=".deserter bg add $time"}
+A.CommandWorkbook[".deserter bg remove"]={group="탈영 디버프 관리",name="대상에게서 BG 탈영병 디버프를 제거합니다",feature="대상에게서 BG 탈영병 디버프를 제거합니다.",method=".deserter bg remove"}
+A.CommandWorkbook[".deserter instance add"]={group="탈영 디버프 관리",name="$time 지속 시간으로 대상에게 인스턴스 탈영병 디버프를 추가합니다",feature="$time 지속 시간으로 대상에게 인스턴스 탈영병 디버프를 추가합니다.",method=".deserter instance add $time"}
+A.CommandWorkbook[".deserter instance remove"]={group="탈영 디버프 관리",name="대상에게서 인스턴스 탈영병 디버프를 제거합니다",feature="대상에게서 인스턴스 탈영병 디버프를 제거합니다.",method=".deserter instance remove"}
+A.CommandWorkbook[".dev"]={group="개발자 모드",name="게임 개발 태그에서 활성화 또는 비활성화하거나 켜기/끄기가 제공되지 않은 경우 현재 상태를 표시합니다",feature="게임 개발 태그에서 활성화 또는 비활성화하거나 켜기/끄기가 제공되지 않은 경우 현재 상태를 표시합니다.",method=".dev [on/off]"}
+A.CommandWorkbook[".die"]={group="즉시 사망 처리",name="선택한 플레이어를 죽여라",feature="선택한 플레이어를 죽입니다. 플레이어를 선택하지 않으면 죽게 됩니다.",method=".die"}
+A.CommandWorkbook[".disable add achievement_criteria"]={group="기능 비활성화 설정",name="추가 achievement_criteria 비활성화",feature="",method=".disable add achievement_criteria $entry $flag $comment"}
+A.CommandWorkbook[".disable add battleground"]={group="기능 비활성화 설정",name="전장 추가 비활성화",feature="",method=".disable add battleground $entry $flag $comment"}
+A.CommandWorkbook[".disable add map"]={group="기능 비활성화 설정",name="지도 추가 비활성화",feature="",method=".disable add map $entry $flag $comment"}
+A.CommandWorkbook[".disable add mmap"]={group="기능 비활성화 설정",name="mmap 추가 비활성화",feature="",method=".disable add mmap $entry $flag $comment"}
+A.CommandWorkbook[".disable add outdoorpvp"]={group="기능 비활성화 설정",name="야외 PVP 추가 비활성화",feature="",method=".disable add outdoorpvp $entry $flag $comment"}
+A.CommandWorkbook[".disable add quest"]={group="기능 비활성화 설정",name="추가 퀘스트 비활성화",feature="",method=".disable add quest $entry $flag $comment"}
+A.CommandWorkbook[".disable add spell"]={group="기능 비활성화 설정",name="추가 주문 비활성화",feature="",method=".disable add spell $entry $flag $comment"}
+A.CommandWorkbook[".disable add vmap"]={group="기능 비활성화 설정",name="vmap 추가 비활성화",feature="",method=".disable add vmap $entry $flag $comment"}
+A.CommandWorkbook[".disable remove achievement_criteria"]={group="기능 비활성화 설정",name="Achievement_criteria 제거 비활성화",feature="",method=".disable remove achievement_criteria $entry"}
+A.CommandWorkbook[".disable remove battleground"]={group="기능 비활성화 설정",name="비활성화 전장 제거",feature="",method=".disable remove battleground $entry"}
+A.CommandWorkbook[".disable remove map"]={group="기능 비활성화 설정",name="지도 제거 비활성화",feature="",method=".disable remove map $entry"}
+A.CommandWorkbook[".disable remove mmap"]={group="기능 비활성화 설정",name="mmap 제거 비활성화",feature="",method=".disable remove mmap $entry"}
+A.CommandWorkbook[".disable remove outdoorpvp"]={group="기능 비활성화 설정",name="야외 PVP 제거 비활성화",feature="",method=".disable remove outdoorpvp $entry"}
+A.CommandWorkbook[".disable remove quest"]={group="기능 비활성화 설정",name="제거 퀘스트 비활성화",feature="",method=".disable remove quest $entry"}
+A.CommandWorkbook[".disable remove spell"]={group="기능 비활성화 설정",name="제거 주문 비활성화",feature="",method=".disable remove spell $entry"}
+A.CommandWorkbook[".disable remove vmap"]={group="기능 비활성화 설정",name="vmap 제거 비활성화",feature="",method=".disable remove vmap $entry"}
+A.CommandWorkbook[".dismount"]={group="탈것 강제 해제",name="당신이 마운트된 경우, 당신을 내리십시오",feature="탑승했다면 내리십시오.",method=".dismount"}
+A.CommandWorkbook[".distance"]={group="대상과의 거리 확인",name="캐릭터에서 선택한 생물까지의 거리를 표시합니다",feature="캐릭터에서 선택한 생물까지의 거리를 표시합니다.",method=".distance"}
+A.CommandWorkbook[".event"]={group="이벤트 관리",name="#event_id를 사용하여 이벤트에 대한 세부정보 표시",feature="#event_id로 이벤트에 대한 세부정보를 표시합니다.",method=".event #event_id"}
+A.CommandWorkbook[".event activelist"]={group="이벤트 관리",name="현재 진행 중인 이벤트 목록 표시",feature="현재 진행 중인 이벤트 목록을 표시합니다.",method=".event activelist"}
+A.CommandWorkbook[".event start"]={group="이벤트 관리",name="시작 이벤트 #event_id",feature="이벤트 #event_id를 시작합니다. 이벤트 시작 시간을 현재 순간으로 설정합니다(변경 사항은 DB에 저장되지 않음).",method=".event start #event_id"}
+A.CommandWorkbook[".event stop"]={group="이벤트 관리",name="이벤트 #event_id 중지",feature="이벤트 #event_id를 중지합니다. 이벤트 시작 시간을 현재 시간이 이벤트 종료 시간이 되도록 과거 시간으로 설정합니다. (변경 사항은 DB에 저장되지 않습니다.)",method=".event stop #event_id"}
+A.CommandWorkbook[".freeze"]={group="캐릭터 동결(프리즈)",name="#duration(초) 동안 #player를 고정합니다. 인수가 없으면 선택한 플레이어를 고정합니다",feature="#player를 #duration(초) 동안 동결합니다. 인수가 제공되지 않으면 선택한 플레이어를 동결합니다. 기본 기간: GM.FreezeAuraDuration(worldserver.conf)",method=".freeze [#player] [#duration]"}
+A.CommandWorkbook[".gm"]={group="GM 모드",name="게임 GM 모드에서 활성화 또는 비활성화하거나 현재 켜짐/꺼짐 상태를 표시하지 않습니다",feature="게임 GM 모드에서 활성화 또는 비활성화하거나 현재 켜짐/꺼짐 상태를 표시하는 기능은 제공되지 않습니다.",method=".gm [on/off]"}
+A.CommandWorkbook[".gm chat"]={group="GM 모드",name="채팅 GM 모드를 활성화 또는 비활성화(메시지에 GM 배지 표시)하거나 현재 상태를 표시합니다",feature="채팅 GM 모드를 활성화 또는 비활성화하거나(메시지에 GM 배지 표시) 현재 켜짐/꺼짐 상태를 표시하지 않습니다.",method=".gm chat [on/off]"}
+A.CommandWorkbook[".gm fly"]={group="GM 모드",name="GM 비행 모드 활성화/비활성화",feature="GM 플라이 모드를 활성화/비활성화합니다.",method=".gm fly [on/off]"}
+A.CommandWorkbook[".gm ingame"]={group="GM 모드",name="게임 내에서 사용 가능한 게임 마스터 목록을 표시합니다",feature="게임 내에서 사용 가능한 게임 마스터 목록을 표시합니다.",method=".gm ingame"}
+A.CommandWorkbook[".gm list"]={group="GM 모드",name="모든 Game Masters 계정 및 보안 수준 목록 표시",feature="모든 Game Masters 계정 및 보안 수준 목록을 표시합니다.",method=".gm list"}
+A.CommandWorkbook[".gm visible"]={group="GM 모드",name="현재 가시성 상태를 출력하거나 다른 사람에게는 GM을 보이게(on), 보이지 않게(off) 시킵니다",feature="현재의 가시성 상태를 출력하거나 다른 플레이어에게 GM을 보이게(on) 및 보이지 않게(off) 시킵니다.",method=".gm visible on/off"}
+A.CommandWorkbook[".gmannounce"]={group="GM 전용 공지",name="온라인 Gamemasters에게 공지사항 보내기",feature="온라인 Gamemasters에게 공지사항을 보냅니다.",method=".gmannounce $announcement"}
+A.CommandWorkbook[".gmnameannounce"]={group="GM 이름 표시 공지",name="보낸 사람의 이름을 표시하는 공지 사항을 모든 온라인 GM에게 보냅니다",feature="모든 온라인 GM에게 보낸 사람의 이름을 표시하는 공지 사항을 보냅니다.",method=".gmnameannounce $announcement."}
+A.CommandWorkbook[".gmnotify"]={group="GM 전용 알림",name="모든 온라인 GM의 화면에 알림을 표시합니다",feature="모든 온라인 GM의 화면에 알림을 표시합니다.",method=".gmnotify $notification"}
+A.CommandWorkbook[".go"]={group="지정 위치로 이동",name="가능한 하위 명령 목록을 보려면 .go를 입력하고 정보를 보려면 .help go $subcommand를 입력하세요",feature="가능한 하위 명령 목록을 보려면 .go를 입력하고, 하위 명령에 대한 정보를 보려면 .help go $subcommand를 입력하세요.",method=".go $subcommand"}
+A.CommandWorkbook[".go creature"]={group="지정 위치로 이동",name="캐릭터를 guid #creature_guid를 사용하여 생물체로 순간이동시킵니다. .gocreature #생물_이름",feature="캐릭터를 guid #creature_guid를 사용하여 생물체로 순간이동시킵니다. .gocreature #creature_name 캐릭터를 이 이름을 가진 생물로 순간이동시킵니다. .gocreature id #creature_id 이 항목을 사용하여 템플릿에서 생성된 생물로 캐릭터를 순간이동합니다. *만약 둘 이상의 생물이 발견되면* 데이터베이스 내에서 발견된 첫 번째 생물로 순간이동됩니다.",method=".go creature #creature_guid"}
+A.CommandWorkbook[".go graveyard"]={group="지정 위치로 이동",name="지정된 graveyardId를 사용하여 묘지로 순간이동합니다",feature="지정된 graveyardId를 사용하여 묘지로 순간이동합니다.",method=".go graveyard #graveyardId"}
+A.CommandWorkbook[".go grid"]={group="지정 위치로 이동",name="지도 #mapId(또는 현재 지도인 경우)에서 제공된 인덱스를 사용하여 gm을 그리드 중앙으로 순간 이동합니다",feature="지도 #mapId(또는 제공되지 않은 경우 현재 지도)에서 제공된 인덱스를 사용하여 gm을 그리드 중앙으로 순간 이동합니다.",method=".go grid #gridX #gridY [#mapId]"}
+A.CommandWorkbook[".go gameobject"]={group="지정 위치로 이동",name="guid #object_guid를 사용하여 캐릭터를 게임 개체로 순간 이동합니다",feature="guid #object_guid를 사용하여 캐릭터를 게임 개체로 순간 이동합니다.",method=".go gameobject #object_guid"}
+A.CommandWorkbook[".go taxinode"]={group="지정 위치로 이동",name="플레이어를 택시노드 좌표로 순간이동시킵니다",feature="플레이어를 택시노드 좌표로 순간이동시킵니다. .lookup Taxnode $namepart를 사용하여 영역을 조회할 수 있습니다.",method=".go taxinode #taxinode"}
+A.CommandWorkbook[".go ticket"]={group="지정 위치로 이동",name="$ticketid가 생성된 위치로 사용자를 순간 이동합니다",feature="$ticketid가 생성된 위치로 사용자를 순간 이동합니다.",method=".go ticket #ticketid"}
+A.CommandWorkbook[".go trigger"]={group="지정 위치로 이동",name="ID가 #trigger_id인 지역 트리거로 캐릭터를 순간이동시킵니다",feature="ID가 #trigger_id인 지역 트리거로 캐릭터를 순간이동합니다. 선택한 영역 트리거가 텔레포트 트리거인 경우 캐릭터가 트리거 대상으로 순간이동됩니다.",method=".go trigger #trigger_id"}
+A.CommandWorkbook[".go xyz"]={group="지정 위치로 이동",name="(#x)를 가리키는 순간이동 플레이어",feature="플레이어가 방향 #orientation을 사용하여 지도 #mapid에서 (#x,#y,#z) 좌표를 가리키도록 순간 이동합니다. z가 제공되지 않으면 지상/수위가 사용됩니다. mapid가 제공되지 않으면 현재 지도가 사용됩니다. #orientation을 제공하지 않으면 현재 방향이 사용됩니다.",method=".go xyz #x #y [#z [#mapid [#orientation]]]"}
+A.CommandWorkbook[".go zonexy"]={group="지정 위치로 이동",name="(#x)를 가리키는 순간이동 플레이어",feature="플레이어가 #zoneid 영역의 지상(물) 수준 또는 #zoneid가 제공되지 않은 경우 현재 영역의 (#x,#y) 클라이언트 좌표를 가리키도록 순간 이동합니다. .lookup Area $namepart를 사용하여 영역을 조회할 수 있습니다.",method=".go zonexy #x #y [#zone]"}
+A.CommandWorkbook[".gobject"]={group="게임 오브젝트 조작",name="가능한 하위 명령 목록을 보려면 .gobject를 입력하고, 보려면 .help gobject $subcommand를 입력하세요",feature="가능한 하위 명령 목록을 보려면 .gobject를 입력하고, 하위 명령에 대한 정보를 보려면 .help gobject $subcommand를 입력하세요.",method=".gobject $subcommand"}
+A.CommandWorkbook[".gobject activate"]={group="게임 오브젝트 조작",name="문이나 버튼과 같은 개체를 활성화합니다",feature="문이나 버튼과 같은 개체를 활성화합니다.",method=".gobject activate #guid"}
+A.CommandWorkbook[".gobject add"]={group="게임 오브젝트 조작",name="다음을 사용하여 게임 개체 템플릿의 게임 개체를 현재 위치의 세계에 추가합니다",feature="#id를 사용하여 게임 개체 템플릿의 게임 개체를 현재 위치의 세계에 추가합니다. spawntimesecs는 생성 시간을 설정하며 선택 사항입니다.  참고: 이것은 .gameobject의 복사본입니다.",method=".gobject add #id <spawntimeSecs>"}
+A.CommandWorkbook[".gobject add temp"]={group="게임 오브젝트 조작",name="DB에 저장되지 않은 임시 게임오브젝트를 추가합니다",feature="",method="Adds a temporary gameobject that is not saved to DB."}
+A.CommandWorkbook[".gobject delete"]={group="게임 오브젝트 조작",name="guid #go_guid를 사용하여 게임 개체 삭제",feature="guid #go_guid로 게임오브젝트를 삭제하세요.",method=".gobject delete #go_guid"}
+A.CommandWorkbook[".gobject info"]={group="게임 오브젝트 조작",name="선택한 게임오브젝트 또는 주어진 항목에 대한 게임오브젝트 정보 쿼리",feature="선택한 게임오브젝트나 주어진 항목에 대한 게임오브젝트 정보를 쿼리합니다.",method=".gobject info [$object_entry]\\r \\r"}
+A.CommandWorkbook[".gobject move"]={group="게임 오브젝트 조작",name="게임오브젝트 #goguid를 캐릭터 좌표(또는 (#x)로 이동합니다",feature="게임 객체 #goguid를 캐릭터 좌표(또는 제공되는 경우 (#x,#y,#z) 좌표)로 이동합니다.",method=".gobject move #goguid [#x #y #z]"}
+A.CommandWorkbook[".gobject near"]={group="게임 오브젝트 조작",name="플레이어로부터 거리 #거리에 있는 게임 객체 출력",feature="플레이어로부터 #distance 떨어진 곳에 게임오브젝트를 출력합니다. 캐릭터로부터의 거리를 기준으로 정렬된 게임오브젝트 가이드와 좌표를 출력합니다. #distance가 제공되지 않은 경우 기본값으로 10을 사용합니다.",method=".gobject near  [#distance]"}
+A.CommandWorkbook[".gobject set phase"]={group="게임 오브젝트 조작",name="DB guid #guidphasemask가 있는 게임 객체가 관련 월드 비전이 있는 #phasemask로 변경되었습니다",feature="DB guid #guidphasemask가 있는 게임 객체가 플레이어를 위한 관련 월드 비전 업데이트와 함께 #phasemask로 변경되었습니다. 게임오브젝트 상태가 DB에 저장되고 지속됩니다.",method=".gobject set phase #guid #phasemask"}
+A.CommandWorkbook[".gobject target"]={group="게임 오브젝트 조작",name="가장 가까운 게임 개체를 찾아 표시합니다",feature="가장 가까운 게임 개체를 찾아 표시합니다. #go_id 또는 #go_name_part가 제공되면 게임 개체 템플릿 ID #go_id 또는 이름에 #go_name_part가 일부로 포함된 가장 가까운 게임 개체의 위치를 ​​찾아 표시합니다.",method=".gobject target [#go_id|#go_name_part]"}
+A.CommandWorkbook[".gobject turn"]={group="게임 오브젝트 조작",name="현재 캐릭터 방향과 동일한 게임 객체 #goguid 방향으로 설정",feature="현재 캐릭터 방향과 동일한 게임 개체 #goguid 방향을 설정합니다.",method=".gobject turn #goguid"}
+A.CommandWorkbook[".gps"]={group="현재 좌표 확인",name="선택한 캐릭터나 생물의 위치 정보를 표시합니다(플레이어인 경우에도 마찬가지)",feature="선택한 캐릭터나 생물에 대한 위치 정보를 표시합니다(플레이어 이름 $name이 제공된 경우 명명된 플레이어에 대해 제공되거나 생물/게임오브젝트 시프트 링크가 제공된 경우 로드된 경우 지정된 생물/게임오브젝트). 위치 정보에는 X, Y, Z, 방향, 지도 ID 및 구역 ID가 포함됩니다.",method=".gps [$name|$shift-link]"}
+A.CommandWorkbook[".group"]={group="파티 관리",name="가능한 하위 명령 목록을 보려면 .group을 입력하고, 보려면 .help group $subcommand를 입력하세요",feature="가능한 하위 명령 목록을 보려면 .group을 입력하고, 하위 명령에 대한 정보를 보려면 .help group $subcommand를 입력하세요.",method=".group $subcommand"}
+A.CommandWorkbook[".group disband"]={group="파티 관리",name="해당 캐릭터의 그룹을 해산합니다",feature="해당 캐릭터의 그룹을 해산합니다.",method=".group disband [$characterName]"}
+A.CommandWorkbook[".group join"]={group="파티 관리",name="플레이어 $AnyCharacterNameFromGroup 플레이어 $CharacterName(또는 선택된) 그룹에 추가합니다",feature="플레이어 $AnyCharacterNameFromGroup 플레이어 $CharacterName(또는 선택된) 그룹에 추가합니다.",method=".group join $AnyCharacterNameFromGroup [$CharacterName]"}
+A.CommandWorkbook[".group leader"]={group="파티 관리",name="주어진 캐릭터를 그룹의 리더로 설정합니다",feature="주어진 캐릭터를 그룹의 리더로 설정합니다.",method=".group leader [$characterName]"}
+A.CommandWorkbook[".group list"]={group="파티 관리",name="플레이어가 속한 그룹/파티의 모든 구성원을 나열합니다",feature="플레이어가 속한 그룹/파티의 모든 구성원을 나열합니다.",method=".group list [$CharacterName]"}
+A.CommandWorkbook[".group remove"]={group="파티 관리",name="그룹에서 지정된 캐릭터를 제거합니다",feature="그룹에서 해당 캐릭터를 제거합니다.",method=".group remove [$characterName]"}
+A.CommandWorkbook[".group summon"]={group="파티 관리",name="주어진 캐릭터와 그의 그룹을 당신에게 순간이동시킵니다",feature="주어진 캐릭터와 그의 그룹을 당신에게 순간이동시킵니다. 온라인 캐릭터만 순간이동하지만 원래 선택한 그룹 멤버는 오프라인일 수 있습니다.",method=".group summon [$charactername]"}
+A.CommandWorkbook[".guard delete"]={group="경비병/이용자 경고 관리",name="모든 플레이어의 신고 기록을 삭제하거나 플레이어 $name의 신고 내용을 모두 삭제합니다",feature="모든 플레이어의 신고 기록을 삭제하거나 플레이어 $name의 신고 내용을 모두 삭제합니다.",method=".guard delete [deleteall|$name]"}
+A.CommandWorkbook[".guard global"]={group="경비병/이용자 경고 관리",name="총액 보고서와 평균을 반환합니다. (상위 3명의 선수)",feature="",method=".guard global returns the total amount reports and the average. (top three players)"}
+A.CommandWorkbook[".guard handle"]={group="경비병/이용자 경고 관리",name="가드 감지 켜기/끄기",feature="가드 감지를 켜거나 끕니다.",method=".guard handle [on|off]"}
+A.CommandWorkbook[".guard player"]={group="경비병/이용자 경고 관리",name="플레이어의 총 경고 수를 반환합니다",feature="구문: .guard player $name은 플레이어의 총 경고 수, 평균 및 각 치트 유형의 수를 반환합니다.",method=".guard player $name returns the players's total amount of warnings, the average and the amount of each cheat type."}
+A.CommandWorkbook[".guid"]={group="고유번호(GUID) 조회",name="선택한 캐릭터의 GUID 표시",feature="선택한 캐릭터의 GUID를 표시합니다.",method=".guid"}
+A.CommandWorkbook[".guild"]={group="길드 관리",name="가능한 하위 명령 목록을 보려면 .guild를 입력하고, 보려면 .help guild $subcommand를 입력하세요",feature="가능한 하위 명령 목록을 보려면 .guild를 입력하고, 하위 명령에 대한 정보를 보려면 .help guild $subcommand를 입력하세요.",method=".guild $subcommand"}
+A.CommandWorkbook[".guild create"]={group="길드 관리",name="플레이어 $GuildLeaderName(또는 선택된)을 리더로하여 $GuildName이라는 길드를 만듭니다",feature="플레이어 $GuildLeaderName(또는 선택된)을 리더로 하여 $GuildName이라는 길드를 만듭니다.  길드 이름은 따옴표로 묶어야 합니다.",method=".guild create [$GuildLeaderName] \"$GuildName\""}
+A.CommandWorkbook[".guild delete"]={group="길드 관리",name="$GuildName 길드 삭제",feature="$GuildName 길드를 삭제합니다. 길드 이름은 따옴표로 묶어야 합니다.",method=".guild delete \"$GuildName\""}
+A.CommandWorkbook[".guild invite"]={group="길드 관리",name="플레이어 $CharacterName(또는 선택된)을 길드 $GuildName에 추가하세요",feature="플레이어 $CharacterName(또는 선택된)을 길드 $GuildName에 추가하세요. 길드 이름은 따옴표로 묶어야 합니다.",method=".guild invite [$CharacterName] \"$GuildName\""}
+A.CommandWorkbook[".guild rank"]={group="길드 관리",name="플레이어 $CharacterName(또는 선택한) 길드 순위 #Rank에 설정",feature="길드에서 플레이어 $CharacterName(또는 선택한) 순위 #Rank를 설정합니다.",method=".guild rank [$CharacterName] #Rank"}
+A.CommandWorkbook[".guild rename"]={group="길드 관리",name="$NewGuildName을 사용하여 $GuildName이라는 길드 이름을 바꿉니다",feature="$GuildName이라는 길드의 이름을 $NewGuildName으로 변경합니다. 길드 이름과 새 길드 이름은 따옴표로 묶어야 합니다.",method=".guild rename \"$GuildName\" \"$NewGuildName\""}
+A.CommandWorkbook[".guild uninvite"]={group="길드 관리",name="길드에서 플레이어 $CharacterName(또는 선택된) 제거",feature="길드에서 플레이어 $CharacterName(또는 선택된)을 제거합니다.",method=".guild uninvite [$CharacterName]"}
+A.CommandWorkbook[".help"]={group="명령어 도움말",name="주어진 $command에 대한 사용법 지침을 표시합니다",feature="주어진 $command에 대한 사용법 지침을 표시합니다. $command가 제공되지 않으면 사용 가능한 명령 목록을 표시합니다.",method=".help [$command]"}
+A.CommandWorkbook[".hidearea"]={group="지역 숨기기",name="선택한 캐릭터에게 #areaid 영역을 숨깁니다",feature="선택한 캐릭터에게 #areaid 영역을 숨깁니다. 선택한 캐릭터가 없으면 이 영역을 숨기세요.",method=".hidearea #areaid"}
+A.CommandWorkbook[".honor"]={group="명예 포인트",name="가능한 하위 명령 목록을 보려면 .honor를 입력하고, 보려면 .help Honor $subcommand를 입력하세요",feature="가능한 하위 명령 목록을 보려면 .honor를 입력하고, 하위 명령에 대한 정보를 보려면 .help Honor $subcommand를 입력하세요.",method=".honor $subcommand"}
+A.CommandWorkbook[".honor add"]={group="명예 포인트",name="선택한 플레이어에게 일정량의 명예(오늘 획득)를 추가합니다",feature="선택한 플레이어에게 일정량의 명예(오늘 획득)를 추가합니다.",method=".honor add $amount"}
+A.CommandWorkbook[".honor add kill"]={group="명예 포인트",name="오늘 목표 유닛을 PVP 처치 중 하나로 추가하세요. (종족일 경우에만 명예를 얻습니다.)",feature="오늘 목표 유닛을 PVP 처치 중 하나로 추가하세요(종족 지도자나 플레이어인 경우에만 명예를 얻습니다).",method=".honor add kill"}
+A.CommandWorkbook[".honor update"]={group="명예 포인트",name="어제의 명예 필드를 오늘의 데이터로 강제 업데이트합니다",feature="어제의 명예 필드를 오늘의 데이터로 강제 업데이트하여 선택한 플레이어에 대해 재설정됩니다.",method=".honor update"}
+A.CommandWorkbook[".instance"]={group="인스턴스(던전) 관리",name=".instance를 입력하여 가능한 하위 명령 목록을 보거나 .help instance $subcommand를 입력하여",feature="가능한 하위 명령 목록을 보려면 .instance를 입력하고, 하위 명령에 대한 정보를 보려면 .help instance $subcommand를 입력하세요.",method=".instance $subcommand"}
+A.CommandWorkbook[".instance listbinds"]={group="인스턴스(던전) 관리",name="선택한 플레이어의 바인드를 나열합니다",feature="선택한 플레이어의 바인드를 나열합니다.",method=".instance listbinds"}
+A.CommandWorkbook[".instance savedata"]={group="인스턴스(던전) 관리",name="현재 플레이어의 지도에 대한 InstanceData를 DB에 저장합니다",feature="현재 플레이어의 지도에 대한 InstanceData를 DB에 저장합니다.",method=".instance savedata"}
+A.CommandWorkbook[".instance stats"]={group="인스턴스(던전) 관리",name="인스턴스에 대한 통계를 표시합니다",feature="인스턴스에 대한 통계를 표시합니다.",method=".instance stats"}
+A.CommandWorkbook[".instance unbind"]={group="인스턴스(던전) 관리",name="플레이어의 바인딩 전체/일부 지우기",feature="플레이어의 바인딩 전체/일부 지우기",method=".instance unbind <mapid|all> [difficulty]"}
+A.CommandWorkbook[".itemdelete"]={group="아이템 삭제",name="시도하지 말고 이것을 사용하면 망할 것입니다. 단지 GM이라면 잊어버리십시오",feature="시도하지 말고 이것을 사용하면 망할 것입니다. 만약 당신이 단지 GM이라면 이것을 잊어버리십시오.",method=".itemdelete [revert] #guid"}
+A.CommandWorkbook[".itemlog"]={group="아이템 로그",name="계정에 대한 항목 로그 활성화/비활성화",feature="계정에 대한 항목 로그 활성화/비활성화",method=".itemlog $account on/off"}
+A.CommandWorkbook[".item move"]={group="아이템 이동",name="인벤토리의 #sourceslotid 슬롯에서 #destinationslotid로 항목을 이동하세요. 아직",feature="인벤토리의 #sourceslotid 슬롯에서 #destinationslotid로 항목을 이동합니다. 아직 구현되지 않았습니다.",method=".item move #sourceslotid #destinationslotid"}
+A.CommandWorkbook[".kick"]={group="강제 퇴장",name="이유가 있든 없든 주어진 캐릭터 이름을 세계에서 쫓아냅니다",feature="이유가 있든 없든 주어진 캐릭터 이름을 세계에서 쫓아냅니다. 캐릭터 이름이 제공되지 않으면 선택한 플레이어(본인 제외)가 추방됩니다. 이유가 제공되지 않은 경우 기본값은 \"이유 없음\"입니다.",method=".kick [$charactername] [$reason]"}
+A.CommandWorkbook[".learn"]={group="스킬/재능 습득",name="선택된 캐릭터는 id #spell의 주문을 배웁니다",feature="선택된 캐릭터는 id #spell의 주문을 배웁니다. 'all'이 제공되면 모든 순위가 학습됩니다.",method=".learn #spell [all]"}
+A.CommandWorkbook[".learn all crafts"]={group="스킬/재능 습득",name="모든 직업과 조리법을 배우세요",feature="모든 직업과 요리법을 배우십시오.",method=".learn crafts"}
+A.CommandWorkbook[".learn all default"]={group="스킬/재능 습득",name="선택한/$playername 플레이어의 종족/클래스 및 주문에 대한 모든 기본 주문을 알아보세요",feature="선택된/$playername 플레이어의 종족/클래스에 대한 모든 기본 주문과 완료된 퀘스트로 보상되는 주문에 대해 알아보세요.",method=".learn all default [$playername]"}
+A.CommandWorkbook[".learn all gm"]={group="스킬/재능 습득",name="Game Masters의 모든 기본 주문을 배우세요",feature="Game Masters의 모든 기본 주문을 알아보세요.",method=".learn all gm"}
+A.CommandWorkbook[".learn all lang"]={group="스킬/재능 습득",name="모든 언어를 배우세요",feature="모든 언어를 배우세요",method=".learn all lang"}
+A.CommandWorkbook[".learn all my class"]={group="스킬/재능 습득",name="해당 클래스에서 사용할 수 있는 모든 주문과 재능을 배우세요",feature="그의 수업에서 사용할 수 있는 모든 주문과 재능을 배우십시오.",method=".learn all my class"}
+A.CommandWorkbook[".learn all my pettalents"]={group="스킬/재능 습득",name="애완동물의 생물 유형에 따라 사용할 수 있는 모든 재능을 알아보세요(사냥꾼 애완동물에만 해당)",feature="생물 유형에 따라 사용할 수 있는 애완동물의 모든 재능을 알아보세요(사냥꾼 애완동물에만 해당).",method=".learn all my pettalents"}
+A.CommandWorkbook[".learn all my spells"]={group="스킬/재능 습득",name="사용 가능한 모든 주문 배우기(재능 및 1등급 재능으로 배운 주문 제외)",feature="그의 클래스에서 사용할 수 있는 모든 주문(재능과 1등급 재능으로 배운 주문 제외)을 배우십시오.",method=".learn all my spells"}
+A.CommandWorkbook[".learn all my talents"]={group="스킬/재능 습득",name="해당 클래스에서 사용할 수 있는 모든 재능(및 재능으로 배운 1등급 주문)을 배우십시오",feature="그의 클래스에서 사용할 수 있는 모든 재능(및 재능으로 배운 1등급 주문)을 배우십시오.",method=".learn all my talents"}
+A.CommandWorkbook[".learn all recipes"]={group="스킬/재능 습득",name="특정 직업의 모든 레시피를 만들고 스킬 레벨을 최대로 설정합니다.\\r예: .모두 학습",feature="",method=".learn all recipes [$profession]\\r\\rLearns all recipes of specified profession and sets skill level to max.\\rExample: .learn all recipes enchanting"}
+A.CommandWorkbook[".levelup"]={group="레벨 증가",name="$playername(또는 이름이 아닌 경우 선택한 이름)을 사용하여 캐릭터 레벨을 높이거나 낮춥니다",feature="$playername(또는 이름이 제공되지 않은 경우 선택된)을 사용하여 캐릭터 레벨을 #numberoflevels만큼 늘리거나 줄입니다. 또는 #numberoflevels가 제공되지 않은 경우 +1입니다. #numberoflevels를 생략하면 레벨이 1씩 증가합니다. #numberoflevels가 0이면 같은 레벨이 다시 시작됩니다. 선택한 캐릭터가 없고 이름이 제공되지 않은 경우 레벨을 높이세요. 명령은 오프라인 캐릭터에 사용할 수 있습니다. 모든 통계 및 종속 값이 다시 계산되었습니다. 필요한 경우 레벨 감소 특성을 재설정할 수 있습니다. 또한 레벨 감소 시 레벨 요구 사항이 더 높은 장비 아이템이 손실될 수 있습니다.",method=".levelup [$playername] [#numberoflevels]"}
+A.CommandWorkbook[".lfg bug"]={group="파티 찾기(LFG)",name="lfg 버그",feature="",method=""}
+A.CommandWorkbook[".lfg clean"]={group="파티 찾기(LFG)",name="디버깅 목적으로만 현재 대기열을 정리합니다",feature="디버깅 목적으로만 현재 대기열을 정리합니다.",method=".flg clean"}
+A.CommandWorkbook[".lfg group"]={group="파티 찾기(LFG)",name="그룹의 모든 플레이어에 대한 정보를 표시합니다(상태",feature="그룹의 모든 플레이어에 대한 정보를 표시합니다(상태, 역할, 댓글, 선택한 던전).",method=".lfg group"}
+A.CommandWorkbook[".lfg options"]={group="파티 찾기(LFG)",name="현재 lfg 옵션을 표시합니다",feature="현재 lfg 옵션을 표시합니다. 추가 매개변수가 있으면 새 값이 설정됩니다.",method=".lfg options [new value]"}
+A.CommandWorkbook[".lfg player"]={group="파티 찾기(LFG)",name="플레이어에 대한 정보 표시(상태, 역할, 설명, 선택한 던전)",feature="플레이어에 대한 정보(상태, 역할, 설명, 선택한 던전)를 표시합니다.",method=".lfg player"}
+A.CommandWorkbook[".lfg queue"]={group="파티 찾기(LFG)",name="현재 lfg 대기열에 대한 정보를 표시합니다",feature="현재 lfg 대기열에 대한 정보를 표시합니다.",method=".lfg queue"}
+A.CommandWorkbook[".linkgrave"]={group="묘지 연결",name="현재 영역을 모든(또는 얼라이언스/호드 팩션 유령)의 묘지에 연결",feature="현재 구역을 모든(또는 얼라이언스/호드 세력 유령)의 묘지에 연결합니다. 이렇게 하면 묘지가 연결된 구역에서 가장 가까운 경우 구역의 캐릭터 유령이 죽은 후 묘지로 순간이동할 수 있으며 이 팩션의 유령을 받아들일 수 있습니다. 다른 지도에 하나의 묘지만 추가하고, 연결된 묘지가 없는 경우에만(또는 동일한 지도에 연결되도록 계획된 경우에만) 추가합니다.",method=".linkgrave #graveyard_id [alliance|horde]"}
+A.CommandWorkbook[".list"]={group="정보 목록 조회",name="가능한 하위 명령 목록을 보려면 .list를 입력하고 정보를 보려면 .help list $subcommand를 입력하세요",feature="가능한 하위 명령 목록을 보려면 .list를 입력하고, 하위 명령에 대한 정보를 보려면 .help list $subcommand를 입력하세요.",method=".list $subcommand"}
+A.CommandWorkbook[".list aggro"]={group="정보 목록 조회",name="어그로 목록",feature="",method=""}
+A.CommandWorkbook[".list auras"]={group="정보 목록 조회",name="선택한 생물이나 플레이어의 오라(패시브 및 액티브) 나열",feature="선택한 생물이나 플레이어의 오라(패시브 및 액티브)를 나열합니다. 생물이나 플레이어를 선택하지 않은 경우 자신의 오라를 나열하십시오.",method=".list auras"}
+A.CommandWorkbook[".list creature"]={group="정보 목록 조회",name="세계에서 발견된 생물 ID #creature_id를 가진 생물을 출력합니다",feature="세계에서 발견된 생물 ID #creature_id를 가진 생물을 출력합니다. 캐릭터로부터의 거리에 따라 정렬된 생물 안내 및 좌표를 출력합니다. 최대 #max_count 생물이 출력됩니다. #max_count가 제공되지 않은 경우 기본값으로 10을 사용합니다.",method=".list creature #creature_id [#max_count]"}
+A.CommandWorkbook[".list hostiles"]={group="정보 목록 조회",name="적 목록",feature="",method=""}
+A.CommandWorkbook[".list item"]={group="정보 목록 조회",name="모든 캐릭터 인벤토리에서 아이템 ID가 #item_id인 출력 아이템이 발견되었습니다",feature="모든 캐릭터 인벤토리, 메일, 경매, 길드 은행에서 발견된 아이템 ID #item_id를 가진 출력 아이템입니다. 아이템 가이드, 아이템 소유자 GUID, 소유자 계정 및 소유자 이름(길드 이름 및 길드 은행의 경우 GUID)을 출력합니다. 최대 #max_count 항목이 출력됩니다. #max_count가 제공되지 않은 경우 기본값으로 10을 사용합니다.",method=".list item #item_id [#max_count]"}
+A.CommandWorkbook[".list mail"]={group="정보 목록 조회",name="캐릭터가 받은 메일 목록",feature="캐릭터가 받은 메일 목록입니다.",method=".list mail $character"}
+A.CommandWorkbook[".list object"]={group="정보 목록 조회",name="월드에서 발견된 게임오브젝트 ID #gameobject_id를 가진 게임오브젝트를 출력합니다",feature="월드에서 발견된 게임오브젝트 ID #gameobject_id를 가진 게임오브젝트를 출력합니다. 캐릭터로부터의 거리를 기준으로 정렬된 게임오브젝트 가이드와 좌표를 출력합니다. 최대 #max_count 게임 개체가 출력됩니다. #max_count가 제공되지 않은 경우 기본값으로 10을 사용합니다.",method=".list object #gameobject_id [#max_count]"}
+A.CommandWorkbook[".list scenes"]={group="정보 목록 조회",name="대상 캐릭터의 모든 활성 장면 목록",feature="대상 캐릭터의 모든 활성 장면 목록입니다.",method=".list scenes"}
+A.CommandWorkbook[".list threat"]={group="정보 목록 조회",name="위협을 나열하다",feature="",method=""}
+A.CommandWorkbook[".listfreeze"]={group="동결된 캐릭터 목록",name="동결된 모든 플레이어 검색 및 출력",feature="정지된 모든 플레이어를 검색하여 출력합니다.",method=".listfreeze"}
+A.CommandWorkbook[".lookup"]={group="데이터 검색",name="가능한 하위 명령 목록을 보려면 .lookup을 입력하고, 보려면 .help lookup $subcommand를 입력하세요",feature=".lookup을 입력하여 가능한 하위 명령 목록을 보거나 .help lookup $subcommand를 입력하여 하위 명령에 대한 정보를 확인하세요.",method=".lookup $subcommand"}
+A.CommandWorkbook[".lookup area"]={group="데이터 검색",name="$namepart로 영역을 조회하고 해당 영역 ID와 일치하는 모든 항목을 반환합니다",feature="$namepart로 영역을 조회하고 해당 영역 ID와 일치하는 모든 항목을 반환합니다.",method=".lookup area $namepart"}
+A.CommandWorkbook[".lookup creature"]={group="데이터 검색",name="$namepart로 생물을 조회하고 생물 ID와 일치하는 모든 항목을 반환합니다",feature="$namepart로 생물을 조회하고 생물 ID와 일치하는 모든 항목을 반환합니다.",method=".lookup creature $namepart"}
+A.CommandWorkbook[".lookup event"]={group="데이터 검색",name="제공된 $name을 사용하여 이벤트 ID를 찾으려고 시도합니다",feature="제공된 $name을 사용하여 이벤트 ID를 찾으려고 시도합니다.",method=".lookup event $name"}
+A.CommandWorkbook[".lookup faction"]={group="데이터 검색",name="제공된 $name을 사용하여 세력의 ID를 찾으려고 시도합니다",feature="제공된 $name을 사용하여 세력의 ID를 찾으려고 시도합니다.",method=".lookup faction $name"}
+A.CommandWorkbook[".lookup item"]={group="데이터 검색",name="$itemname으로 항목을 조회하고 해당 항목 ID와 일치하는 모든 항목을 반환합니다",feature="$itemname으로 항목을 조회하고 해당 항목 ID와 일치하는 모든 항목을 반환합니다.",method=".lookup item $itemname"}
+A.CommandWorkbook[".lookup item set"]={group="데이터 검색",name="$itemname으로 설정된 항목을 조회하고 해당 항목 세트 ID와 일치하는 모든 항목을 반환합니다",feature="$itemname으로 설정된 항목을 조회하고 해당 항목 세트 ID와 일치하는 모든 항목을 반환합니다.",method=".lookup item set $itemname"}
+A.CommandWorkbook[".lookup map"]={group="데이터 검색",name="$namepart로 지도를 조회하고 지도 ID와 일치하는 모든 항목을 반환합니다",feature="$namepart로 지도를 조회하고 지도 ID와 일치하는 모든 항목을 반환합니다.",method=".lookup map $namepart"}
+A.CommandWorkbook[".lookup object"]={group="데이터 검색",name="$objname으로 게임오브젝트를 찾고 해당 게임오브젝트 ID와 일치하는 모든 항목을 반환합니다",feature="$objname으로 게임오브젝트를 찾고 해당 게임오브젝트 ID와 일치하는 모든 항목을 반환합니다.",method=".lookup object $objname"}
+A.CommandWorkbook[".lookup player account"]={group="데이터 검색",name="선택적 매개변수 $limit를 사용하여 계정 사용자 이름이 $account인 플레이어를 검색합니다",feature="선택적 매개변수 $limit 결과를 사용하여 계정 사용자 이름이 $account인 플레이어를 검색합니다.",method=".lookup player account $account ($limit)"}
+A.CommandWorkbook[".lookup player email"]={group="데이터 검색",name="선택적 매개변수 $limit 결과를 사용하여 계정 이메일이 $email인 플레이어를 검색합니다",feature="선택적인 매개변수 $limit 결과를 사용하여 계정 이메일이 $email인 플레이어를 검색합니다.",method=".lookup player email $email ($limit)"}
+A.CommandWorkbook[".lookup player ip"]={group="데이터 검색",name="선택적인 매개변수 $limit를 사용하여 ast_ip 계정이 $ip인 플레이어를 검색합니다",feature="선택적인 매개변수인 $limit 결과를 사용하여 ast_ip 계정이 $ip인 플레이어를 검색합니다.",method=".lookup player ip $ip ($limit)"}
+A.CommandWorkbook[".lookup quest"]={group="데이터 검색",name="$namepart로 퀘스트를 조회하고 퀘스트 ID와 일치하는 모든 항목을 반환합니다",feature="$namepart로 퀘스트를 조회하고 해당 퀘스트 ID와 일치하는 모든 항목을 반환합니다.",method=".lookup quest $namepart"}
+A.CommandWorkbook[".lookup skill"]={group="데이터 검색",name="$namepart로 스킬을 조회하고 해당 스킬 ID와 일치하는 모든 항목을 반환합니다",feature="$namepart로 스킬을 조회하고 해당 스킬 ID와 일치하는 모든 항목을 반환합니다.",method=".lookup skill $$namepart"}
+A.CommandWorkbook[".lookup spell"]={group="데이터 검색",name="$namepart로 주문을 조회하고 주문 ID와 일치하는 모든 항목을 반환합니다",feature="$namepart로 주문을 조회하고 해당 주문 ID와 일치하는 모든 항목을 반환합니다.",method=".lookup spell $namepart"}
+A.CommandWorkbook[".lookup spell id"]={group="데이터 검색",name="#spellid로 주문을 조회하고 해당 주문 이름과 일치하는 항목을 반환합니다",feature="#spellid로 주문을 찾아 해당 주문 이름과 일치하는 항목을 반환합니다.",method=".lookup spell id #spellid"}
+A.CommandWorkbook[".lookup taxinode"]={group="데이터 검색",name="이름에 $substring을 제공하는 모든 Taxnode를 검색하고 출력합니다",feature="이름에 $substring을 제공하는 모든 Taxnode를 검색하고 출력합니다.",method=".lookup taxinode $substring"}
+A.CommandWorkbook[".lookup tele"]={group="데이터 검색",name="이름에 $substring을 제공하여 모든 .tele 명령 위치를 검색하고 출력합니다",feature="이름에 $substring을 제공하여 모든 .tele 명령 위치를 검색하고 출력합니다.",method=".lookup tele $substring"}
+A.CommandWorkbook[".lookup title"]={group="데이터 검색",name="$namepart로 제목을 조회하고 제목 ID 및 색인과 일치하는 모든 항목을 반환합니다",feature="$namepart로 제목을 조회하고 제목 ID 및 색인과 일치하는 모든 항목을 반환합니다.",method=".lookup title $$namepart"}
+A.CommandWorkbook[".maxskill"]={group="숙련도 최대치 설정",name="대상 플레이어의 모든 스킬을 현재 레벨의 최대값으로 설정합니다",feature="대상 플레이어의 모든 스킬을 현재 레벨의 최대값으로 설정합니다.",method=".maxskill"}
+A.CommandWorkbook[".mmap"]={group="이동 경로 맵(MMap) 디버그",name="가능한 하위 명령 목록을 보려면 .mmaps를 입력하고, 보려면 .help mmaps $subcommand를 입력하세요",feature="가능한 하위 명령 목록을 보려면 .mmaps를 입력하고, 하위 명령에 대한 정보를 보려면 .help mmaps $subcommand를 입력하세요.",method=".mmaps $subcommand"}
+A.CommandWorkbook[".mmap loadedtiles"]={group="이동 경로 맵(MMap) 디버그",name="현재 로드된 타일을 표시하려면",feature="",method=".mmap loadedtiles to show which tiles are currently loaded"}
+A.CommandWorkbook[".mmap loc"]={group="이동 경로 맵(MMap) 디버그",name="어느 타일에 있는지 인쇄하려면",feature="",method=".mmap loc to print on which tile one is"}
+A.CommandWorkbook[".mmap path"]={group="이동 경로 맵(MMap) 디버그",name="현재 선택 장치에 대한 경로를 계산하고 표시합니다",feature="",method=".mmap path to calculate and show a path to current select unit"}
+A.CommandWorkbook[".mmap stats"]={group="이동 경로 맵(MMap) 디버그",name="mmap의 현재 상태에 대한 정보를 표시합니다",feature="",method=".mmap stats to show information about current state of mmaps"}
+A.CommandWorkbook[".mmap testarea"]={group="이동 경로 맵(MMap) 디버그",name="플레이어에 대한 근처의 모든 npcs 경로를 계산합니다",feature="",method=".mmap testarea to calculate paths for all nearby npcs to player"}
+A.CommandWorkbook[".modify"]={group="캐릭터 속성 수정",name="가능한 하위 명령 목록을 보려면 .modify를 입력하고, 보려면 .helpmodify $subcommand를 입력하세요",feature="가능한 하위 명령 목록을 보려면 .modify를 입력하고, 하위 명령에 대한 정보를 보려면 .helpmodify $subcommand를 입력하세요.",method=".modify $subcommand"}
+A.CommandWorkbook[".modify bit"]={group="캐릭터 속성 수정",name="선택한 플레이어에 대한 #field 필드의 #bit 비트를 토글합니다",feature="선택한 플레이어에 대한 #field 필드의 #bit 비트를 토글합니다. 플레이어를 선택하지 않은 경우 캐릭터를 수정하세요.",method=".modify bit #field #bit"}
+A.CommandWorkbook[".modify currency"]={group="캐릭터 속성 수정",name="선택한 플레이어에 $currency의 $amount(정밀도 제외) 추가",feature="선택한 플레이어에 $currency의 $amount(정밀도 제외)를 추가합니다.",method=".modify currency #id #value"}
+A.CommandWorkbook[".modify drunk"]={group="캐릭터 속성 수정",name="취한 수준을 #value(0..100)로 설정합니다",feature="취한 수준을 #value(0..100)로 설정합니다. 값 0은 취한 상태를 제거하고, 100은 최대 취한 상태입니다.",method=".modify drunk #value"}
+A.CommandWorkbook[".modify energy"]={group="캐릭터 속성 수정",name="선택한 플레이어의 에너지를 수정합니다",feature="선택한 플레이어의 에너지를 수정합니다. 플레이어를 선택하지 않은 경우 에너지를 수정하세요.",method=".modify energy #energy"}
+A.CommandWorkbook[".modify faction"]={group="캐릭터 속성 수정",name="선택한 생물의 진영과 깃발을 수정합니다",feature="선택한 생물의 진영과 깃발을 수정합니다. 인수 없이 선택한 생물의 진영과 깃발을 표시합니다.",method=".modify faction #factionid #flagid #npcflagid #dynamicflagid"}
+A.CommandWorkbook[".modify gender"]={group="캐릭터 속성 수정",name="선택한 플레이어의 성별 변경",feature="선택한 플레이어의 성별을 변경합니다.",method=".modify gender male/female"}
+A.CommandWorkbook[".modify honor"]={group="캐릭터 속성 수정",name="선택한 플레이어에게 $amount 명예 포인트 추가",feature="선택한 플레이어에게 $amount 명예 포인트를 추가합니다.",method=".modify honor $amount"}
+A.CommandWorkbook[".modify hp"]={group="캐릭터 속성 수정",name="선택한 플레이어의 HP를 수정합니다",feature="선택한 플레이어의 HP를 수정합니다. 플레이어를 선택하지 않은 경우 HP를 수정하세요.",method=".modify hp #newhp"}
+A.CommandWorkbook[".modify mana"]={group="캐릭터 속성 수정",name="선택한 플레이어의 마나를 수정합니다",feature="선택한 플레이어의 마나를 수정합니다. 플레이어를 선택하지 않은 경우 마나를 수정하세요.",method=".modify mana #newmana"}
+A.CommandWorkbook[".modify money"]={group="캐릭터 속성 수정",name="선택한 플레이어에게 돈을 추가하거나 제거합니다",feature="선택한 플레이어에게 돈을 추가하거나 제거합니다. 플레이어가 선택되지 않은 경우 돈을 수정하세요.   #gold는 돈을 제거하기 위해 음수일 수 있습니다.",method=".modify money #money .money #money"}
+A.CommandWorkbook[".modify mount"]={group="캐릭터 속성 수정",name="선택한 플레이어를 #id 생물에 장착된 것으로 표시하고 속도를 #speed 값으로 설정합니다",feature="선택한 플레이어를 #id 생물에 장착된 것으로 표시하고 속도를 #speed 값으로 설정합니다.",method=".modify mount #id #speed"}
+A.CommandWorkbook[".modify phase"]={group="캐릭터 속성 수정",name="관련 월드비전 업데이트에 따라 선택된 캐릭터의 페이즈마스크가 #페이즈마스크로 변경되었습니다",feature="관련 월드비전 업데이트로 인해 선택된 캐릭터의 페이즈마스크가 #페이즈마스크로 변경되었습니다. 게임 단계가 변경되거나 GM 모드를 활성화/비활성화하거나 다시 로그인할 때까지 활성 상태로 변경하세요. 문자 포인트 pasemask가 동일한 값으로 업데이트됩니다.",method=".modify phase #phasemask"}
+A.CommandWorkbook[".modify rage"]={group="캐릭터 속성 수정",name="선택한 플레이어의 분노 수정",feature="선택한 플레이어의 분노를 수정합니다. 플레이어를 선택하지 않으면 분노를 수정하십시오.",method=".modify rage #newrage"}
+A.CommandWorkbook[".modify reputation"]={group="캐릭터 속성 수정",name="#repId 팩션으로 선택한 플레이어 평판을 #repvalue 또는 $reprank로 설정합니다",feature="#repId 팩션으로 선택한 플레이어 평판을 #repvalue 또는 $reprank로 설정합니다. 평판 순위 이름이 제공되면 결과 평판은 해당 순위의 가장 낮은 평판에 델타 금액(지정된 경우)을 더한 값이 됩니다. '.pinfo 담당자'를 사용하여 알려진 모든 평판 ID를 나열하거나 '.lookup Faction $name'을 사용하여 특정 팩션 ID를 찾을 수 있습니다.",method=".modify reputation #repId (#repvalue | $rankname [#delta])"}
+A.CommandWorkbook[".modify runicpower"]={group="캐릭터 속성 수정",name="선택한 플레이어의 룬 마력을 수정합니다",feature="선택한 플레이어의 룬 마력을 수정합니다. 플레이어를 선택하지 않은 경우 룬 마력을 수정하세요.",method=".modify runicpower #newrunicpower"}
+A.CommandWorkbook[".modify scale"]={group="캐릭터 속성 수정",name="선택한 플레이어 또는 생물의 크기를 \"일반 크기\"*속도로 수정",feature="",method=".modify scale #scale Modify size of the selected player or creature to \"normal scale\"*rate. If no player or creature is selected, modify your size. #rate may range from 0.1 to 10."}
+A.CommandWorkbook[".modify speed"]={group="캐릭터 속성 수정",name="선택한 플레이어의 달리기 속도를 \"일반 기본 달리기 속도\"= 1로 수정합니다",feature="선택한 선수의 달리기 속도를 \"일반 기본 달리기 속도\"로 수정합니다. = 1. 선수가 선택되지 않은 경우 속도를 수정합니다.  $speedtypes는 날기, 모두, 걷기, 뒤로 걷기 또는 수영일 수 있습니다.   #rate 범위는 0.1에서 50까지입니다.",method=".modify speed $speedtype #rate"}
+A.CommandWorkbook[".modify speed all"]={group="캐릭터 속성 수정",name="모든 속도 수정 -run",feature="선택한 플레이어의 모든 속도(달리기, 수영, 뒤로 달리기, 뒤로 수영)를 \"이 이동 유형의 일반 기본 속도\"* 속도로 수정합니다. 플레이어를 선택하지 않은 경우 속도를 수정하세요.   #rate 범위는 0.1에서 50까지입니다.",method=".modify aspeed #rate"}
+A.CommandWorkbook[".modify speed backwalk"]={group="캐릭터 속성 수정",name="뒤로 달리는 동안 선택한 플레이어의 속도를 \"일반 걷기 뒤로\"로 수정",feature="뒤로 달리는 동안 선택한 플레이어의 속도를 \"일반 걷기 속도\"* 속도로 수정합니다. 플레이어를 선택하지 않은 경우 속도를 수정하세요.   #rate 범위는 0.1에서 50까지입니다.",method=".modify speed backwalk #rate"}
+A.CommandWorkbook[".modify speed fly"]={group="캐릭터 속성 수정",name="선택한 플레이어의 비행 속도를 \"일반 비행 속도\"*속도로 수정합니다",feature="",method=".modify speed fly #rate Modify the flying speed of the selected player to \"normal flying speed\"*rate. If no player is selected, modify your speed.  #rate may range from 0.1 to 50."}
+A.CommandWorkbook[".modify speed swim"]={group="캐릭터 속성 수정",name="선택한 플레이어의 수영 속도를 \"일반 수영 속도\"*속도로 수정합니다",feature="선택한 플레이어의 수영 속도를 \"일반 수영 속도\"*속도로 수정합니다. 플레이어를 선택하지 않은 경우 속도를 수정하세요.   #rate 범위는 0.1에서 50까지입니다.",method=".modify speed swim #rate"}
+A.CommandWorkbook[".modify speed walk"]={group="캐릭터 속성 수정",name="달리는 동안 선택한 플레이어의 속도를 \"일반 걷기 속도\"*속도로 수정합니다",feature="달리는 동안 선택한 플레이어의 속도를 \"일반 걷기 속도\"*속도로 수정합니다. 플레이어를 선택하지 않은 경우 속도를 수정하세요.   #rate 범위는 0.1에서 50까지입니다.",method=".modify speed bwalk #rate"}
+A.CommandWorkbook[".modify spell"]={group="캐릭터 속성 수정",name="TODO",feature="",method="TODO"}
+A.CommandWorkbook[".modify standstate"]={group="캐릭터 속성 수정",name="서 있는 동안 캐릭터의 감정 표현을 #emoteid로 변경하세요",feature="서 있는 동안 캐릭터의 감정 표현을 #emoteid로 변경하세요.",method=".modify standstate #emoteid"}
+A.CommandWorkbook[".morph target"]={group="외형 변신",name="현재 모델 ID를 #displayid로 변경하세요",feature="현재 모델 ID를 #displayid로 변경하세요.",method=".morph target #displayid"}
+A.CommandWorkbook[".movegens"]={group="이동 생성기(AI 이동) 정보",name="선택한 생물이나 플레이어의 이동 생성기 스택 표시",feature="선택한 생물이나 플레이어의 이동 생성기 스택을 표시합니다.",method=".movegens"}
+A.CommandWorkbook[".mute"]={group="채팅 금지(뮤트)",name="$playerName 캐릭터 계정의 모든 캐릭터에 대한 채팅 메시지를 비활성화합니다(또는",feature="$timeInMinutes분에 $playerName 캐릭터(또는 현재 선택된) 계정의 모든 캐릭터에 대한 채팅 메시지를 비활성화합니다. 플레이어는 오프라인일 수 있습니다.",method=".mute [$playerName] $timeInMinutes [$reason]"}
+A.CommandWorkbook[".mutelist"]={group="채팅 금지 목록",name="뮤트리스트",feature="",method=".mutelist $subcommand"}
+A.CommandWorkbook[".mutelist account"]={group="채팅 금지 목록",name="제공된 계정 이름에 대한 음소거 목록 표시",feature="제공된 계정 이름에 대한 음소거 목록 표시(마지막 10개 행으로 제한)(비활성화 제한에는 '전체' 사용)",method=".mutelist account [full] $AccountName"}
+A.CommandWorkbook[".mutelist character"]={group="채팅 금지 목록",name="제공된 캐릭터 이름 및 현재 계정에 대한 뮤트 목록 표시",feature="제공된 캐릭터 이름과 현재 계정에 대한 음소거 목록을 표시합니다. 마지막 행은 10개로 제한됩니다(비활성화 제한은 '전체' 사용).",method=".mutelist character [full] $CharacterName"}
+A.CommandWorkbook[".nameannounce"]={group="이름 포함 공지",name="모든 온라인 플레이어에게 알림을 보내고 보낸 사람의 이름을 표시합니다",feature="보낸 사람의 이름을 표시하는 공지 사항을 모든 온라인 플레이어에게 보냅니다.",method=".nameannounce $announcement."}
+A.CommandWorkbook[".nearareatrigger"]={group="근처 지역 트리거 조회",name="거리를 기준으로 정렬된 플레이어로부터 #distance 거리에 중심이 있는 출력 영역 트리거",feature="출력 영역은 플레이어로부터 거리 #distance에 있는 중심을 기준으로 정렬된 트리거입니다. #distance가 제공되지 않은 경우 기본값으로 10을 사용합니다.",method=".nearareatrigger [#distance]"}
+A.CommandWorkbook[".neargrave"]={group="근처 묘지 조회",name="구역에 연결된 가장 가까운 묘지 찾기(또는 얼라이언스나 호드에서 가장 가까운 묘지만 허용)",feature="구역에 연결된 가장 가까운 묘지를 찾으십시오(또는 얼라이언스 또는 호드 팩션 유령을 허용하는 가장 가까운 묘지만).",method=".neargrave [alliance|horde]"}
+A.CommandWorkbook[".notify"]={group="화면 알림 전송",name="화면에서 온라인으로 모든 플레이어에게 글로벌 메시지 보내기",feature="화면을 통해 온라인에 있는 모든 플레이어에게 글로벌 메시지를 보냅니다.",method=".notify $MessageToBroadcast"}
+A.CommandWorkbook[".npc"]={group="NPC 관리",name="가능한 하위 명령 목록을 보려면 .npc를 입력하고 정보를 보려면 .help npc $subcommand를 입력하세요",feature="가능한 하위 명령 목록을 보려면 .npc를 입력하고, 하위 명령에 대한 정보를 보려면 .help npc $subcommand를 입력하세요.",method=".npc $subcommand"}
+A.CommandWorkbook[".npc add"]={group="NPC 관리",name="#creatureid의 주어진 템플릿 ID로 생물을 생성합니다",feature="#creatureid라는 주어진 템플릿 ID로 생물을 생성합니다.",method=".npc add #creatureid"}
+A.CommandWorkbook[".npc add formation"]={group="NPC 관리",name="선택한 생물을 리더의 대형에 추가",feature="선택한 생물을 리더의 대형에 추가합니다.",method=".npc add formation $leader"}
+A.CommandWorkbook[".npc add item"]={group="NPC 관리",name="선택한 공급업체의 품목 목록에 품목 #itemid를 추가합니다",feature="선택한 공급업체의 품목 목록에 품목 #itemid를 추가합니다. 또한 선택적으로 공급업체 항목 목록의 최대 항목 수와 항목 수 복원 및 항목 ExtendedCost까지의 시간을 설정합니다.",method=".npc add item #itemId <#maxcount><#incrtime><#extendedcost>r"}
+A.CommandWorkbook[".npc add move"]={group="NPC 관리",name="현재 위치를 guid #creature_guid를 사용하여 생물의 웨이포인트로 추가하세요",feature="guid #creature_guid를 사용하여 현재 위치를 생물의 웨이포인트로 추가합니다. 그리고 선택적으로 대기 시간을 추가합니다.",method=".npc add move #creature_guid [#waittime]"}
+A.CommandWorkbook[".npc add temp"]={group="NPC 관리",name="데이터베이스에 저장되지 않은 임시 NPC를 추가합니다",feature="데이터베이스에 저장되지 않은 임시 NPC를 추가합니다.",method=".npc add temp"}
+A.CommandWorkbook[".npc delete"]={group="NPC 관리",name="guid #guid(또는 guid가 제공되지 않은 경우 선택된)를 사용하여 생물을 삭제합니다",feature="guid #guid(또는 guid가 제공되지 않은 경우 선택된)를 사용하여 생물을 삭제합니다.",method=".npc delete [#guid]"}
+A.CommandWorkbook[".npc delete item"]={group="NPC 관리",name="선택한 공급업체의 품목 목록에서 #itemid 품목을 제거합니다",feature="선택한 공급업체의 품목 목록에서 #itemid 품목을 제거합니다.",method=".npc delete item #itemId"}
+A.CommandWorkbook[".npc follow"]={group="NPC 관리",name="선택된 생물은 죽음/싸움/기타까지 당신을 따르기 시작합니다",feature="선택된 생물은 죽음/싸움/등이 있을 때까지 당신을 따라다니기 시작합니다.",method=".npc follow start"}
+A.CommandWorkbook[".npc follow stop"]={group="NPC 관리",name="선택한 생물(애완동물 아님)이 당신을 따르기를 중지합니다",feature="선택한 생물(애완동물 아님)이 당신을 따라갑니다.",method=".npc follow stop"}
+A.CommandWorkbook[".npc info"]={group="NPC 관리",name="선택한 생물에 대한 세부정보 목록을 표시합니다",feature="선택한 생물의 세부정보 목록을 표시합니다.  목록에는 다음이 포함됩니다. - GUID, 팩션, NPC 플래그, 항목 ID, 모델 ID, - 레벨, - 체력(현재/최대), - 필드 플래그, 동적 플래그, 팩션 템플릿, - 위치 정보, - 및 생물 유형(예: 생물이 상인인 경우.",method=".npc info"}
+A.CommandWorkbook[".npc move"]={group="NPC 관리",name="목표 생물 생성 지점을 좌표로 이동하세요",feature="목표 생물 생성 지점을 좌표로 이동합니다.",method=".npc move [#creature_guid]"}
+A.CommandWorkbook[".npc playemote"]={group="NPC 관리",name="ID가 #emoteid인 감정 표현으로 선택한 생물을 감정 표현하게 만듭니다",feature="ID가 #emoteid인 감정 표현을 사용하여 선택한 생물을 감정 표현하게 만듭니다.",method=".npc playemote #emoteid"}
+A.CommandWorkbook[".npc say"]={group="NPC 관리",name="선택한 생물이 특정 메시지를 말하도록 만들기",feature="선택한 생물이 지정된 메시지를 말하게 합니다.",method=".npc say $message"}
+A.CommandWorkbook[".npc set allowmove"]={group="NPC 관리",name="세계의 이동 생물을 활성화 또는 비활성화합니다",feature="세계의 이동 생물을 활성화하거나 비활성화합니다. 구현되지 않았습니다.",method=".npc set allowmove"}
+A.CommandWorkbook[".npc set data"]={group="NPC 관리",name="선택한 생물에 대한 데이터를 설정합니다",feature="선택한 생물에 대한 데이터를 설정합니다. 스크립팅 테스트에 사용됨",method=".npc set data $field $data"}
+A.CommandWorkbook[".npc set entry"]={group="NPC 관리",name="선택한 생물을 생물 템플릿의 다른 항목으로 전환합니다. - 새로운 생명체.id",feature="선택한 생물을 생물 템플릿의 다른 항목으로 전환합니다. - 새로운 creator.id 값이 DB에 저장되지 않습니다.",method=".npc set entry $entry"}
+A.CommandWorkbook[".npc set factionid"]={group="NPC 관리",name="선택한 생물의 진영을 #factionid로 설정합니다",feature="선택한 생물의 진영을 #factionid로 설정합니다.",method=".npc set factionid #factionid"}
+A.CommandWorkbook[".npc set flag"]={group="NPC 관리",name="선택한 생물과 선택한 생물의 생물 템플릿의 NPC 플래그를 다음으로 설정합니다",feature="선택한 생물과 선택한 생물의 생물 템플릿의 NPC 플래그를 #npcflag로 설정합니다. NPC 플래그는 서버를 다시 시작하거나 그리드 언로드/로드 후 선택한 생물체 템플릿의 모든 생물에 적용됩니다.",method=".npc set flag #npcflag"}
+A.CommandWorkbook[".npc set level"]={group="NPC 관리",name="선택한 크리처의 레벨을 #level로 변경합니다.  #level의 범위는 1에서",feature="선택한 크리처의 레벨을 #level로 변경합니다.  #level의 범위는 1부터 (CONFIG_MAX_PLAYER_LEVEL) + 3까지입니다.",method=".npc set level #level"}
+A.CommandWorkbook[".npc set link"]={group="NPC 관리",name="$creatureGUID가 정의한 조건이 살아 있다는 조건에 선택한 생물의 부활을 연결합니다",feature="$creatureGUID가 정의한 조건이 살아 있다는 조건에 선택한 생물의 부활을 연결합니다.",method=".npc set link $creatureGUID"}
+A.CommandWorkbook[".npc set model"]={group="NPC 관리",name="선택한 생물의 모델 ID를 #displayid로 변경합니다",feature="선택한 생물의 모델 ID를 #displayid로 변경합니다.",method=".npc set model #displayid"}
+A.CommandWorkbook[".npc set movetype"]={group="NPC 관리",name="#creature_guid가 가리키는 생물에 대한 설정(또는 #creature_guid가 제공되지 않은 경우 선택됨)",feature="#creature_guid(또는 #creature_guid가 제공되지 않은 경우 선택)로 지정된 생물체에 대해 설정하고 해당 생물체를 리스폰 위치로 이동합니다(생물이 살아있는 경우). NODEL을 사용하지 않으면 생물체에 대한 기존 웨이포인트가 데이터베이스에서 제거됩니다. 생물이 죽은 경우 생물이 부활할 때 이동 유형이 적용됩니다. 웨이포인트를 유지하려면 NODEL을 사용해야 합니다.",method=".npc set movetype [#creature_guid] stay/random/way [NODEL]"}
+A.CommandWorkbook[".npc set phase"]={group="NPC 관리",name="선택한 유닛 또는 펫 페이즈마스크가 관련 월드비전 업데이트와 함께 #phasemask로 변경되었습니다",feature="플레이어를 위한 관련 월드 비전 업데이트와 함께 선택한 유닛 또는 애완동물 페이즈마스크가 #phasemask로 변경되었습니다. 생물체의 경우 상태가 DB에 저장되고 지속됩니다. 애완동물의 경우 소유자, 소유자 재로그인 또는 GM 모드 활성화/비활성화를 위해 게임 단계가 변경될 때까지 변경이 활성화됩니다.",method=".npc set phase #phasemask"}
+A.CommandWorkbook[".npc set spawntime"]={group="NPC 관리",name="선택한 생물의 생성 시간을 시간에 맞게 조정",feature="선택한 생물의 생성 시간을 시간에 맞게 조정합니다.",method=".npc set spawntime #time"}
+A.CommandWorkbook[".npc set wanderdistance"]={group="NPC 관리",name="선택한 생물의 방황 거리를 dist로 조정",feature="선택한 생물의 방황 거리를 dist로 조정합니다.",method=".npc set wanderdistance #dist"}
+A.CommandWorkbook[".npc textemote"]={group="NPC 관리",name="선택한 생물이 ID #emoteid의 감정 표현으로 문자 메시지를 보내도록 만듭니다",feature="선택한 생물이 ID #emoteid의 감정 표현으로 문자 메시지를 보내도록 만듭니다.",method=".npc textemote #emoteid"}
+A.CommandWorkbook[".npc whisper"]={group="NPC 관리",name="선택한 npc가 #playerguid에게 #text를 속삭이도록 합니다",feature="선택한 npc가 #playerguid에게 #text를 속삭이도록 합니다.",method=".npc whisper #playerguid #text"}
+A.CommandWorkbook[".npc yell"]={group="NPC 관리",name="선택한 생물이 지정된 메시지를 외치게 합니다",feature="선택한 생물이 지정된 메시지를 외치게 만듭니다.",method=".npc yell $message"}
+A.CommandWorkbook[".pdump"]={group="캐릭터 백업/복원(덤프)",name="가능한 하위 명령 목록을 보려면 .pdump를 입력하고, 보려면 .help pdump $subcommand를 입력하세요",feature="가능한 하위 명령 목록을 보려면 .pdump를 입력하고, 하위 명령에 대한 정보를 보려면 .help pdump $subcommand를 입력하세요.",method=".pdump $subcommand"}
+A.CommandWorkbook[".pdump load"]={group="캐릭터 백업/복원(덤프)",name="덤프 파일의 문자 덤프를 저장된 또는 $newname을 사용하여 $account의 문자 목록으로 로드합니다",feature="덤프 파일의 문자 덤프를 저장된(또는 첫 번째 무료) 또는 $newguid guid를 사용하여 저장된 또는 $newname을 사용하여 $account의 문자 목록으로 로드합니다.",method=".pdump load $filename $account [$newname] [$newguid]"}
+A.CommandWorkbook[".pdump write"]={group="캐릭터 백업/복원(덤프)",name="이름/guid가 $playerNameOrGUID인 문자 덤프를 $filename 파일에 씁니다",feature="이름/guid가 $playerNameOrGUID인 문자 덤프를 $filename 파일에 씁니다.",method=".pdump write $filename $playerNameOrGUID"}
+A.CommandWorkbook[".pet"]={group="펫 관리",name=".pet을 입력하여 가능한 하위 명령 목록을 보거나 .help pet $subcommand를 입력하여 정보를 확인하세요",feature=".pet을 입력하여 가능한 하위 명령 목록을 보거나 .help pet $subcommand를 입력하여 하위 명령에 대한 정보를 확인하세요.",method=".pet $subcommand"}
+A.CommandWorkbook[".pet create"]={group="펫 관리",name="선택한 생물의 애완동물을 생성합니다",feature="선택한 생물의 애완동물을 생성합니다.",method=".pet create"}
+A.CommandWorkbook[".pet learn"]={group="펫 관리",name="애완동물에게 #주문법 배우기",feature="애완동물에게 #spellid를 배우세요.",method=".pet learn"}
+A.CommandWorkbook[".pet unlearn"]={group="펫 관리",name="애완동물에게 #주문법 배우기",feature="애완동물에게 #주문법을 배우세요.",method=".pet unlean"}
+A.CommandWorkbook[".pinfo"]={group="플레이어 상세 정보",name="선택한 플레이어의 계정 정보 및 길드 정보 출력 또는 플레이어 찾기",feature="$player_name 또는 #GUID로 선택한 플레이어 또는 플레이어 찾기에 대한 계정 정보 및 길드 정보를 출력합니다.",method=".pinfo [$player_name/#GUID]"}
+A.CommandWorkbook[".playall"]={group="사운드 전체 재생",name="전체 서버에 사운드 플레이어",feature="전체 서버에 사운드를 재생합니다.",method=".playall #soundid"}
+A.CommandWorkbook[".possess"]={group="대상 빙의(조종)",name="선택한 생물을 무기한 소유합니다",feature="선택한 생물을 무기한 소유합니다.",method=".possess"}
+A.CommandWorkbook[".quest"]={group="퀘스트 관리",name="가능한 하위 명령 목록을 보려면 .quest를 입력하고, 보려면 .help Quest $subcommand를 입력하세요",feature="가능한 하위 명령 목록을 보려면 .quest를 입력하고, 하위 명령에 대한 정보를 보려면 .help Quest $subcommand를 입력하세요.",method=".quest $subcommand"}
+A.CommandWorkbook[".quest add"]={group="퀘스트 관리",name="캐릭터 퀘스트 로그에 추가 퀘스트 #quest_id",feature="캐릭터 퀘스트 로그에 퀘스트 #quest_id를 추가하세요. 항목에서 시작된 퀘스트는 이 명령으로 추가할 수 없지만 명령 출력에 올바른 .additem 호출이 제공됩니다.",method=".quest add #quest_id"}
+A.CommandWorkbook[".quest complete"]={group="퀘스트 관리",name="대상 캐릭터 활성 퀘스트에 대해 모든 퀘스트 목표를 완료됨으로 표시",feature="대상 캐릭터 활성 퀘스트에 대해 모든 퀘스트 목표를 완료된 것으로 표시합니다. 이 대상 캐릭터가 끝나면 퀘스트 보상을 받을 수 있습니다.",method=".quest complete #questid"}
+A.CommandWorkbook[".quest remove"]={group="퀘스트 관리",name="퀘스트 #quest_id 상태를 완료되지 않고 활성화되지 않은 상태로 설정하고 활성 퀘스트에서 제거합니다",feature="선택한 플레이어에 대해 퀘스트 #quest_id 상태를 완료되지 않고 활성화되지 않은 상태로 설정합니다(그리고 활성 퀘스트 목록에서 제거).",method=".quest remove #quest_id"}
+A.CommandWorkbook[".quest reward"]={group="퀘스트 관리",name="선택한 플레이어에게 퀘스트 보상을 부여하고 로그에서 퀘스트를 제거합니다(퀘스트는",feature="선택한 플레이어에게 퀘스트 보상을 부여하고 로그에서 퀘스트를 제거합니다(퀘스트는 완료 상태여야 함).",method=".quest reward #questId"}
+A.CommandWorkbook[".recall"]={group="이전 위치로 귀환",name="$playername 또는 선택한 플레이어를 마지막으로 사용하기 전에 있었던 장소로 순간이동합니다",feature="$playername 또는 선택한 플레이어를 마지막 순간 이동 명령을 사용하기 전에 있었던 장소로 순간 이동합니다. $playername을 입력하지 않고 플레이어를 선택하지 않으면 순간 이동됩니다.",method=".recall [$playername]"}
+A.CommandWorkbook[".reload"]={group="DB 테이블 다시 불러오기",name="가능한 하위 명령 목록을 보려면 .reload를 입력하고, 보려면 .help reload $subcommand를 입력하세요",feature=".reload를 입력하여 가능한 하위 명령 목록을 보거나 .help reload $subcommand를 입력하여 하위 명령에 대한 정보를 확인하세요.",method=".reload $subcommand"}
+A.CommandWorkbook[".reload access_requirement"]={group="DB 테이블 다시 불러오기",name="access_requirement 테이블 다시 로드",feature="access_requirement 테이블을 다시 로드합니다.",method=".reload access_requirement"}
+A.CommandWorkbook[".reload achievement_criteria_data"]={group="DB 테이블 다시 불러오기",name="achievement_criteria_data 테이블 다시 로드",feature="achievement_criteria_data 테이블을 다시 로드하세요.",method=".reload achievement_criteria_data"}
+A.CommandWorkbook[".reload achievement_reward"]={group="DB 테이블 다시 불러오기",name="achievement_reward 테이블 다시 로드",feature="achievement_reward 테이블을 다시 로드하세요.",method=".reload achievement_reward"}
+A.CommandWorkbook[".reload achievement_reward_locale"]={group="DB 테이블 다시 불러오기",name="achievement_reward_locale 테이블 다시 로드",feature="achievement_reward_locale 테이블을 다시 로드하세요.",method=".reload achievement_reward_locale"}
+A.CommandWorkbook[".reload all"]={group="DB 테이블 다시 불러오기",name="다시 로드 지원이 추가되어 _안전하게_ 다시 로드할 수 있는 모든 테이블을 다시 로드합니다",feature="다시 로드 지원이 추가되어 _안전하게_ 다시 로드할 수 있는 모든 테이블을 다시 로드합니다.",method=".reload all"}
+A.CommandWorkbook[".reload all achievement"]={group="DB 테이블 다시 불러오기",name="achievement_reward, achievement_criteria_data 테이블 다시 로드",feature="achievement_reward, achievement_criteria_data 테이블을 다시 로드하세요.",method=".reload all achievement"}
+A.CommandWorkbook[".reload all area"]={group="DB 테이블 다시 불러오기",name="areatrigger_teleport,aretrigger_tavern,game_graveyard_zone 테이블 다시 로드",feature="Areatrigger_teleport, Areatrigger_tavern, game_graveyard_zone 테이블을 다시 로드합니다.",method=".reload all area"}
+A.CommandWorkbook[".reload all gossips"]={group="DB 테이블 다시 불러오기",name="gossip_menu, gossip_menu_option, gossip_scripts, points_of_interest 테이블 다시 로드",feature="gossip_menu, gossip_menu_option, gossip_scripts, points_of_interest 테이블을 다시 로드합니다.",method=".reload all gossips"}
+A.CommandWorkbook[".reload all item"]={group="DB 테이블 다시 불러오기",name="page_text, item_enchantment_table 테이블 다시 로드",feature="page_text, item_enchantment_table 테이블을 다시 로드합니다.",method=".reload all item"}
+A.CommandWorkbook[".reload all locales"]={group="DB 테이블 다시 불러오기",name="다시 로드 지원이 추가되어 _안전하게_ 다시 로드할 수 있는 모든 `locales_*` 테이블을 다시 로드합니다",feature="다시 로드 지원이 추가되어 _안전하게_ 다시 로드할 수 있는 모든 `locales_*` 테이블을 다시 로드합니다.",method=".reload all locales"}
+A.CommandWorkbook[".reload all loot"]={group="DB 테이블 다시 불러오기",name="모든 `*_loot_template` 테이블 다시 로드",feature="모든 `*_loot_template` 테이블을 다시 로드합니다. 서버 실행 시 지연이 발생하여 작업이 느려질 수 있습니다.",method=".reload all loot"}
+A.CommandWorkbook[".reload all npc"]={group="DB 테이블 다시 불러오기",name="npc_option, npc_trainer, npc Vendor, 관심 장소 테이블 다시 로드",feature="npc_option, npc_trainer, npc Vendor, 관심 지점 테이블을 다시 로드합니다.",method=".reload all npc"}
+A.CommandWorkbook[".reload all quest"]={group="DB 테이블 다시 불러오기",name="이 테이블에 대한 다시 로드 지원이 추가되면 모든 퀘스트 관련 테이블을 다시 로드할 수 있습니다",feature="이 테이블에 대한 다시 로드 지원이 추가되고 이 테이블을 _안전하게_ 다시 로드할 수 있는 경우 모든 퀘스트 관련 테이블을 다시 로드하십시오.",method=".reload all quest"}
+A.CommandWorkbook[".reload all scripts"]={group="DB 테이블 다시 불러오기",name="gameobject_scripts 다시 로드",feature="gameobject_scripts, event_scripts,quest_end_scripts,quest_start_scripts,spell_scripts,db_script_string,waypoint_scripts 테이블을 다시 로드합니다.",method=".reload all scripts"}
+A.CommandWorkbook[".reload all spell"]={group="DB 테이블 다시 불러오기",name="다시 로드 지원이 추가되어 _안전하게_ 다시 로드할 수 있는 모든 `spell_*` 테이블을 다시 로드합니다",feature="다시 로드 지원이 추가되어 _안전하게_ 다시 로드할 수 있는 모든 `spell_*` 테이블을 다시 로드하세요.",method=".reload all spell"}
+A.CommandWorkbook[".reload areatrigger_involvedrelation"]={group="DB 테이블 다시 불러오기",name="Areatrigger_involved관계 테이블 다시 로드",feature="Areatrigger_involvedrelation 테이블을 다시 로드합니다.",method=".reload areatrigger_involvedrelation"}
+A.CommandWorkbook[".reload areatrigger_tavern"]={group="DB 테이블 다시 불러오기",name="Areatrigger_tavern 테이블 다시 로드",feature="Areatrigger_tavern 테이블을 다시 로드합니다.",method=".reload areatrigger_tavern"}
+A.CommandWorkbook[".reload areatrigger_teleport"]={group="DB 테이블 다시 불러오기",name="Areatrigger_teleport 테이블 다시 로드",feature="Areatrigger_teleport 테이블을 다시 로드합니다.",method=".reload areatrigger_teleport"}
+A.CommandWorkbook[".reload auctions"]={group="DB 테이블 다시 불러오기",name="데이터베이스에서 동적 데이터 테이블 다시 로드",feature="데이터베이스에서 동적 데이터 테이블을 다시 로드합니다.",method=".reload auctions"}
+A.CommandWorkbook[".reload autobroadcast"]={group="DB 테이블 다시 불러오기",name="자동 방송 테이블 다시 로드",feature="자동 방송 테이블을 다시 로드합니다.",method=".reload autobroadcast"}
+A.CommandWorkbook[".reload command"]={group="DB 테이블 다시 불러오기",name="명령 테이블 다시 로드",feature="명령 테이블을 다시 로드합니다.",method=".reload command"}
+A.CommandWorkbook[".reload conditions"]={group="DB 테이블 다시 불러오기",name="테이블",feature="",method="Reload conditions table."}
+A.CommandWorkbook[".reload config"]={group="DB 테이블 다시 불러오기",name="구성 설정 다시 로드(기본적으로 trinityd.conf에 저장됨)",feature="구성 설정을 다시 로드합니다(기본적으로 trinityd.conf에 저장됨). 다시 로드할 때 모든 설정을 변경할 수 있는 것은 아닙니다. 일부 새 설정 값은 다시 시작할 때까지 무시되고, 일부 값은 지연되거나 새 객체/맵에만 적용되며, 일부 값은 다시 로드할 때 변경이 명시적으로 거부됩니다.",method=".reload config"}
+A.CommandWorkbook[".reload creature_linked_respawn"]={group="DB 테이블 다시 불러오기",name="Creature_linked_respawn 테이블 다시 로드",feature="Creature_linked_respawn 테이블을 다시 로드합니다.",method=".reload creature_linked_respawn"}
+A.CommandWorkbook[".reload creature_loot_template"]={group="DB 테이블 다시 불러오기",name="Creature_loot_template 테이블 다시 로드",feature="creeper_loot_template 테이블을 다시 로드하세요.",method=".reload creature_loot_template"}
+A.CommandWorkbook[".reload creature_onkill_reputation"]={group="DB 테이블 다시 불러오기",name="Creature_onkill_reputation 테이블 다시 로드",feature="creeper_onkill_reputation 테이블을 다시 로드하세요.",method=".reload creature_onkill_reputation"}
+A.CommandWorkbook[".reload creature_questender"]={group="DB 테이블 다시 불러오기",name="Creature_questender 테이블 다시 로드",feature="creeper_questender 테이블을 다시 로드하세요.",method=".reload creature_questender"}
+A.CommandWorkbook[".reload creature_queststarter"]={group="DB 테이블 다시 불러오기",name="Creature_queststarter 테이블 다시 로드",feature="creeper_queststarter 테이블을 다시 로드하세요.",method=".reload creature_queststarter"}
+A.CommandWorkbook[".reload creature_summon_groups"]={group="DB 테이블 다시 불러오기",name="Creature_summon_groups 테이블 다시 로드",feature="creeper_summon_groups 테이블을 다시 로드하세요.",method=".reload creature_summon_groups"}
+A.CommandWorkbook[".reload creature_template"]={group="DB 테이블 다시 불러오기",name="지정된 생물의 템플릿을 다시 로드합니다",feature="지정된 생물의 템플릿을 다시 로드합니다.",method=".reload creature_template $entry"}
+A.CommandWorkbook[".reload creature_template_locale"]={group="DB 테이블 다시 불러오기",name="creeper_template_locale 테이블 다시 로드",feature="Creature_template_locale 테이블을 다시 로드합니다.",method=".reload creature_template_locale"}
+A.CommandWorkbook[".reload creature_text"]={group="DB 테이블 다시 불러오기",name="Creature_text 테이블 다시 로드",feature="Creature_text 테이블을 다시 로드합니다.",method=".reload creature_text"}
+A.CommandWorkbook[".reload creature_text_locale"]={group="DB 테이블 다시 불러오기",name="creeper_text_locale 테이블 다시 로드",feature="creeper_text_locale 테이블을 다시 로드하세요.",method=".reload creature_text_locale"}
+A.CommandWorkbook[".reload disables"]={group="DB 테이블 다시 불러오기",name="다시 로드하면 테이블이 비활성화됩니다",feature="다시 로드하면 테이블이 비활성화됩니다.",method=".reload disables"}
+A.CommandWorkbook[".reload disenchant_loot_template"]={group="DB 테이블 다시 불러오기",name="disenchant_loot_template 테이블 다시 로드",feature="disenchant_loot_template 테이블을 다시 로드합니다.",method=".reload disenchant_loot_template"}
+A.CommandWorkbook[".reload event_scripts"]={group="DB 테이블 다시 불러오기",name="event_scripts 테이블 다시 로드",feature="event_scripts 테이블을 다시 로드합니다.",method=".reload event_scripts"}
+A.CommandWorkbook[".reload fishing_loot_template"]={group="DB 테이블 다시 불러오기",name="Fishing_loot_template 테이블 다시 로드",feature="Fishing_loot_template 테이블을 다시 로드합니다.",method=".reload fishing_loot_template"}
+A.CommandWorkbook[".reload gameobject_loot_template"]={group="DB 테이블 다시 불러오기",name="gameobject_loot_template 테이블 다시 로드",feature="gameobject_loot_template 테이블을 다시 로드합니다.",method=".reload gameobject_loot_template"}
+A.CommandWorkbook[".reload gameobject_questender"]={group="DB 테이블 다시 불러오기",name="gameobject_questender 테이블 다시 로드",feature="gameobject_questender 테이블을 다시 로드합니다.",method=".reload gameobject_questender\\"}
+A.CommandWorkbook[".reload gameobject_queststarter"]={group="DB 테이블 다시 불러오기",name="gameobject_queststarter 테이블 다시 로드",feature="gameobject_queststarter 테이블을 다시 로드합니다.",method=".reload gameobject_queststarter"}
+A.CommandWorkbook[".reload gameobject_template_locale"]={group="DB 테이블 다시 불러오기",name="gameobject_template_locale 테이블 다시 로드",feature="gameobject_template_locale 테이블을 다시 로드합니다.",method=".reload gameobject_template_locale"}
+A.CommandWorkbook[".reload game_graveyard_zone"]={group="DB 테이블 다시 불러오기",name="game_graveyard_zone 테이블 다시 로드",feature="game_graveyard_zone 테이블을 다시 로드합니다.",method=".reload game_graveyard_zone"}
+A.CommandWorkbook[".reload game_tele"]={group="DB 테이블 다시 불러오기",name="game_tele 테이블 다시 로드",feature="game_tele 테이블을 다시 로드합니다.",method=".reload game_tele"}
+A.CommandWorkbook[".reload gm_tickets"]={group="DB 테이블 다시 불러오기",name="gm_tickets 테이블 다시 로드",feature="gm_tickets 테이블을 다시 로드합니다.",method=".reload gm_tickets"}
+A.CommandWorkbook[".reload gossip_menu"]={group="DB 테이블 다시 불러오기",name="gossip_menu 테이블 다시 로드",feature="gossip_menu 테이블을 다시 로드합니다.",method=".reload gossip_menu"}
+A.CommandWorkbook[".reload gossip_menu_option"]={group="DB 테이블 다시 불러오기",name="gossip_menu_option 테이블 다시 로드",feature="gossip_menu_option 테이블을 다시 로드합니다.",method=".reload gossip_menu_option"}
+A.CommandWorkbook[".reload gossip_menu_option_locale"]={group="DB 테이블 다시 불러오기",name="gossip_menu_option_locale 테이블 다시 로드",feature="gossip_menu_option_locale 테이블을 다시 로드합니다.",method=".reload gossip_menu_option_locale"}
+A.CommandWorkbook[".reload item_enchantment_template"]={group="DB 테이블 다시 불러오기",name="item_enchantment_template 테이블 다시 로드",feature="item_enchantment_template 테이블을 다시 로드합니다.",method=".reload item_enchantment_template"}
+A.CommandWorkbook[".reload item_loot_template"]={group="DB 테이블 다시 불러오기",name="item_loot_template 테이블 다시 로드",feature="item_loot_template 테이블을 다시 로드합니다.",method=".reload item_loot_template"}
+A.CommandWorkbook[".reload item_template_locale"]={group="DB 테이블 다시 불러오기",name="item_template_locale 테이블 다시 로드",feature="item_template_locale 테이블을 다시 로드합니다.",method=".reload item_template_locale"}
+A.CommandWorkbook[".reload lfg_dungeon_rewards"]={group="DB 테이블 다시 불러오기",name="lfg_dungeon_rewards 테이블 다시 로드",feature="lfg_dungeon_rewards 테이블을 다시 로드합니다.",method=".reload lfg_dungeon_rewards"}
+A.CommandWorkbook[".reload mail_level_reward"]={group="DB 테이블 다시 불러오기",name="mail_level_reward 테이블 다시 로드",feature="mail_level_reward 테이블을 다시 로드합니다.",method=".reload mail_level_reward"}
+A.CommandWorkbook[".reload mail_loot_template"]={group="DB 테이블 다시 불러오기",name="Quest_mail_loot_template 테이블 다시 로드",feature="Quest_mail_loot_template 테이블을 다시 로드합니다.",method=".reload quest_mail_loot_template"}
+A.CommandWorkbook[".reload milling_loot_template"]={group="DB 테이블 다시 불러오기",name="milling_loot_template 테이블 다시 로드",feature="milling_loot_template 테이블을 다시 로드합니다.",method=".reload milling_loot_template"}
+A.CommandWorkbook[".reload npc_text_locale"]={group="DB 테이블 다시 불러오기",name="npc_text_locale 테이블 다시 로드",feature="npc_text_locale 테이블을 다시 로드합니다.",method=".reload npc_text_locale"}
+A.CommandWorkbook[".reload npc_trainer"]={group="DB 테이블 다시 불러오기",name="npc_trainer 테이블 다시 로드",feature="npc_trainer 테이블을 다시 로드합니다.",method=".reload npc_trainer"}
+A.CommandWorkbook[".reload npc_vendor"]={group="DB 테이블 다시 불러오기",name="npc_vendor 테이블 다시 로드",feature="npc_vendor 테이블을 다시 로드합니다.",method=".reload npc_vendor"}
+A.CommandWorkbook[".reload page_text"]={group="DB 테이블 다시 불러오기",name="page_text 테이블 다시 로드",feature="page_text 테이블을 다시 로드합니다.",method=".reload page_text"}
+A.CommandWorkbook[".reload page_text_locale"]={group="DB 테이블 다시 불러오기",name="page_text_locale 테이블 다시 로드",feature="page_text_locale 테이블을 다시 로드합니다.",method=".reload page_text_locale"}
+A.CommandWorkbook[".reload pickpocketing_loot_template"]={group="DB 테이블 다시 불러오기",name="소매치기_loot_template 테이블 다시 로드",feature="소매치기_loot_template 테이블을 다시 로드합니다.",method=".reload pickpocketing_loot_template"}
+A.CommandWorkbook[".reload points_of_interest"]={group="DB 테이블 다시 불러오기",name="points_of_interest 테이블 다시 로드",feature="points_of_interest 테이블을 다시 로드합니다.",method=".reload points_of_interest"}
+A.CommandWorkbook[".reload points_of_interest_locale"]={group="DB 테이블 다시 불러오기",name="points_of_interest_locale 테이블 다시 로드",feature="points_of_interest_locale 테이블을 다시 로드합니다.",method=".reload points_of_interest_locale"}
+A.CommandWorkbook[".reload prospecting_loot_template"]={group="DB 테이블 다시 불러오기",name="Prospecting_loot_template 테이블 다시 로드",feature="Prospecting_loot_template 테이블을 다시 로드합니다.",method=".reload prospecting_loot_template"}
+A.CommandWorkbook[".reload quest_objective_locale"]={group="DB 테이블 다시 불러오기",name="Quest_objective_locale 테이블 다시 로드",feature="Quest_objective_locale 테이블을 다시 로드합니다.",method=".reload quest_objective_locale"}
+A.CommandWorkbook[".reload quest_offer_reward_locale"]={group="DB 테이블 다시 불러오기",name="Quest_offer_reward_locale 테이블 다시 로드",feature="Quest_offer_reward_locale 테이블을 다시 로드합니다.",method=".reload quest_offer_reward_locale"}
+A.CommandWorkbook[".reload quest_poi"]={group="DB 테이블 다시 불러오기",name="Quest_poi 테이블 다시 로드",feature="Quest_poi 테이블을 다시 로드합니다.",method=".reload quest_poi"}
+A.CommandWorkbook[".reload quest_request_items_locale"]={group="DB 테이블 다시 불러오기",name="Quest_request_items_locale 테이블 다시 로드",feature="Quest_request_items_locale 테이블을 다시 로드합니다.",method=".reload quest_request_items_locale"}
+A.CommandWorkbook[".reload quest_template"]={group="DB 테이블 다시 불러오기",name="Quest_template 테이블 다시 로드",feature="Quest_template 테이블을 다시 로드합니다.",method=".reload quest_template"}
+A.CommandWorkbook[".reload quest_template_locale"]={group="DB 테이블 다시 불러오기",name="Quest_template_locale 테이블 다시 로드",feature="Quest_template_locale 테이블을 다시 로드합니다.",method=".reload quest_template_locale"}
+A.CommandWorkbook[".reload reference_loot_template"]={group="DB 테이블 다시 불러오기",name="reference_loot_template 테이블 다시 로드",feature="reference_loot_template 테이블을 다시 로드합니다.",method=".reload reference_loot_template"}
+A.CommandWorkbook[".reload reputation_reward_rate"]={group="DB 테이블 다시 불러오기",name="평판_보상_비율 테이블 다시 로드",feature="평판_보상_비율 테이블을 다시 로드합니다.",method=".reload reputation_reward_rate"}
+A.CommandWorkbook[".reload reputation_spillover_template"]={group="DB 테이블 다시 불러오기",name="평판_spillover_template 테이블 다시 로드",feature="평판_spillover_template 테이블을 다시 로드합니다.",method=".reload reputation_spillover_template"}
+A.CommandWorkbook[".reload reserved_name"]={group="DB 테이블 다시 불러오기",name="Reserved_name 테이블 다시 로드",feature="Reserved_name 테이블을 다시 로드합니다.",method=".reload reserved_name"}
+A.CommandWorkbook[".reload skill_discovery_template"]={group="DB 테이블 다시 불러오기",name="Skill_discovery_template 테이블 다시 로드",feature="Skill_discovery_template 테이블을 다시 로드합니다.",method=".reload skill_discovery_template"}
+A.CommandWorkbook[".reload skill_extra_item_template"]={group="DB 테이블 다시 불러오기",name="Skill_extra_item_template 테이블 다시 로드",feature="Skill_extra_item_template 테이블을 다시 로드합니다.",method=".reload skill_extra_item_template"}
+A.CommandWorkbook[".reload skill_fishing_base_level"]={group="DB 테이블 다시 불러오기",name="Skill_fishing_base_level 테이블 다시 로드",feature="Skill_fishing_base_level 테이블을 다시 로드합니다.",method=".reload skill_fishing_base_level"}
+A.CommandWorkbook[".reload skinning_loot_template"]={group="DB 테이블 다시 불러오기",name="skinning_loot_template 테이블 다시 로드",feature="skinning_loot_template 테이블을 다시 로드합니다.",method=".reload skinning_loot_template"}
+A.CommandWorkbook[".reload smart_scripts"]={group="DB 테이블 다시 불러오기",name="smart_scripts 테이블 다시 로드",feature="smart_scripts 테이블을 다시 로드합니다.",method=".reload smart_scripts"}
+A.CommandWorkbook[".reload spell_area"]={group="DB 테이블 다시 불러오기",name="Spell_area 테이블 다시 로드",feature="Spell_area 테이블을 다시 로드합니다.",method=".reload spell_area"}
+A.CommandWorkbook[".reload spell_bonus_data"]={group="DB 테이블 다시 불러오기",name="Spell_bonus_data 테이블 다시 로드",feature="Spell_bonus_data 테이블을 다시 로드합니다.",method=".reload spell_bonus_data"}
+A.CommandWorkbook[".reload spell_group"]={group="DB 테이블 다시 불러오기",name="Spell_group 테이블 다시 로드",feature="Spell_group 테이블을 다시 로드합니다.",method=".reload spell_group"}
+A.CommandWorkbook[".reload spell_group_stack_rules"]={group="DB 테이블 다시 불러오기",name="Spell_group_stack_rules 테이블 다시 로드",feature="Spell_group_stack_rules 테이블을 다시 로드합니다.",method=".reload spell_group"}
+A.CommandWorkbook[".reload spell_learn_spell"]={group="DB 테이블 다시 불러오기",name="Spell_learn_spell 테이블 다시 로드",feature="Spell_learn_spell 테이블을 다시 로드합니다.",method=".reload spell_learn_spell"}
+A.CommandWorkbook[".reload spell_linked_spell"]={group="DB 테이블 다시 불러오기",name="Spell_linked_spell DB 테이블을 다시 로드합니다",feature="사용법: .reload Spell_linked_spell Spell_linked_spell DB 테이블을 다시 로드합니다.",method="Usage: .reload spell_linked_spell Reloads the spell_linked_spell DB table."}
+A.CommandWorkbook[".reload spell_loot_template"]={group="DB 테이블 다시 불러오기",name="Spell_loot_template 테이블 다시 로드",feature="Spell_loot_template 테이블을 다시 로드합니다.",method=".reload spell_loot_template"}
+A.CommandWorkbook[".reload spell_pet_auras"]={group="DB 테이블 다시 불러오기",name="Spell_pet_auras 테이블 다시 로드",feature="Spell_pet_auras 테이블을 다시 로드합니다.",method=".reload spell_pet_auras"}
+A.CommandWorkbook[".reload spell_proc"]={group="DB 테이블 다시 불러오기",name="Spell_proc 테이블 다시 로드",feature="Spell_proc 테이블을 다시 로드합니다.",method=".reload spell_proc"}
+A.CommandWorkbook[".reload spell_proc_event"]={group="DB 테이블 다시 불러오기",name="Spell_proc_event 테이블 다시 로드",feature="Spell_proc_event 테이블을 다시 로드합니다.",method=".reload spell_proc_event"}
+A.CommandWorkbook[".reload spell_required"]={group="DB 테이블 다시 불러오기",name="Spell_required 테이블 다시 로드",feature="Spell_required 테이블을 다시 로드합니다.",method=".reload spell_required"}
+A.CommandWorkbook[".reload spell_scripts"]={group="DB 테이블 다시 불러오기",name="Spell_scripts 테이블 다시 로드",feature="Spell_scripts 테이블을 다시 로드합니다.",method=".reload spell_scripts"}
+A.CommandWorkbook[".reload spell_target_position"]={group="DB 테이블 다시 불러오기",name="Spell_target_position 테이블 다시 로드",feature="Spell_target_position 테이블을 다시 로드합니다.",method=".reload spell_target_position"}
+A.CommandWorkbook[".reload spell_threats"]={group="DB 테이블 다시 불러오기",name="Spell_threats 테이블 다시 로드",feature="Spell_threats 테이블을 다시 로드합니다.",method=".reload spell_threats"}
+A.CommandWorkbook[".reload trinity_string"]={group="DB 테이블 다시 불러오기",name="trinity_string 테이블 다시 로드",feature="trinity_string 테이블을 다시 로드합니다.",method=".reload trinity_string"}
+A.CommandWorkbook[".reload vehicle_accessory"]={group="DB 테이블 다시 불러오기",name="데이터베이스에서 GUID 기반 차량 액세서리 정의를 다시 로드합니다",feature="데이터베이스에서 GUID 기반 차량 액세서리 정의를 다시 로드합니다.",method=".reload vehicle_accessory"}
+A.CommandWorkbook[".reload vehicle_template_accessory"]={group="DB 테이블 다시 불러오기",name="데이터베이스에서 보급형 차량 액세서리 정의를 다시 로드합니다",feature="데이터베이스에서 보급형 차량 액세서리 정의를 다시 로드합니다.",method=".reload vehicle_template_accessory"}
+A.CommandWorkbook[".reload waypoint_data"]={group="DB 테이블 다시 불러오기",name="waypoint_data 테이블을 다시 로드합니다",feature="구문: .reload waypoint_data는 waypoint_data 테이블을 다시 로드합니다.",method=".reload waypoint_data will reload waypoint_data table."}
+A.CommandWorkbook[".reload waypoint_scripts"]={group="DB 테이블 다시 불러오기",name="waypoint_scripts 테이블 다시 로드",feature="waypoint_scripts 테이블을 다시 로드합니다.",method=".reload waypoint_scripts"}
+A.CommandWorkbook[".removeitem"]={group="아이템 회수",name="추가 항목처럼 작동",feature="",method=".removeitem work like additem"}
+A.CommandWorkbook[".gear repair"]={group="장비 수리",name="선택한 플레이어의 모든 아이템을 수리하세요",feature="선택한 플레이어의 아이템을 모두 수리하세요.",method=".gear repair"}
+A.CommandWorkbook[".replace skill"]={group="치환",name="캐릭터 $name에 대한 스킬 $newSkill의 스킬 &oldSkill을 교체하고 새 스킬 값을 다음으로 설정합니다",feature="$name 캐릭터에 대한 $newSkill 스킬의 &oldSkill 스킬을 교체하고 새 스킬 값을 $skillValue로 설정합니다.",method=".replace skill $name &oldSkill $newSkill $skillValue"}
+A.CommandWorkbook[".reset"]={group="초기화",name="가능한 하위 명령 목록을 보려면 .reset을 입력하고, 보려면 .help Reset $subcommand를 입력하세요",feature="가능한 하위 명령 목록을 보려면 .reset을 입력하고, 하위 명령에 대한 정보를 보려면 .help Reset $subcommand를 입력하세요.",method=".reset $subcommand"}
+A.CommandWorkbook[".reset achievements"]={group="초기화",name="선택 또는 이름이 지정된(온라인 또는 오프라인) 캐릭터의 업적 데이터 재설정",feature="선택되거나 이름이 지정된(온라인 또는 오프라인) 캐릭터의 업적 데이터를 재설정합니다. 완료된 퀘스트 등 지속성 진행 데이터에 대한 성과는 재설정 시 다시 채워집니다. 처치/시전 등의 이벤트 성과는 사라집니다.",method=".reset achievements [$playername]"}
+A.CommandWorkbook[".reset all"]={group="초기화",name="구문: .reset alltalent 주문 또는 재능 재설정을 요청합니다(모든 재능 포함)",feature="구문: .reset alltalents 다음 로그인 시 존재하는 각 캐릭터에서 주문 또는 재능(모든 캐릭터의 애완동물에 대한 재능이 있는 경우 포함) 재설정을 요청합니다.",method=".reset all spells"}
+A.CommandWorkbook[".reset honor"]={group="초기화",name="대상 캐릭터의 모든 명예 데이터를 재설정합니다",feature="대상 캐릭터의 명예 데이터를 모두 초기화합니다.",method=".reset honor [Playername]"}
+A.CommandWorkbook[".reset level"]={group="초기화",name="통계 및 재능 재설정을 포함하여 레벨을 1로 재설정합니다",feature="통계 및 재능 재설정을 포함하여 레벨을 1로 재설정합니다.  레벨 요구 사항이 더 큰 장비 아이템은 손실될 수 있습니다.",method=".reset level [Playername]"}
+A.CommandWorkbook[".reset spells"]={group="초기화",name="주문서에서 원본이 아닌 주문을 모두 제거합니다. . 플레이어 이름은 오프라인 이름일 수 있습니다",feature="주문서에서 원본이 아닌 주문을 모두 제거합니다. . 플레이어 이름은 오프라인 캐릭터의 이름일 수 있습니다.",method=".reset spells [Playername]"}
+A.CommandWorkbook[".reset stats"]={group="초기화",name="현재 대상 플레이어의 모든 통계를 원래 값으로 재설정(재계산)합니다",feature="대상 플레이어의 모든 능력치를 현재 레벨의 원래 값으로 재설정(재계산)합니다.",method=".reset stats [Playername]"}
+A.CommandWorkbook[".reset talents"]={group="초기화",name="대상 플레이어, 애완동물 또는 지명된 플레이어의 모든 재능을 제거합니다",feature="대상 플레이어, 애완동물 또는 지명된 플레이어의 모든 재능을 제거합니다. 플레이어 이름은 오프라인 캐릭터의 이름일 수 있습니다. 플레이어 재능을 사용하면 모든 캐릭터의 애완동물에 대한 재능도 재설정됩니다.",method=".reset talents [Playername]"}
+A.CommandWorkbook[".respawn"]={group="리스폰(재생성)",name="리스폰 시간 만료를 기다리지 않고 가장 가까운 모든 생물을 리스폰하고 이동하세요",feature="리스폰 시간 만료를 기다리지 않고 가장 가까운 모든 생물을 리스폰하고 GO하세요.",method=".respawn"}
+A.CommandWorkbook[".revive"]={group="부활",name="선택한 플레이어를 부활시키세요",feature="선택한 플레이어를 부활시킵니다. 플레이어를 선택하지 않으면 부활합니다.",method=".revive"}
+A.CommandWorkbook[".save"]={group="캐릭터 저장",name="캐릭터를 저장합니다",feature="캐릭터를 저장합니다.",method=".save"}
+A.CommandWorkbook[".saveall"]={group="전체 캐릭터 저장",name="게임 내 모든 캐릭터 저장",feature="게임 내 모든 캐릭터를 저장합니다.",method=".saveall"}
+A.CommandWorkbook[".scene"]={group="씬(연출) 재생",name="장면",feature="",method=""}
+A.CommandWorkbook[".scene cancel"]={group="씬(연출) 재생",name="대상 플레이어의 패키지 ID가 있는 장면을 취소합니다",feature="대상 플레이어의 패키지 ID가 있는 장면을 취소합니다.",method=".scene cancel #scenePackageId"}
+A.CommandWorkbook[".scene debug"]={group="씬(연출) 재생",name="장면의 디버그 모드 전환",feature="장면의 디버그 모드를 전환합니다. 디버그 모드에서 장면이 시작/중지/트리거 이벤트가 발생하면 GM은 채팅으로 알림을 받습니다.",method=".scene debug"}
+A.CommandWorkbook[".scene play"]={group="씬(연출) 재생",name="대상 플레이어의 ID로 장면을 재생합니다",feature="대상 플레이어의 ID로 장면을 재생합니다.",method=".scene play #sceneId"}
+A.CommandWorkbook[".send items"]={group="메일/메시지 발송",name="플레이어에게 메일 보내기",feature="플레이어에게 메일을 보냅니다. 제목과 메일 내용은 \"\" 안에 있어야 합니다. 항목 ID에 관련 개수 값이 제공되지 않은 경우 1이 예상됩니다. 개수 > 스택의 최대 항목인 경우 항목은 필요한 양의 스택으로 전송됩니다. 메일의 모든 스택 수는 12개로 제한됩니다.",method=".send items #playername \"#subject\" \"#text\" itemid1[:count1] itemid2[:count2] ... itemidN[:countN]"}
+A.CommandWorkbook[".send mail"]={group="메일/메시지 발송",name="플레이어에게 메일 보내기",feature="플레이어에게 메일을 보냅니다. 제목과 메일 내용은 \"\" 안에 있어야 합니다.",method=".send mail #playername \"#subject\" \"#text\""}
+A.CommandWorkbook[".send message"]={group="메일/메시지 발송",name="관리자가 플레이어에게 화면 메시지 보내기",feature="관리자가 플레이어에게 화면 메시지를 보냅니다.",method=".send message $playername $message"}
+A.CommandWorkbook[".send money"]={group="메일/메시지 발송",name="플레이어에게 돈이 담긴 메일 보내기",feature="플레이어에게 돈이 담긴 메일을 보냅니다. 제목과 메일 내용은 \"\" 안에 있어야 합니다.",method=".send money #playername \"#subject\" \"#text\" #money"}
+A.CommandWorkbook[".server"]={group="서버 관리",name="가능한 하위 명령 목록을 보려면 .server를 입력하고, 보려면 .help server $subcommand를 입력하세요",feature="가능한 하위 명령 목록을 보려면 .server를 입력하고, 하위 명령에 대한 정보를 보려면 .help server $subcommand를 입력하세요.",method=".server $subcommand"}
+A.CommandWorkbook[".server corpses"]={group="서버 관리",name="세계에서 시체 만료 확인을 트리거합니다",feature="발동하는 시체는 세계에서 확인 만료됩니다.",method=".server corpses"}
+A.CommandWorkbook[".server exit"]={group="서버 관리",name="지금 trinity-core를 종료하세요. 종료 코드 0",feature="지금 trinity-core를 종료하세요. 종료 코드 0.",method=".server exit"}
+A.CommandWorkbook[".server idlerestart"]={group="서버 관리",name="활성 연결이 없는 경우(플레이어 없음) #delay 초 후에 서버를 다시 시작합니다",feature="활성 연결이 없으면(플레이어 없음) #delay 초 후에 서버를 다시 시작합니다. 프로그램 종료 코드로 #exit_code 또는 2를 사용하십시오.",method=".server idlerestart #delay [#exit_code] [reason]"}
+A.CommandWorkbook[".server idlerestart cancel"]={group="서버 관리",name="재시작/종료 타이머가 있으면 취소하세요",feature="재시작/종료 타이머가 있으면 취소하십시오.",method=".server idlerestart cancel"}
+A.CommandWorkbook[".server idleshutdown"]={group="서버 관리",name="활성 연결이 없으면 #delay 초 후에 서버를 종료합니다",feature="활성 연결이 없으면(플레이어 없음) #delay 초 후에 서버를 종료합니다. 프로그램 존재 코드로 #exit_code 또는 0을 사용하십시오.",method=".server idleshutdown #delay [#exit_code] [reason]"}
+A.CommandWorkbook[".server idleshutdown cancel"]={group="서버 관리",name="재시작/종료 타이머가 있으면 취소하세요",feature="재시작/종료 타이머가 있으면 취소하십시오.",method=".server idleshutdown cancel"}
+A.CommandWorkbook[".server info"]={group="서버 관리",name="서버 버전 및 연결된 플레이어 수 표시",feature="서버 버전과 연결된 플레이어 수를 표시합니다.",method=".server info"}
+A.CommandWorkbook[".server motd"]={group="서버 관리",name="서버 오늘의 메시지 표시",feature="오늘의 서버 메시지를 표시합니다.",method=".server motd"}
+A.CommandWorkbook[".server plimit"]={group="서버 관리",name="arg가 없으면 현재 플레이어 수와 서버 로그인에 대한 보안 수준 제한이 표시됩니다",feature="arg가 없으면 서버에 로그인하기 위한 현재 플레이어 수와 보안 수준 제한을 표시하고 arg를 사용하면 플레이어 linit($num > 0) 또는 보안 제한($num < 0 또는 보안 파일 이름)을 설정합니다. `reset`을 사용하면 플레이어 제한을 구성 파일의 값으로 설정합니다.",method=".server plimit [#num|-1|-2|-3|reset|player|moderator|gamemaster|administrator]"}
+A.CommandWorkbook[".server restart"]={group="서버 관리",name="#delay초 후에 서버를 다시 시작합니다",feature="#delay초 후에 서버를 다시 시작합니다. 프로그램 존재 코드로 #exit_code 또는 2를 사용하십시오.",method=".server restart #delay [#exit_code] [reason]"}
+A.CommandWorkbook[".server restart cancel"]={group="서버 관리",name="재시작/종료 타이머가 있으면 취소하세요",feature="재시작/종료 타이머가 있으면 취소하십시오.",method=".server restart cancel"}
+A.CommandWorkbook[".server set closed"]={group="서버 관리",name="전 세계에서 새로운 클라이언트 연결을 허용할지 여부를 설정합니다",feature="전 세계에서 새로운 클라이언트 연결을 허용할지 여부를 설정합니다.",method="server set closed on/off"}
+A.CommandWorkbook[".server set loglevel"]={group="서버 관리",name="어펜더(a) 또는 로거(l) 값을 사용할 수 있습니다. $loglevel은 다음 값을 가질 수 있습니다: 비활성화됨",feature="",method=".server set loglevel $facility $name $loglevel. $facility can take the values: appender (a) or logger (l). $loglevel can take the values: disabled (0), trace (1), debug (2), info (3), warn (4), error (5) or fatal (6)"}
+A.CommandWorkbook[".server set motd"]={group="서버 관리",name="서버 오늘의 메시지 설정",feature="오늘의 서버 메시지를 설정하세요.",method=".server set motd $MOTD"}
+A.CommandWorkbook[".server shutdown"]={group="서버 관리",name="#delay초 후에 서버 종료",feature="#delay초 후에 서버를 종료합니다. 프로그램 종료 코드로 #exit_code 또는 0을 사용하십시오.",method=".server shutdown #delay [#exit_code] [reason]"}
+A.CommandWorkbook[".server shutdown cancel"]={group="서버 관리",name="재시작/종료 타이머가 있으면 취소하세요",feature="재시작/종료 타이머가 있으면 취소하십시오.",method=".server shutdown cancel"}
+A.CommandWorkbook[".setskill"]={group="숙련도 설정",name="id #skill 스킬을 현재 스킬 값 #level, 최대 값 #max로 설정합니다",feature="선택한 캐릭터에 대해 현재 스킬 값 #level 및 최대 값 #max(또는 제공하지 않는 경우 현재 최대값과 동일)로 id #skill 스킬을 설정합니다. 선택한 캐릭터가 없으면 스킬을 배우게 됩니다.",method=".setskill #skill #level [#max]"}
+A.CommandWorkbook[".showarea"]={group="지역 공개(발견 처리)",name="선택한 캐릭터에게 #areaid 영역을 공개합니다",feature="선택한 캐릭터에게 #areaid 영역을 공개합니다. 캐릭터를 선택하지 않은 경우 이 영역을 공개하세요.",method=".showarea #areaid"}
+A.CommandWorkbook[".summon"]={group="캐릭터 소환",name="주어진 캐릭터를 당신에게 순간이동시킵니다",feature="주어진 캐릭터를 당신에게 순간이동시킵니다. 캐릭터는 오프라인일 수 있습니다.",method=".summon [$charactername]"}
+A.CommandWorkbook[".tele"]={group="저장된 좌표로 순간이동",name="플레이어를 특정 위치로 순간이동시킵니다",feature="플레이어를 특정 위치로 순간이동시킵니다.",method=".tele #location"}
+A.CommandWorkbook[".tele add"]={group="저장된 좌표로 순간이동",name="이름이 $name인 .tele 명령 대상 위치 목록에 현재 위치를 추가하세요",feature="$name이라는 이름으로 .tele 명령 대상 위치 목록에 현재 위치를 추가합니다.",method=".tele add $name"}
+A.CommandWorkbook[".tele del"]={group="저장된 좌표로 순간이동",name=".tele 명령 위치 목록에 대해 이름이 $name인 위치 제거",feature=".tele 명령 위치 목록에 대해 이름이 $name인 위치를 제거합니다.",method=".tele del $name"}
+A.CommandWorkbook[".tele group"]={group="저장된 좌표로 순간이동",name="선택한 플레이어와 그룹 구성원을 특정 위치로 순간이동시킵니다",feature="선택한 플레이어와 그룹 구성원을 지정된 위치로 순간이동시킵니다.",method=".tele group#location"}
+A.CommandWorkbook[".tele name"]={group="저장된 좌표로 순간이동",name="주어진 캐릭터를 주어진 위치로 순간이동시킵니다",feature="주어진 캐릭터를 주어진 위치로 순간이동시킵니다. 캐릭터는 오프라인일 수 있습니다.  homebind로 순간 이동하려면 #location을 \"$home\"(따옴표 없이)으로 설정하세요.",method=".tele name [#playername] #location"}
+A.CommandWorkbook[".ticket"]={group="GM 티켓(문의) 관리",name="가능한 하위 명령 목록을 보려면 .ticket을 입력하고, 보려면 .help ticket $subcommand를 입력하세요",feature="가능한 하위 명령 목록을 보려면 .ticket을 입력하고, 하위 명령에 대한 정보를 보려면 .help ticket $subcommand를 입력하세요.",method=".ticket $subcommand"}
+A.CommandWorkbook[".ticket assign"]={group="GM 티켓(문의) 관리",name="지정된 게임 마스터에게 지정된 티켓을 할당합니다",feature="사용법: .ticket은 $ticketid $gmname을 할당합니다. 지정된 티켓을 지정된 게임 마스터에게 할당합니다.",method="Usage: .ticket assign $ticketid $gmname. Assigns the specified ticket to the specified Game Master."}
+A.CommandWorkbook[".ticket close"]={group="GM 티켓(문의) 관리",name="지정된 티켓을 닫습니다",feature="사용법: .ticket close $ticketid. 지정된 티켓을 닫습니다. 영구적으로 삭제하지 않습니다.",method="Usage: .ticket close $ticketid. Closes the specified ticket. Does not delete permanently."}
+A.CommandWorkbook[".ticket closedlist"]={group="GM 티켓(문의) 관리",name="종료된 GM 티켓 목록을 표시합니다",feature="종료된 GM 티켓 목록을 표시합니다.",method="Displays a list of closed GM tickets."}
+A.CommandWorkbook[".ticket comment"]={group="GM 티켓(문의) 관리",name="지정된 티켓에 댓글을 추가하거나 수정할 수 있습니다",feature="사용법: .ticket 댓글 $ticketid $comment. 지정된 티켓에 댓글을 추가하거나 수정할 수 있습니다.",method="Usage: .ticket comment $ticketid $comment. Allows the adding or modifying of a comment to the specified ticket."}
+A.CommandWorkbook[".ticket delete"]={group="GM 티켓(문의) 관리",name="지정된 티켓을 영구적으로 삭제합니다",feature="사용법: .ticket 삭제 $ticketid. 지정된 티켓을 영구적으로 삭제합니다. 티켓을 먼저 닫아야 합니다.",method="Usage: .ticket delete $ticketid. Deletes the specified ticket permanently. Ticket must be closed first."}
+A.CommandWorkbook[".ticket list"]={group="GM 티켓(문의) 관리",name="진행 중인 GM 티켓 목록을 표시합니다",feature="진행 중인 GM 티켓 목록을 표시합니다.",method="Displays a list of open GM tickets."}
+A.CommandWorkbook[".ticket onlinelist"]={group="GM 티켓(문의) 관리",name="소유자가 온라인인 공개 GM 티켓 목록을 표시합니다",feature="소유자가 온라인인 공개 GM 티켓 목록을 표시합니다.",method="Displays a list of open GM tickets whose owner is online."}
+A.CommandWorkbook[".ticket reset"]={group="GM 티켓(문의) 관리",name="종료된 모든 티켓을 제거하고 카운터를 재설정합니다",feature="보류 중인 오픈 티켓이 없으면 종료된 모든 티켓을 제거하고 카운터를 재설정합니다.",method=".ticket reset"}
+A.CommandWorkbook[".ticket unassign"]={group="GM 티켓(문의) 관리",name="현재 할당된 게임 마스터로부터 지정된 티켓을 할당 해제합니다",feature="사용법: .ticket $ticketid 할당 해제. 현재 할당된 Game Master로부터 지정된 티켓을 할당 해제합니다.",method="Usage: .ticket unassign $ticketid. Unassigns the specified ticket from the current assigned Game Master."}
+A.CommandWorkbook[".ticket viewid"]={group="GM 티켓(문의) 관리",name="지정된 티켓에 대한 세부정보를 반환합니다",feature="사용법: .ticket viewid $ticketid. 지정된 티켓에 대한 세부 정보를 반환합니다. 티켓은 열려 있어야 하며 삭제되어서는 안 됩니다.",method="Usage: .ticket viewid $ticketid. Returns details about specified ticket. Ticket must be open and not deleted."}
+A.CommandWorkbook[".ticket viewname"]={group="GM 티켓(문의) 관리",name="지정된 티켓에 대한 세부정보를 반환합니다",feature="사용법: .ticket viewname $creatorname.  지정된 티켓에 대한 세부 정보를 반환합니다. 티켓은 열려 있어야 하며 삭제되어서는 안 됩니다.",method="Usage: .ticket viewname $creatorname.  Returns details about specified ticket. Ticket must be open and not deleted."}
+A.CommandWorkbook[".titles add"]={group="칭호 관리",name="선택한 플레이어의 알려진 타이틀 목록에 타이틀 #title(id 또는 Shift-link) 추가",feature="선택한 플레이어의 알려진 타이틀 목록에 타이틀 #title(id 또는 Shift-link)을 추가합니다.",method=".titles add #title"}
+A.CommandWorkbook[".titles current"]={group="칭호 관리",name="선택한 플레이어에 대해 현재 선택된 제목으로 제목 #title(id 또는 Shift-link)을 설정합니다",feature="선택한 플레이어에 대해 현재 선택된 제목으로 제목 #title(id 또는 Shift-link)을 설정합니다. 플레이어의 알려진 타이틀 목록에 타이틀이 없으면 목록에 추가됩니다.",method=".titles current #title"}
+A.CommandWorkbook[".titles remove"]={group="칭호 관리",name="선택한 플레이어의 알려진 타이틀 목록에서 타이틀 #title(id 또는 Shift-link)을 제거합니다",feature="선택한 플레이어의 알려진 타이틀 목록에서 타이틀 #title(id 또는 Shift-link)을 제거합니다.",method=".titles remove #title"}
+A.CommandWorkbook[".titles set mask"]={group="칭호 관리",name="사용자가 #mask의 모든 타이틀을 사용할 수 있습니다.   #mask=0은 제목 선택 필드를 비활성화합니다",feature="사용자가 #mask의 모든 타이틀을 사용할 수 있습니다.   #mask=0은 제목 선택 필드를 비활성화합니다.",method=".titles set mask #mask"}
+A.CommandWorkbook[".unaura"]={group="오라 제거",name="선택한 유닛의 #spellid 주문으로 인한 오라 제거",feature="선택한 유닛의 #spellid 주문으로 인한 오라를 제거합니다.",method=".unaura #spellid"}
+A.CommandWorkbook[".unban"]={group="차단 해제",name="가능한 하위 명령 목록을 보려면 .unban 을 입력하고, 보려면 .help unban $subcommand 를 입력하세요",feature="가능한 하위 명령 목록을 보려면 .unban을 입력하고, 하위 명령에 대한 정보를 보려면 .help unban $subcommand를 입력하세요.",method=".unban $subcommand"}
+A.CommandWorkbook[".unban account"]={group="차단 해제",name="계정 이름 패턴에 대한 계정 금지 해제",feature="계정 이름 패턴에 대한 계정 금지를 해제합니다.",method=".unban account $Name"}
+A.CommandWorkbook[".unban character"]={group="차단 해제",name="캐릭터 이름 패턴에 대한 계정 금지 해제",feature="캐릭터 이름 패턴에 대한 계정 금지를 해제합니다.",method=".unban character $Name"}
+A.CommandWorkbook[".unban ip"]={group="차단 해제",name="IP 패턴에 대한 계정 금지 해제",feature="구문 : .unban ip $Ip IP 패턴에 대한 계정 금지를 해제합니다.",method="Syntax : .unban ip $Ip Unban accounts for IP pattern."}
+A.CommandWorkbook[".unbindsight"]={group="시야 결속 해제",name="제한된 시야를 제거합니다",feature="구속된 시야를 제거합니다. 현재 대상을 보유하고 있는 동안에는 사용할 수 없습니다.",method=".unbindsight"}
+A.CommandWorkbook[".unfreeze"]={group="동결 해제",name="#name 없이 이것을 사용하면 대상 고정이 해제됩니다",feature="#name 없이 이것을 사용하면 대상 고정이 해제됩니다.",method=".unfreeze (#player) \"Unfreezes\" #player and enables his chat again."}
+A.CommandWorkbook[".unlearn"]={group="스킬/재능 제거",name="선택한 플레이어의 주문 #spell을 학습 취소합니다",feature="선택한 플레이어의 주문 #spell을 학습 취소합니다.  'all'이 제공되면 모든 순위가 학습되지 않습니다.",method=".unlearn #spell [all]"}
+A.CommandWorkbook[".unmute"]={group="채팅 금지 해제",name="$playerName 캐릭터 계정의 모든 캐릭터에 대한 채팅 메시지를 복원합니다(또는",feature="$playerName 캐릭터(또는 선택한) 계정의 모든 캐릭터에 대한 채팅 메시지를 복원합니다. 캐릭터는 오프라인일 수 있습니다.",method=".unmute [$playerName]"}
+A.CommandWorkbook[".unpossess"]={group="빙의 해제",name="당신이 소유한 경우",feature="당신이 사로잡혀 있다면, 당신 자신을 빼앗아 가십시오. 그렇지 않으면 현재 소유한 대상을 다시 소유하지 않습니다.",method=".unpossess"}
+A.CommandWorkbook[".unstuck"]={group="끼임 상태 해제(구조)",name="지정된 플레이어를 지정된 위치로 순간이동시킵니다",feature="지정된 플레이어를 지정된 위치로 순간이동시킵니다. 기본 위치는 플레이어의 현재 난로 위치입니다.",method=".unstuck $playername [inn/graveyard/startzone]"}
+A.CommandWorkbook[".warden"]={group="워든(치트 감시 시스템)",name="Warden 하위 시스템과 함께 작동하는 명령을 제공합니다",feature="Warden 하위 시스템을 사용하는 명령을 제공합니다.",method=".warden $subcommand"}
+A.CommandWorkbook[".warden check"]={group="워든(치트 감시 시스템)",name="선택한 플레이어에 대해 사전 정의된 Warden 확인(지정된 #id로 선택)을 수행합니다",feature="선택한 플레이어에 대해 사전 정의된 Warden 확인(지정된 #id로 선택)을 수행하고 진행 상황과 결과를 보고합니다.",method=".warden check #id"}
+A.CommandWorkbook[".warden direct"]={group="워든(치트 감시 시스템)",name="선택한 플레이어에 대해 사용자 정의 Warden 확인을 수행하고 진행 상황에 대해 보고합니다",feature="선택한 플레이어에 대해 사용자 지정 Warden 확인을 수행하고 진행 상황과 결과를 보고합니다. 현재 수행 중인 작업과 모든 매개변수의 용도를 완전히 확신하지 않는 한 사용하지 마십시오.",method=".warden direct #type \"$data\" \"$str\" #address #length \"$result\""}
+A.CommandWorkbook[".warden disable"]={group="워든(치트 감시 시스템)",name="선택한 플레이어에 대한 자동 감시자 확인을 비활성화합니다",feature="선택한 플레이어에 대한 자동 감시자 확인을 비활성화합니다.",method=".warden disable"}
+A.CommandWorkbook[".warden enable"]={group="워든(치트 감시 시스템)",name="선택한 플레이어에 대한 자동 소장 확인을 활성화합니다",feature="선택한 플레이어에 대한 자동 감시자 확인을 활성화합니다.",method=".warden enable"}
+A.CommandWorkbook[".warden group"]={group="워든(치트 감시 시스템)",name="미리 정의된 여러 Warden 검사(지정된 $group에 의해 선택됨)를 예약합니다",feature="선택한 플레이어에 대해 실행되도록 미리 정의된 여러 Warden 검사(지정된 $group에 의해 선택됨)를 예약하고 진행 상황과 결과에 대해 보고합니다.",method=".warden group $group"}
+A.CommandWorkbook[".warden info endscene"]={group="워든(치트 감시 시스템)",name="이 대상($name 또는 선택한 플레이어 포함)에 대해 계산된 EndScene 주소를 반환합니다",feature="이 대상($name 또는 선택한 플레이어 포함)에 대해 계산된 EndScene 주소를 반환합니다.",method=".warden info endscene [$name]"}
+A.CommandWorkbook[".warden list"]={group="워든(치트 감시 시스템)",name="온라인 상태에서 Warden 검사에 실패한 모든 온라인 세션을 나열합니다",feature="온라인 상태에서 Warden 검사에 실패한 모든 온라인 세션을 나열합니다. 검사 그룹별로 정렬됩니다.",method=".warden list"}
+A.CommandWorkbook[".warden reload"]={group="워든(치트 감시 시스템)",name="`warden_checks` 월드 데이터베이스 테이블에서 Warden 클라이언트 검사를 다시 로드합니다",feature="`warden_checks` 월드 데이터베이스 테이블에서 Warden 클라이언트 검사를 다시 로드합니다. 현재 실행 중이거나 예약된 검사에는 영향을 미치지 않습니다.",method=".warden reload"}
+A.CommandWorkbook[".warden toggle"]={group="워든(치트 감시 시스템)",name="선택한 플레이어에 대한 자동 감시자 확인을 활성화 또는 비활성화합니다",feature="선택한 플레이어에 대한 자동 감시자 확인을 활성화하거나 비활성화합니다.",method=".warden toggle"}
+A.CommandWorkbook[".wchange"]={group="날씨 변경",name="현재 날씨를 #status 강도로 #weathertype으로 설정합니다.  #weathertype은 1일 수 있습니다",feature="현재 날씨를 #status 강도로 #weathertype으로 설정합니다.  #weathertype은 비의 경우 1, 눈의 경우 2, 모래의 경우 3일 수 있습니다. #status는 비활성화된 경우 0, 활성화된 경우 1일 수 있습니다.",method=".wchange #weathertype #status"}
+A.CommandWorkbook[".whispers"]={group="귓속말 수신 설정",name="플레이어의 GM 귓속말 수락 활성화/비활성화",feature="플레이어의 GM 귓속말 수락을 활성화/비활성화합니다. 기본적으로 trinityd.conf 설정을 사용합니다.",method=".whispers on|off"}
+A.CommandWorkbook[".wp add"]={group="웨이포인트(이동 경로점)",name="현재 위치에서 선택한 생물에 대한 웨이포인트를 추가하세요",feature="현재 위치에 선택한 생물에 대한 웨이포인트를 추가합니다.",method=".wp add"}
+A.CommandWorkbook[".wp event"]={group="웨이포인트(이동 경로점)",name=".path event를 입력하여 가능한 하위 명령 목록을 확인하거나 .help path event $subcommand를 확인하세요",feature="가능한 하위 명령 목록을 보려면 .path event를 입력하고, 하위 명령에 대한 정보를 보려면 .help path event $subcommand를 입력하세요.",method=".wp event $subcommand"}
+A.CommandWorkbook[".wp load"]={group="웨이포인트(이동 경로점)",name="선택한 생물의 경로 ID 번호 로드",feature="선택한 생물의 경로 ID 번호를 로드합니다. 생물에는 웨이포인트 데이터가 없어야 합니다.",method=".wp load $pathid"}
+A.CommandWorkbook[".wp reload"]={group="웨이포인트(이동 경로점)",name="게임 내 경로 변경 로드 - 중요: .wp 로드 전에 새 경로에 먼저 적용해야 합니다",feature="게임 내 경로 변경 로드 - 중요: .wp 로드 #pathid 전에 새 경로에 먼저 적용해야 합니다.",method=".wp reload $pathid"}
+A.CommandWorkbook[".wp show"]={group="웨이포인트(이동 경로점)",name="옵션: on $pathid (또는 로드된 경로가 있는 선택된 생물) - 경로 표시 끄기 - 경로 숨기기",feature="옵션: $pathid(또는 로드된 경로가 있는 선택된 생물) - 경로 표시 끄기 - 경로 정보 숨기기 $slected_waypoint - 선택한 웨이포인트에 대한 정보 표시.",method=".wp show $option"}
+A.CommandWorkbook[".wp unload"]={group="웨이포인트(이동 경로점)",name="선택한 생물의 언로드 경로",feature="선택한 생물의 경로를 언로드합니다.",method=".wp unload"}
+A.CommandWorkbook[".wpgps"]={group="웨이포인트 좌표 출력",name="현재 위치를 경로 지정에 사용할 부분 SQL 쿼리로 SQL 개발자 로그에 출력합니다",feature="현재 위치를 경로 지정에 사용할 부분 SQL 쿼리로 SQL 개발자 로그에 출력합니다.",method=".wpgps"}
+A.ConvenienceDefaults={".tele",".tele name",".go xyz",".appear",".summon",".recall",".additem",".additem set",".learn all my spells",".learn all my talents",".unlearn",".character level",".modify speed all",".modify speed fly",".modify scale",".modify hp",".modify mana",".modify gender",".cheat god",".cheat power",".cheat casttime",".cheat cooldown",".cooldown",".morph target",".morph reset",".revive",".gear repair",".respawn",".unstuck",".reset all",".pet create",".quest complete",".titles add",".wchange",".saveall",".levelup",".modify money",".die",".cheat waterwalk",".gm fly"}
+
+-- Actual Legends command syntax supersedes MoP descriptions.
+local old=A.CommandWorkbook;A.CommandWorkbook={}
+for _,r in ipairs(A.ServerCommandIndex) do
+ local cmd="."..r.name;local previous=old[cmd];local key=A.commandLocaleKeys and A.commandLocaleKeys[cmd]
+ A.CommandWorkbook[cmd]={group=previous and previous.group or "GM 관리",name=previous and previous.name or cmd,feature=previous and previous.feature or r.help,method=(r.help or ""):match("([^\r\n]+)") or cmd}
+end

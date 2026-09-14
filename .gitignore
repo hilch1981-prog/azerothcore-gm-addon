@@ -1,0 +1,7 @@
+dist/
+__pycache__/
+*.pyc
+.tools/
+.env
+WTF/
+SavedVariables/

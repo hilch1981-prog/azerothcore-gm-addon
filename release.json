@@ -1,0 +1,11 @@
+{
+  "key": "ac335",
+  "repo": "azerothcore-gm-addon",
+  "title": "리치왕 · AzerothCore",
+  "client": "WoW 3.3.5a (12340)",
+  "interface": 30300,
+  "lua": "5.1",
+  "asset": "GMminibar_AzerothCore_3.3.5a_v1.0.0.zip",
+  "version": "1.0.0",
+  "date": "2026-09-14"
+}

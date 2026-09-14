@@ -1,0 +1,2 @@
+local A = AzerothAdminAC335
+A:RegisterModule("profession_info", { status = "module-active-static-verified-game-test-pending", dependencies = { "commands" }, runtimeFiles = { "Modules/ProfessionInfo/Module.lua", "Modules/ProfessionInfo/Registration.lua" }, tests = { "tests/test_release_contract.py", "tools/verify_release.py" }, notes = "R7: persistent cache, skill-tier filtering, actual profession/skill gating, and reagent readiness visuals; real-client retest pending" })

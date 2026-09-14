@@ -1,0 +1,33 @@
+{
+  "source": "LibBabble-SubZone-3.0",
+  "revision": 261,
+  "license": "MIT",
+  "sources": {
+    "koKR": {
+      "url": "https://repos.wowace.com/wow/libbabble-subzone-3-0/!svn/bc/261/trunk/Locale/koKR.lua",
+      "sha256": "54675360fc391c4b765831926c16159a96746aa61c473bcf63c46949960e4039",
+      "entries": 8226
+    },
+    "enUS": {
+      "url": "https://repos.wowace.com/wow/libbabble-subzone-3-0/!svn/bc/261/trunk/Locale/enUS.lua",
+      "sha256": "bfb21dd293204106862787f0966608a3d337881af7708ded8f8914fa5ccc09ec",
+      "entries": 8236
+    },
+    "zhCN": {
+      "url": "https://repos.wowace.com/wow/libbabble-subzone-3-0/!svn/bc/261/trunk/Locale/zhCN.lua",
+      "sha256": "bface347039f585af10fafcfe94be90e8d9105cf6c06f70bf91a89977fee8c22",
+      "entries": 8234
+    },
+    "zhTW": {
+      "url": "https://repos.wowace.com/wow/libbabble-subzone-3-0/!svn/bc/261/trunk/Locale/zhTW.lua",
+      "sha256": "2e50910a5c72c098c9cb9e38e38999085db6bc031febd357d886e01a0afae9c5",
+      "entries": 8235
+    },
+    "ruRU": {
+      "url": "https://repos.wowace.com/wow/libbabble-subzone-3-0/!svn/bc/261/trunk/Locale/ruRU.lua",
+      "sha256": "86c7c5d69923ade6b86edebfde573725af5c78ecef17eeb6804f0e53ebc5787b",
+      "entries": 8226
+    }
+  },
+  "matched": 1490
+}

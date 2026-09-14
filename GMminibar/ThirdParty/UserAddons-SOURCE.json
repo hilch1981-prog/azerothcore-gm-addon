@@ -1,0 +1,10 @@
+{
+  "nidtip5": {
+    "source": "nidtip5(itemid,questid,npcid).zip",
+    "sha256": "fcd7782aeb6fb0b331e89963440c4c55547650be03be23dfe252ee8ec0eab8aa"
+  },
+  "SpellSpy": {
+    "source": "SpellSpy.zip",
+    "sha256": "07db1851e5a9fd09e0dcfe660f562414a67f5537be8bfb7d0b465514f0e23f21"
+  }
+}

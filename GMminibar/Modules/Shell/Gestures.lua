@@ -1,0 +1,2 @@
+-- Double-tap gestures removed by user request in RC9.4.8.
+-- No keyboard listener, native movement/jump hook, or binding changes.

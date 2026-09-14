@@ -1,0 +1,12 @@
+{
+  "commit": "f8d157532fbfaeda587e826d4cd5b21a49186f7c",
+  "url": "https://raw.githubusercontent.com/notofonts/noto-cjk/f8d157532fbfaeda587e826d4cd5b21a49186f7c/Sans/Variable/TTF/NotoSansCJKkr-VF.ttf",
+  "license_url": "https://raw.githubusercontent.com/notofonts/noto-cjk/f8d157532fbfaeda587e826d4cd5b21a49186f7c/Sans/LICENSE",
+  "source_sha256": "7715af52f5fe77153ce5678546258993982d2da61abea8d25fb89eb5aaec5ca6",
+  "font_sha256": "6c3a9769887fd399c1729d7f3706354fafde1d9dc6b9a2eb9923e61c740c450a",
+  "bytes": 21323292,
+  "glyph_codepoints": 44810,
+  "required_codepoints": 2989,
+  "missing_codepoints": [],
+  "static_ttf": true
+}

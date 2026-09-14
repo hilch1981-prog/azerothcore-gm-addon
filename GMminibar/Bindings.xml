@@ -1,0 +1,13 @@
+<Bindings>
+  <Binding name="GMMINIBARAC335_1" header="GMMINIBARAC335_HEADER">AzerothAdminAC335:ActivateMiniBar(1)</Binding>
+  <Binding name="GMMINIBARAC335_2">AzerothAdminAC335:ActivateMiniBar(2)</Binding>
+  <Binding name="GMMINIBARAC335_3">AzerothAdminAC335:ActivateMiniBar(3)</Binding>
+  <Binding name="GMMINIBARAC335_4">AzerothAdminAC335:ActivateMiniBar(4)</Binding>
+  <Binding name="GMMINIBARAC335_5">AzerothAdminAC335:ActivateMiniBar(5)</Binding>
+  <Binding name="GMMINIBARAC335_6">AzerothAdminAC335:ActivateMiniBar(6)</Binding>
+  <Binding name="GMMINIBARAC335_7">AzerothAdminAC335:ActivateMiniBar(7)</Binding>
+  <Binding name="GMMINIBARAC335_8">AzerothAdminAC335:ActivateMiniBar(8)</Binding>
+  <Binding name="GMMINIBARAC335_9">AzerothAdminAC335:ActivateMiniBar(9)</Binding>
+  <Binding name="GMMINIBARAC335_10">AzerothAdminAC335:ActivateMiniBar(10)</Binding>
+  <Binding name="GMMINIBARAC335_11">AzerothAdminAC335:ActivateMiniBar(11)</Binding>
+</Bindings>

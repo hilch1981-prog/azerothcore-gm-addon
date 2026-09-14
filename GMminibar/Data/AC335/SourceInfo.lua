@@ -1,0 +1,3 @@
+-- AC335 data: supplied archive + pinned AzerothCore source; no MoP world rows.
+AzerothAdminAC335=AzerothAdminAC335 or {}
+AzerothAdminAC335.ReleaseSourceInfo={["server_repository"]="azerothcore/azerothcore-wotlk; Legends Playerbot branch",["server_baseline"]="82d3bf237d51+ (Legends Server.log)",["counts"]={["Items"]=46096,["Quests"]=9464,["Creatures"]=29950,["Teleports"]=1968},["data_source"]="Base items/quests: Legends 26.8.9; teleports/quest locations/loot sources: live Legends 1.5.3 (2026-09-12)",["reference_core_commit"]="c0e6272af9a1a95aa0859a0cd95f7b70b273c9f4",["game_verified"]=false}

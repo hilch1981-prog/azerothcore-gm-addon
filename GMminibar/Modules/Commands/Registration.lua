@@ -1,0 +1,2 @@
+local A = AzerothAdminAC335
+A:RegisterModule("commands", { status = "module-active-static-verified-game-test-pending", dependencies = { "language" }, runtimeFiles = { "Modules/Commands/ServerIndex.lua", "Modules/Commands/ServerCatalogAdapter.lua", "Modules/Commands/CommandMeta.lua", "Modules/Commands/Module.lua", "Modules/Commands/Registration.lua" }, tests = { "tests/test_release_contract.py", "tools/verify_release.py" }, notes = "AC335 3.3.5a Build 12340 in-game smoke pending" })
