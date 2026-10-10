@@ -2,6 +2,21 @@
 
 **[English](README.md) | [한국어](README.ko.md)**
 
+## GM MINI BAR 클라이언트별 버전
+
+이곳은 GM MINI BAR의 메인 안내이자 아제로스코어용 저장소입니다. 사용하는 클라이언트·서버에 맞는 저장소와 설치 파일을 선택하세요. 각 버전은 `GMminibar` 폴더 하나로 설치하며, 서로 다른 버전의 파일을 섞어 넣지 마세요.
+
+| 클라이언트 | 서버 계열 | 저장소 / 설명 | 다운로드 |
+|---|---|---|---|
+| 리치왕 3.3.5a (12340) | AzerothCore | **[아제로스코어용](https://github.com/hilch1981-prog/azerothcore-gm-addon)** | [릴리스](https://github.com/hilch1981-prog/azerothcore-gm-addon/releases) |
+| MoP 5.4.8 (18414) | SkyFire 계열 | [MoP용](https://github.com/hilch1981-prog/mop-gm-addon) | [릴리스](https://github.com/hilch1981-prog/mop-gm-addon/releases) |
+| 터틀 와우 1.18.1 | Tortoise | [터틀용](https://github.com/hilch1981-prog/turtle-gm-addon) | [릴리스](https://github.com/hilch1981-prog/turtle-gm-addon/releases) |
+| 군단 7.3.5 (26972) | SPP Praevius 2026.2a | [군단용](https://github.com/hilch1981-prog/legion-gm-addon) | [RC8 시험 릴리스](https://github.com/hilch1981-prog/legion-gm-addon/releases/tag/v1.0.0-rc8) |
+
+지원 언어와 실제 게임 검증 범위는 버전마다 다르므로, 선택한 저장소의 설명을 확인하세요.
+
+## 아제로스코어용 안내
+
 **WoW 3.3.5a (12340) / AzerothCore용 GM 애드온**입니다. 개인 서버의 운영·테스트에 필요한 검색, 이동, 퀘스트, 캐릭터 관리 기능을 WoW 방식의 UI로 제공합니다. 제작: **취미연구가** · 현재 배포: **v1.0.0**.
 
 한국어·영어·중국어 간체·중국어 번체·러시아어 UI와 클라이언트 언어 자동 선택을 지원합니다.

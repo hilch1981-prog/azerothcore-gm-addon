@@ -2,6 +2,21 @@
 
 **[English](README.md) | [한국어](README.ko.md)**
 
+## GM MINI BAR client editions
+
+This is the main GM MINI BAR guide and the AzerothCore edition. Choose the repository and download matching your client and server. Each edition installs as one `GMminibar` folder; do not merge files from different editions.
+
+| Client | Server family | Repository / guide | Downloads |
+|---|---|---|---|
+| Wrath 3.3.5a (12340) | AzerothCore | **[AzerothCore edition](https://github.com/hilch1981-prog/azerothcore-gm-addon)** | [Releases](https://github.com/hilch1981-prog/azerothcore-gm-addon/releases) |
+| MoP 5.4.8 (18414) | SkyFire family | [MoP edition](https://github.com/hilch1981-prog/mop-gm-addon) | [Releases](https://github.com/hilch1981-prog/mop-gm-addon/releases) |
+| Turtle WoW 1.18.1 | Tortoise | [Turtle edition](https://github.com/hilch1981-prog/turtle-gm-addon) | [Releases](https://github.com/hilch1981-prog/turtle-gm-addon/releases) |
+| Legion 7.3.5 (26972) | SPP Praevius 2026.2a | [Legion edition](https://github.com/hilch1981-prog/legion-gm-addon) | [RC8 prerelease](https://github.com/hilch1981-prog/legion-gm-addon/releases/tag/v1.0.0-rc8) |
+
+Language support and game-test coverage differ by edition; check the selected repository's guide.
+
+## AzerothCore edition
+
 **GM tools for WoW 3.3.5a (12340) / AzerothCore**, with a WoW-style interface for private-server administration and testing: search, teleportation, quests and character utilities. Created by **취미연구가** · Current release: **v1.0.0**.
 
 The addon supports Korean, English, Simplified Chinese, Traditional Chinese and Russian UI, plus automatic client-language selection.
