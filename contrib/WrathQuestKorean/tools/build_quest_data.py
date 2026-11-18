@@ -19,12 +19,12 @@ SUPPORTED = re.compile(r"\$[bBnNcCrR]|\$[gG][^:;]*:[^;]*;")
 
 FIELDS = {
     "quest_template": {
-        "title": ("LogTitle", "Title", "LogTitle"),
-        "description": ("QuestDescription", "Details", "QuestDescription"),
-        "objectives": ("LogDescription", "Objectives", "LogDescription"),
+        "title": ("LogTitle", "Title"),
+        "description": ("QuestDescription", "Details"),
+        "objectives": ("LogDescription", "Objectives"),
     },
-    "quest_request_items": {"progress": ("CompletionText",) * 3},
-    "quest_offer_reward": {"completion": ("RewardText",) * 3},
+    "quest_request_items": {"progress": ("CompletionText", "CompletionText")},
+    "quest_offer_reward": {"completion": ("RewardText", "RewardText")},
 }
 
 
@@ -112,60 +112,36 @@ def lua(value):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("source", type=Path)
-    parser.add_argument("legends_world", type=Path)
     parser.add_argument("output", type=Path)
     parser.add_argument("--ids", nargs="*", type=int)
     args = parser.parse_args()
     folder = args.source
     tables = tuple(FIELDS)
     locale_tables = {table + "_locale" for table in tables}
-    legends_tables = {"_koKR_stage_" + table: table for table in locale_tables}
     wotlk = keyed(records((folder / f"{table}.sql" for table in tables), tables))
-    legends = keyed(records([args.legends_world], tables))
-    wotlk_kr = keyed(records((folder / f"{table}.sql" for table in locale_tables), locale_tables), True)
     ac_pr = keyed(records([folder / "ac-pr.sql"], locale_tables), True)
-    lg_pr = keyed(
-        ((legends_tables[table], row) for table, row in records(
-            [folder / f"legends-{n}.sql" for n in (11, 12, 13)], legends_tables)),
-    )
 
-    quests, provenance, counts, rejected = {}, Counter(), Counter(), Counter()
+    quests, counts = {}, Counter()
     for (table, quest_id), row in wotlk.items():
         parent = wotlk.get(("quest_template", quest_id), {})
         if not parent.get("LogTitle") or (args.ids and quest_id not in args.ids):
             continue
         locale_key = table + "_locale", quest_id
-        for field, (english_col, ac_col, lg_col) in FIELDS[table].items():
+        for field, (english_col, ac_col) in FIELDS[table].items():
             english = row.get(english_col)
             if not english or not normalize(english) or TOKEN.search(SUPPORTED.sub("", english)):
                 continue
-            lg_value = lg_pr.get(locale_key, {}).get(lg_col)
-            lg_english = legends.get((table, quest_id), {}).get(english_col)
-            lg_title = legends.get(("quest_template", quest_id), {}).get("LogTitle")
-            if lg_value and (
-                not lg_title or normalize(lg_title) != normalize(parent["LogTitle"])
-                or not lg_english or normalize(lg_english) != normalize(english)
-            ):
-                rejected[field] += 1
-                lg_value = None
-            candidates = (
-                ("Legends#446", lg_value),
-                ("AzerothCore#27829", ac_pr.get(locale_key, {}).get(ac_col)),
-                ("AzerothCore base", wotlk_kr.get(locale_key, {}).get(ac_col)),
-            )
-            for origin, text in candidates:
-                if not text or not HANGUL.search(text) or TOKEN.search(SUPPORTED.sub("", text)):
-                    continue
-                quest = quests.setdefault(quest_id, {"enTitle": parent["LogTitle"]})
-                quest[field] = text if field == "title" else (runtime_key(english), text)
-                provenance[origin] += 1
-                counts[field] += 1
-                break
+            text = ac_pr.get(locale_key, {}).get(ac_col)
+            if not text or not HANGUL.search(text) or TOKEN.search(SUPPORTED.sub("", text)):
+                continue
+            quest = quests.setdefault(quest_id, {"enTitle": parent["LogTitle"]})
+            quest[field] = text if field == "title" else (runtime_key(english), text)
+            counts[field] += 1
 
-    if args.ids is None and (not quests or not provenance["Legends#446"]):
-        raise ValueError("No verified Legends contribution or quest records emitted")
+    if not quests:
+        raise ValueError("No AzerothCore PR #27829 translations emitted")
     with args.output.open("w", encoding="utf-8", newline="\n") as out:
-        out.write("-- Generated from authorized quest localization sources. See README.md.\n")
+        out.write("-- Korean quest translations from AzerothCore WotLK PR #27829. See README.md.\n")
         out.write("local _, addon = ...\naddon.quests = {}\nlocal quests = addon.quests\n")
         for quest_id, row in sorted(quests.items()):
             values = []
@@ -176,8 +152,7 @@ def main():
                 else:
                     values.append(f"{field}={lua(value)}")
             out.write(f"quests[{quest_id}]={{{','.join(values)}}}\n")
-    print(json.dumps(dict(quests=len(quests), fields=counts, sources=provenance,
-                          blocked_legends=rejected), ensure_ascii=False))
+    print(json.dumps(dict(quests=len(quests), fields=counts, source="AzerothCore#27829"), ensure_ascii=False))
 
 
 if __name__ == "__main__":

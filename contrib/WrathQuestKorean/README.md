@@ -1,4 +1,4 @@
-# WrathQuestKorean 0.2.0
+# WrathQuestKorean 0.2.1
 
 WoW 3.3.5a (12340) 한글 클라이언트와 영문 리팩에서 서버 DB 패치 없이 한글을 표시합니다. 퀘스트 한국어 안내는 기본 퀘스트 창 옆에 표시합니다. 기본 버튼, 보상 선택, 목표 카운터는 원래 UI에서 동작합니다.
 
@@ -6,7 +6,7 @@ WoW 3.3.5a (12340) 한글 클라이언트와 영문 리팩에서 서버 DB 패�
 
 설치 ZIP의 `WrathQuestKorean`과 `TooltipKOR-wotlk`를 게임을 종료한 상태에서 `Interface/AddOns`에 복사합니다. 캐릭터 선택 화면에서 두 애드온이 켜져 있는지 확인합니다. `/wqk`로 퀘스트 보조 창을 켜고 끄고, `/wqk status`로 TooltipKOR 로드 여부를 확인합니다. 기존 TooltipKOR의 사용자 사전을 편집했다면 설치 전에 `custom` 폴더를 백업합니다.
 
-설치 ZIP에는 9,413개 퀘스트, 40,237개 번역 필드가 있습니다. GitHub 소스에 포함한 `QuestData.lua`는 북녘골 5개 퀘스트를 검증하는 샘플입니다. 전체 데이터팩은 아래 재생성 절차나 설치 ZIP을 이용합니다.
+설치 ZIP에는 퀘스트 9,413개에 해당하는 번역 필드 40,226개가 들어 있습니다. GitHub 소스에 포함한 `QuestData.lua`는 북녘골 5개 퀘스트를 검증하는 샘플입니다. 전체 데이터팩은 아래 재생성 절차나 설치 ZIP을 이용합니다.
 
 ## 한글화 범위
 
@@ -27,11 +27,11 @@ WoW 3.3.5a (12340) 한글 클라이언트와 영문 리팩에서 서버 DB 패�
 
 ## 번역 데이터의 출처와 적용 조건
 
-[Legends PR #446](https://github.com/Legends-of-Azeroth/Legends-of-Azeroth-Pandaria-5.4.8/pull/446)의 필드는 [Legends 공개 월드 DB](https://github.com/Legends-of-Azeroth/Legends-of-Azeroth-Pandaria-5.4.8/releases/tag/WDB20231230)와 WotLK 기준 DB의 퀘스트 ID·영문 제목·해당 영문 필드가 일치할 때 사용합니다. 일치하지 않는 필드는 [AzerothCore PR #27829](https://github.com/azerothcore/azerothcore-wotlk/pull/27829)의 3.3.5a 데이터를 우선 확인합니다. 최종 40,237개 필드 중 Legends에서 20,417개, AzerothCore PR에서 19,820개를 채택했습니다.
+퀘스트 번역 40,226개는 모두 `hilch1981-prog`가 3.3.5a용으로 제출한 AzerothCore WotLK의 `koKR` 월드 DB 패치에서 가져왔습니다. 퀘스트를 식별할 영문 제목과 본문은 해당 PR의 기준 월드 DB를 사용합니다. [AzerothCore PR #27829](https://github.com/azerothcore/azerothcore-wotlk/pull/27829)
 
 | 제목 | 본문 | 목표 요약 | 진행 대사 | 보상 대사 |
 |---:|---:|---:|---:|---:|
-| 9,386 | 7,981 | 7,979 | 6,242 | 8,649 |
+| 9,376 | 7,981 | 7,979 | 6,242 | 8,648 |
 
 게임에서도 ID와 영문 제목을 확인하고, ID를 받을 수 없는 화면은 제목과 표시 중인 영문 본문을 대조합니다. 여러 후보가 같은 번역을 갖고 있으면 공통 본문을 표시하고, 후보의 한국어 제목이 다르면 원래 제목을 표시합니다. 원문이 일치하는 필드만 표시하므로 이미 번역된 한국어 문장과 리팩이 수정한 문구는 원래 화면에서 읽을 수 있습니다. 데이터에 포함된 이름·직업·종족·줄바꿈·성별 토큰을 처리합니다. 서버의 토큰 치환 결과가 기준 원문과 다른 경우 해당 문장은 건너뜁니다.
 
@@ -39,7 +39,6 @@ WoW 3.3.5a (12340) 한글 클라이언트와 영문 리팩에서 서버 DB 패�
 
 ## 데이터와 ZIP 재생성
 
-1. Legends PR head `9544987155e81e772ee08dcc273bacfd81c939e6`의 월드 SQL 11~13을 각각 `legends-11.sql`, `legends-12.sql`, `legends-13.sql`로 둡니다. Legends 공개 월드 DB도 별도로 풉니다.
-2. AzerothCore PR head `2dd32c7ca2a5399a64efcee7e0cdf488547831ae`의 pending SQL을 `ac-pr.sql`로 둡니다. PR base `f444b8ac985d1d24c2568ef5aba7f4401bbd70aa`의 `data/sql/base/db_world`에서 `quest_template`, `quest_request_items`, `quest_offer_reward`와 각 `_locale` SQL을 같은 입력 폴더에 둡니다.
-3. `python tools/build_quest_data.py <입력-폴더> <Legends-world.sql> <출력-QuestData.lua>`로 Lua를 만듭니다. 데이터 준비 과정에서 SQL을 실행하거나 서버에 적용할 필요가 없습니다.
-4. 위 커밋의 TooltipKOR 소스를 준비하고 `python tools/package.py <출력-QuestData.lua> <TooltipKOR-소스-폴더> <설치.zip>`으로 ZIP을 만듭니다.
+1. AzerothCore PR head `2dd32c7ca2a5399a64efcee7e0cdf488547831ae`의 `data/sql/updates/pending_db_world/rev_2026_09_27_00.sql`을 `ac-pr.sql`로 둡니다. PR base `f444b8ac985d1d24c2568ef5aba7f4401bbd70aa`의 `data/sql/base/db_world`에서 `quest_template.sql`, `quest_request_items.sql`, `quest_offer_reward.sql`을 같은 입력 폴더에 둡니다.
+2. `python tools/build_quest_data.py <입력-폴더> <출력-QuestData.lua>`로 Lua를 만듭니다. 데이터 준비 과정에서 SQL을 실행하거나 서버에 적용할 필요가 없습니다.
+3. 위 커밋의 TooltipKOR 소스를 준비하고 `python tools/package.py <출력-QuestData.lua> <TooltipKOR-소스-폴더> <설치.zip>`으로 ZIP을 만듭니다.
