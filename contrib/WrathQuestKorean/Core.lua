@@ -1,22 +1,21 @@
 local _, addon = ...
 
-local questIdsByTitle = {}
-for id, quest in pairs(addon.quests) do
-    local title = quest.enTitle
-    if questIdsByTitle[title] == nil then
-        questIdsByTitle[title] = id
-    else
-        questIdsByTitle[title] = false
-    end
+local function Normalize(text)
+    if type(text) ~= "string" then return "" end
+    return (text:gsub("%$[bB]", " "):gsub("’", "'"):gsub("‘", "'")
+        :gsub("“", '"'):gsub("”", '"'):gsub(" ", " ")
+        :gsub("[ \t\r\n\v\f]+", " "):match("^%s*(.-)%s*$"):lower())
 end
 
-local function FindQuest(id, title)
-    if type(id) ~= "number" or id <= 0 then
-        id = questIdsByTitle[title]
-    end
-    local quest = id and addon.quests[id]
-    if quest and quest.enTitle == title then
-        return quest, id
+local questIdsByTitle = {}
+for id, quest in pairs(addon.quests) do
+    for _, title in ipairs({ quest.enTitle, quest.title }) do
+        local key = Normalize(title)
+        local matches = questIdsByTitle[key] or {}
+        if matches[#matches] ~= id then
+            matches[#matches + 1] = id
+        end
+        questIdsByTitle[key] = matches
     end
 end
 
@@ -26,16 +25,13 @@ end
 
 local function ReadQuest()
     if IsVisible(QuestFrame) then
-        local stage
+        local id = type(GetQuestID) == "function" and GetQuestID()
         if IsVisible(QuestFrameDetailPanel) then
-            stage = "detail"
+            return id, GetTitleText(), GetQuestText(), GetObjectiveText()
         elseif IsVisible(QuestFrameProgressPanel) then
-            stage = "progress"
+            return id, GetTitleText(), nil, nil, GetProgressText()
         elseif IsVisible(QuestFrameRewardPanel) then
-            stage = "completion"
-        end
-        if stage then
-            return stage, type(GetQuestID) == "function" and GetQuestID(), GetTitleText()
+            return id, GetTitleText(), nil, nil, nil, GetRewardText()
         end
         return
     end
@@ -45,23 +41,92 @@ local function ReadQuest()
         if index and index > 0 then
             local title, _, _, _, isHeader, _, _, _, id = GetQuestLogTitle(index)
             if not isHeader then
-                return "detail", id, title
+                local description, objectives = GetQuestLogQuestText()
+                return id, title, description, objectives
             end
         end
     end
 end
 
-local function GetBody(quest, stage)
-    if stage == "progress" then
-        return quest.progress or quest.objectives
+local englishRaces = { Scourge = "Undead", NightElf = "Night Elf",
+    BloodElf = "Blood Elf" }
+local englishClasses = { DEATHKNIGHT = "Death Knight" }
+
+local function Expand(text, korean)
+    local sex = UnitSex("player")
+    local race, raceToken = UnitRace("player")
+    local class, classToken = UnitClass("player")
+    local className = classToken and (englishClasses[classToken]
+        or classToken:sub(1, 1) .. classToken:sub(2):lower())
+    local values = {
+        b = "\n",
+        n = UnitName("player"),
+        r = korean and race or englishRaces[raceToken] or raceToken,
+        c = korean and class or className,
+    }
+    text = text:gsub("%$[gG]([^:;]*):([^;]*);", function(male, female)
+        return sex == 3 and female or male
+    end)
+    return (text:gsub("%$([bBnNcCrR])", function(token)
+        return values[token:lower()]
+    end))
+end
+
+local function SelectText(entry, source)
+    if not entry or not source or source == "" then return end
+    local guard, translation = entry[1], entry[2]
+    local normalized = Normalize(source)
+    if type(guard) == "string" then
+        if normalized ~= Normalize(Expand(guard, false)) then return end
+    else
+        if #normalized ~= guard[1] then return end
+        local checksum = 0
+        for i = 1, #normalized do
+            checksum = (checksum * 131 + normalized:byte(i)) % 2147483647
+        end
+        if checksum ~= guard[2] then return end
     end
-    if stage == "completion" then
-        return quest.completion
+    return Expand(translation, true)
+end
+
+local function GetBody(quest, description, objectives, progress, completion)
+    if description or objectives then
+        local descriptionKo = SelectText(quest.description, description)
+        local objectivesKo = SelectText(quest.objectives, objectives)
+        if descriptionKo and objectivesKo then
+            return "목표\n" .. objectivesKo .. "\n\n설명\n" .. descriptionKo
+        end
+        return objectivesKo or descriptionKo
     end
-    if quest.objectives and quest.description then
-        return "목표\n" .. quest.objectives .. "\n\n설명\n" .. quest.description
+    return SelectText(quest.progress, progress) or SelectText(quest.completion, completion)
+end
+
+local function GetDisplay()
+    local id, title, description, objectives, progress, completion = ReadQuest()
+    if not title then return end
+    local key = Normalize(title)
+    if type(id) == "number" and id > 0 then
+        local quest = addon.quests[id]
+        if quest and (Normalize(quest.enTitle) == key or Normalize(quest.title) == key) then
+            return quest.title or title, GetBody(quest, description, objectives, progress, completion)
+        end
+        return
     end
-    return quest.objectives or quest.description
+
+    local candidates = questIdsByTitle[key]
+    if not candidates then return end
+    local displayTitle, body
+    for _, candidate in ipairs(candidates) do
+        local quest = addon.quests[candidate]
+        local matched = GetBody(quest, description, objectives, progress, completion)
+        if matched then
+            if body and matched ~= body then return end
+            local candidateTitle = quest.title or title
+            displayTitle = (displayTitle and displayTitle ~= candidateTitle) and title or candidateTitle
+            body = matched
+        end
+    end
+    return displayTitle, body
 end
 
 local panel = CreateFrame("Frame", nil, UIParent)
@@ -102,22 +167,23 @@ bodyText:SetJustifyH("LEFT")
 bodyText:SetJustifyV("TOP")
 
 local enabled = true
-local displayedId, displayedStage
+local displayedTitle, displayedBody
 
 local function Refresh()
-    local stage, id, title = ReadQuest()
-    local quest, resolvedId = FindQuest(id, title)
-    local body = quest and GetBody(quest, stage)
-    if not enabled or not body then
+    local title, body
+    if enabled then
+        title, body = GetDisplay()
+    end
+    if not body then
         panel:Hide()
-        displayedId, displayedStage = nil, nil
+        displayedTitle, displayedBody = nil, nil
         return
     end
-    if resolvedId == displayedId and stage == displayedStage then
+    if title == displayedTitle and body == displayedBody then
         return
     end
-    displayedId, displayedStage = resolvedId, stage
-    titleText:SetText(quest.title)
+    displayedTitle, displayedBody = title, body
+    titleText:SetText(title)
     bodyText:SetText(body)
     panel:Show()
     content:SetHeight(math.max(1, math.ceil(bodyText:GetStringHeight())))
@@ -147,7 +213,12 @@ QuestLogFrame:HookScript("OnHide", QueueRefresh)
 QuestLogFrame:HookScript("OnShow", QueueRefresh)
 
 SLASH_WRATHQUESTKOREAN1 = "/wqk"
-SlashCmdList.WRATHQUESTKOREAN = function()
+SlashCmdList.WRATHQUESTKOREAN = function(message)
+    if message == "status" then
+        local tooltip = type(IsAddOnLoaded) == "function" and IsAddOnLoaded("TooltipKOR-wotlk")
+        DEFAULT_CHAT_FRAME:AddMessage(tooltip and "TooltipKOR-wotlk 사용 중" or "TooltipKOR-wotlk 미로드")
+        return
+    end
     enabled = not enabled
     Refresh()
     DEFAULT_CHAT_FRAME:AddMessage(enabled and "한글 퀘스트 표시 켬" or "한글 퀘스트 표시 끔")

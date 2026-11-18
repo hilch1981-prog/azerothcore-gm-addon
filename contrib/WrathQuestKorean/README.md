@@ -1,36 +1,45 @@
-# WrathQuestKorean 0.1.0
+# WrathQuestKorean 0.2.0
 
-WoW 3.3.5a (12340)의 한글 클라이언트에서 영문 리팩을 이용하는 플레이어용 애드온입니다. 서버가 보내는 퀘스트를 식별해, 등록된 한국어 안내를 오른쪽 창에 표시합니다. 설치자는 서버 DB를 변경할 필요가 없습니다.
+WoW 3.3.5a (12340) 한글 클라이언트와 영문 리팩에서 서버 DB 패치 없이 한글을 표시합니다. 퀘스트 한국어 안내는 기본 퀘스트 창 옆에 표시합니다. 기본 버튼, 보상 선택, 목표 카운터는 원래 UI에서 동작합니다.
 
-## 설치와 확인
+## 설치
 
-1. 이 폴더를 통째로 복사해 `Interface/AddOns/WrathQuestKorean/WrathQuestKorean.toc`가 되도록 둡니다.
-2. 한글 3.3.5a 클라이언트에서 **리치왕 한글 퀘스트**를 켜고, 영문 퀘스트가 나오는 리팩에 접속합니다.
-3. 인간 시작 지역에서 **A Threat Within** (783), **Kobold Camp Cleanup** (7), **Investigate Echo Ridge** (15) 중 가능한 퀘스트를 엽니다.
-4. 수락 창과 퀘스트 기록에서 제목·목표·설명을 확인합니다. 진행 및 보상 창에서는 등록된 단계별 안내가 표시됩니다. 긴 안내는 마우스 휠로 스크롤하고, `/wqk`로 현재 세션의 표시를 켜거나 끕니다.
+설치 ZIP의 `WrathQuestKorean`과 `TooltipKOR-wotlk`를 게임을 종료한 상태에서 `Interface/AddOns`에 복사합니다. 캐릭터 선택 화면에서 두 애드온이 켜져 있는지 확인합니다. `/wqk`로 퀘스트 보조 창을 켜고 끄고, `/wqk status`로 TooltipKOR 로드 여부를 확인합니다. 기존 TooltipKOR의 사용자 사전을 편집했다면 설치 전에 `custom` 폴더를 백업합니다.
 
-샘플은 위 세 퀘스트의 한국어 요약입니다. 퀘스트 수락·완료, 보상 선택과 진행 카운터는 기본 UI에서 조작합니다. 나머지 퀘스트는 기본 화면 그대로 표시됩니다.
+설치 ZIP에는 9,413개 퀘스트, 40,237개 번역 필드가 있습니다. GitHub 소스에 포함한 `QuestData.lua`는 북녘골 5개 퀘스트를 검증하는 샘플입니다. 전체 데이터팩은 아래 재생성 절차나 설치 ZIP을 이용합니다.
 
-## 리팩 간 매칭
+## 한글화 범위
 
-클라이언트가 퀘스트 ID와 제목을 제공하면 둘 다 일치해야 합니다. ID를 받을 수 없는 화면은 데이터팩 안에서 영문 제목이 유일한 경우에만 대체 조회합니다. ID가 없는 화면에서는 같은 영문 제목을 쓰는 커스텀 퀘스트를 구분하기 어려우므로, 대규모 데이터팩 적용 시 해당 경로는 리팩별 검증이 필요합니다. 이미 한국어 제목으로 표시되는 퀘스트는 기본 UI를 사용합니다.
+| 화면 | 한글 3.3.5a 클라이언트 | 설치 ZIP으로 추가되는 범위 |
+|---|---|---|
+| 메뉴·기본 버튼·클라이언트 UI | 기본 한국어 UI와 폰트 제공 | 클라이언트 표기를 사용 |
+| 퀘스트 수락·기록·진행·보상 창 | 제목·본문은 서버의 로케일 데이터에 따라 달라짐 | 한국어 제목·목표·본문·진행 및 보상 대사를 보조 창에 표시 |
+| 퀘스트 추적기·NPC 퀘스트 선택 목록 | 서버 제목·목표 카운터가 표시됨 | 퀘스트 링크의 일부 표시를 TooltipKOR가 처리. 추적기와 선택 목록은 원래 표시 사용 |
+| 아이템 툴팁 | 품질·장비 부위 등의 기본 라벨 | 등록된 영문 아이템 이름·효과·설명 일부 |
+| 주문·특성·버프 툴팁 | 클라이언트 데이터에 있는 한국어 사용 | 표시되는 영문 이름과 설명 일부, 주문책·훈련사 일부 |
+| NPC·몹·오브젝트 | 서버 제공 이름은 서버 로케일에 따름 | 등록된 이름을 마우스오버 툴팁에서 한글로 표시 |
+| 지도·미니맵 지역명 | 클라이언트 데이터에 있는 한국어 사용 | 남은 영문 지역 이름 일부 |
+| 전문기술·상점·경매장 | 기본 UI 한국어 | 등록된 제작 이름·재료·상점·경매장 표시 일부. 서버 검색은 서버 원문에 따름 |
+| 메일·시스템 메시지 | 기본 UI와 클라이언트 처리 문구 | 경매장 자동 우편 제목, 획득·시스템 메시지 일부 |
+| NPC 일반 대사·책·퀘스트 외 우편 본문·리팩 전용 문구 | 서버 데이터에 따름 | 이번 패키지에서는 원래 표시 사용 |
 
-`QuestData.lua`의 항목은 숫자 ID, `enTitle`, `title`과 번역된 `description`, `objectives`, `progress`, `completion`을 받습니다. 공통 데이터팩을 먼저 확장하고, 리팩별로 변경·추가된 퀘스트는 별도 데이터팩으로 관리할 수 있습니다. 초기판은 단일 데이터 파일을 읽습니다.
+표의 TooltipKOR 범위는 upstream 코드와 설치 목록을 대조한 결과입니다. 실제 게임에서 두 애드온을 동시에 로드하는 테스트는 남아 있습니다.
 
-## 설계 가능성
+## 번역 데이터의 출처와 적용 조건
 
-점수는 구현 가능성 추정치이며, 현재 번역률이나 게임 테스트 통과율과 별개입니다.
+[Legends PR #446](https://github.com/Legends-of-Azeroth/Legends-of-Azeroth-Pandaria-5.4.8/pull/446)의 필드는 [Legends 공개 월드 DB](https://github.com/Legends-of-Azeroth/Legends-of-Azeroth-Pandaria-5.4.8/releases/tag/WDB20231230)와 WotLK 기준 DB의 퀘스트 ID·영문 제목·해당 영문 필드가 일치할 때 사용합니다. 일치하지 않는 필드는 [AzerothCore PR #27829](https://github.com/azerothcore/azerothcore-wotlk/pull/27829)의 3.3.5a 데이터를 우선 확인합니다. 최종 40,237개 필드 중 Legends에서 20,417개, AzerothCore PR에서 19,820개를 채택했습니다.
 
-| 범위 | 점수 | 조건 |
-|---|---:|---|
-| 기본 퀘스트 제목·목표·본문·보상 대사 | 9/10 | 클라이언트에서 퀘스트를 식별하고 대응 번역을 준비 |
-| 기본 아이템·주문 툴팁, NPC 이름·지역명 일부 | 8/10 | 한국어 클라이언트 리소스와 별도 툴팁 모듈 활용 |
-| NPC 대화·메일·퀘스트 추적기 | 6/10 | 화면마다 별도 표시 처리 및 문구 대조 |
-| 리팩 전용 퀘스트와 NPC 문구 | 5/10 | 리팩별 원문·번역 확보와 충돌 검증 |
-| 서버 원문·모든 화면과 검색 결과까지 한국어 | 2/10 | 애드온이 접근하는 UI 범위를 넘어서는 항목 포함 |
+| 제목 | 본문 | 목표 요약 | 진행 대사 | 보상 대사 |
+|---:|---:|---:|---:|---:|
+| 9,386 | 7,981 | 7,979 | 6,242 | 8,649 |
 
-## 참고 자료와 검증 범위
+게임에서도 ID와 영문 제목을 확인하고, ID를 받을 수 없는 화면은 제목과 표시 중인 영문 본문을 대조합니다. 여러 후보가 같은 번역을 갖고 있으면 공통 본문을 표시하고, 후보의 한국어 제목이 다르면 원래 제목을 표시합니다. 원문이 일치하는 필드만 표시하므로 이미 번역된 한국어 문장과 리팩이 수정한 문구는 원래 화면에서 읽을 수 있습니다. 데이터에 포함된 이름·직업·종족·줄바꿈·성별 토큰을 처리합니다. 서버의 토큰 치환 결과가 기준 원문과 다른 경우 해당 문장은 건너뜁니다.
 
-- [LaziKoreanQuest 공개 미러](https://github.com/PALGUGU/TurtleWoWKR/tree/main/AddOns/LaziKoreanQuest)에서 퀘스트 한글 표시 방식과 1.12.1/EQL3 의존 구조를 확인했습니다. 이 미리보기는 3.3.5a 기본 UI를 대상으로 별도 작성했습니다.
-- [samahee/wotlk_kor](https://github.com/samahee/wotlk_kor)에는 3.3.5용 QuestTranslator가 있습니다. [TooltipKOR-wotlk](https://github.com/samahee/TooltipKOR-wotlk)는 MIT 라이선스의 툴팁 확장 후보입니다.
-- [3.3.5a FrameXML](https://github.com/wowgaming/3.3.5-interface-files)을 기준으로 퀘스트 창과 기록의 표시 경로를 대조했습니다. 실제 게임에서 폰트, 창 위치, 이벤트 순서, 리팩별 응답은 검증 대기입니다.
+[TooltipKOR-wotlk](https://github.com/samahee/TooltipKOR-wotlk/tree/c3cb6c12eb230fe5a377d8955c809f4cee22cd71)는 samahee의 MIT 애드온입니다. 한글 클라이언트용 설치 ZIP은 upstream의 UI 문자열 덮어쓰기와 별도 폰트 적용을 빼고 툴팁·표시 모듈을 사용합니다. 함께 제공하는 LICENSE에 원 저작권을 표시했습니다.
+
+## 데이터와 ZIP 재생성
+
+1. Legends PR head `9544987155e81e772ee08dcc273bacfd81c939e6`의 월드 SQL 11~13을 각각 `legends-11.sql`, `legends-12.sql`, `legends-13.sql`로 둡니다. Legends 공개 월드 DB도 별도로 풉니다.
+2. AzerothCore PR head `2dd32c7ca2a5399a64efcee7e0cdf488547831ae`의 pending SQL을 `ac-pr.sql`로 둡니다. PR base `f444b8ac985d1d24c2568ef5aba7f4401bbd70aa`의 `data/sql/base/db_world`에서 `quest_template`, `quest_request_items`, `quest_offer_reward`와 각 `_locale` SQL을 같은 입력 폴더에 둡니다.
+3. `python tools/build_quest_data.py <입력-폴더> <Legends-world.sql> <출력-QuestData.lua>`로 Lua를 만듭니다. 데이터 준비 과정에서 SQL을 실행하거나 서버에 적용할 필요가 없습니다.
+4. 위 커밋의 TooltipKOR 소스를 준비하고 `python tools/package.py <출력-QuestData.lua> <TooltipKOR-소스-폴더> <설치.zip>`으로 ZIP을 만듭니다.

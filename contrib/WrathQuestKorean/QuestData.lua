@@ -1,29 +1,9 @@
+-- Generated from authorized quest localization sources. See README.md.
 local _, addon = ...
-
--- These are short Korean summaries written for the preview.
--- enTitle is both the English match and a guard against reused quest IDs.
-addon.quests = {
-    [783] = {
-        enTitle = "A Threat Within",
-        title = "내부의 위협",
-        description = "스톰윈드 경비병 상당수가 외지로 떠난 사이, 북녘골에 남은 경비병들이 일손을 구하고 있습니다. 지원하려면 윌렘 뒤편 수도원으로 들어가세요.",
-        objectives = "수도원 안에 있는 치안대장 맥브라이드와 대화하세요.",
-        completion = "맥브라이드가 지원을 환영합니다. 외부의 적에 대응하는 동안 왕국 안의 치안도 지켜야 합니다.",
-    },
-    [7] = {
-        enTitle = "Kobold Camp Cleanup",
-        title = "코볼트 야영지 소탕",
-        description = "수도원 북쪽 숲에 코볼트가 모여들었습니다. 맥브라이드가 북녘골의 안전을 위해 이들을 소탕해 달라고 부탁합니다.",
-        objectives = "코볼트 졸개 10마리를 처치한 뒤 치안대장 맥브라이드에게 돌아가세요.",
-        progress = "북쪽 숲에서 코볼트 졸개 10마리를 처치해야 합니다.",
-        completion = "맥브라이드에게 코볼트 소탕 결과를 보고했습니다.",
-    },
-    [15] = {
-        enTitle = "Investigate Echo Ridge",
-        title = "메아리 산마루 조사",
-        description = "북쪽 메아리 산마루 광산 부근에 코볼트 일꾼들이 모였습니다. 광산 주변을 조사하고 위협을 줄이세요.",
-        objectives = "코볼트 일꾼 10마리를 처치한 뒤 치안대장 맥브라이드에게 돌아가세요.",
-        progress = "메아리 산마루 광산 근처에서 코볼트 일꾼을 찾으세요.",
-        completion = "맥브라이드에게 메아리 산마루 광산 부근의 조사 결과를 보고했습니다.",
-    },
-}
+addon.quests = {}
+local quests = addon.quests
+quests[7]={enTitle="Kobold Camp Cleanup",title="코볼트 소탕",description={"Your first task is one of cleansing, $N.  A clan of kobolds have infested the woods to the north.  Go there and fight the kobold vermin you find.  Reduce their numbers so that we may one day drive them from Northshire.","자네에게 맡길 첫 임무는 쓰레기 같은 코볼트 녀석들을 처치하는 일일세. 북쪽의 숲에 가면 코볼트들이 무리를 이루고 있는 걸 볼 수 있을 것일세. 가서 벌레 같은 코볼트 졸개들을 보이는 대로 처치해 주게. 놈들의 수를 점차 줄여나가다 보면 언젠가 노스샤이어에서 완전히 몰아낼 날이 오겠지."},objectives={{53,2048430028},"코볼트 졸개 6마리를 처치한 다음 치안대장 맥브라이드에게 가야 합니다."},progress={"How goes the hunting, $N? Have you found and defeated those vermin?","사냥은 어떻게 되어가는가? 그 벌레 같은 녀석들을 찾아 처치했나?"},completion={{204,981574700},"오, 훌륭하군. 그 코볼트들은 하찮은 겁쟁이와 도둑에 불과하지만 그 수가 워낙 많아서 우리에게 위협이 되고 있었네. 우리 스톰윈드의 인간들은 그런 놈들 따위에 신경을 쓸 상황이 아니라서 말일세.$B$B어쨌든 녀석들을 처리해줘서 고맙네."}}
+quests[15]={enTitle="Investigate Echo Ridge",title="메아리 광산 조사",description={"$N, my scouts tell me that the kobold infestation is larger than we had thought.  A group of kobold workers has camped near the Echo Ridge Mine to the north.$B$BGo to the mine and remove them.  We know there are at least 8.  Kill them, see if there are more, then report back to me.","정찰병의 보고에 의하면 생각했던 것보다 코볼트가 훨씬 많이 출몰하고 있다고 하네. 코볼트 잡역부 무리가 북쪽의 메아리 광산 근처에 야영지를 건설했네.$B$B광산으로 가서 코볼트 놈들을 처치해 주게나. 파악된 바로는 최소 10마리 이상으로 보이네. 놈들을 처치하고 다른 놈들이 더 있는지 알아본 다음 내게 보고해 주게."},objectives={{59,307824132},"코볼트 잡역부 8마리를 처치한 다음 치안대장 맥브라이드에게 돌아와 보고해야 합니다."},progress={{52,1949362719},"광산에 다녀왔나 보군 그래. 보고 내용은?"},completion={{208,1809282536},"코볼트 놈들이 우리 광산에 들어와 있다니 불쾌하군... 이래서야 원... 어쨌든, 이건 보상금일세. 그리고 다시 전투에 나갈 준비되는 대로 내게 알려 주게. 자네가 광산에 다시 한 번 가 주었으면 한다네."}}
+quests[21]={enTitle="Skirmish at Echo Ridge",title="메아리 광산 전투",description={"Your previous investigations are proof that the Echo Ridge Mine needs purging.  Return to the mine and help clear it of kobolds.$B$BWaste no time, $N.  The longer the kobolds are left unmolested in the mine, the deeper a foothold they gain in Northshire.","일전에 자네가 조사한 결과를 볼 때 메아리 광산에 있는 코볼트 녀석들을 없애야 할 거 같네. 자네가 광산으로 돌아가서 코볼트를 제거하는 일을 도와주게나.$B$B지체할 시간이 없네. 저런 상태로 코볼트들이 방치되면 방치될수록 녀석들이 노스샤이어 깊숙이 터전을 마련하게 될 테니 말이야."},objectives={{75,979200750},"코볼트 일꾼 8마리를 처치한 다음 노스야이어 수도원에 있는 치안대장 맥브라이드에게 가야 합니다."},progress={"I know it's bloody work, $N, but it's vital to the safety of Northshire. Are you ready to report?","\"힘든 임무인 줄은 알고 있지만 노스샤이어의 안전을 위해서는 불가피한 일일세. 그래, 보고할 준비는 됐나?\""},completion={{189,778075566},"다시 한번 자네에게 경의를 표하네. 또한 스톰윈드 군대를 대신해 감사를 표하는 바이네, 아직 광산에 코볼트들이 남아있겠지만 이제 다른 병사들을 보내도록 하겠네. 그리고 자네에게는 다른 임무를 맡기고자 하네."}}
+quests[54]={enTitle="Report to Goldshire",title="골드샤이어로의 전갈",description={"$N, you are a $c with proven interest in the security of Northshire.  You are now tasked with the protection of the surrounding Elwynn Forest.$B$BIf you accept this duty, then I have prepared papers that must be delivered to Marshal Dughan in Goldshire.  Goldshire lies along the southern road, past the border gates.","\"자네는 $C|1으로서;로서; 노스샤이어의 안전을 위해 애써 왔으니, 이번에는 엘윈 숲 주위의 방어를 맡기도록 하겠네.$B$B이 임무를 맡겠다면 내가 준비한 문서를 골드샤이어의 치안대장 더그한에게 전해 주게나. 남쪽 도로를 따라가다가 방벽을 지나 계속 가다 보면 골드샤이어에 도착할 걸세.\""},objectives={{64,1178208773},"엘윈 숲의 골드샤이어에 있는 치안대장 더그한에게 치안대장 맥브라이드의 문서를 가져가야 합니다."},progress={{158,954998119},"맥브라이드에게서 소식 들었나? 노스셔는 엘윈 숲에 비하면 한적한 곳이지만, 맥브라이드 원수가 무슨 소식을 전할지 궁금하군. 자, 그의 서류 좀 줘 보시오..."},completion={{297,1859152913},"여기 보니 당신이 스톰윈드 원수들의 대리 부관으로 임명되었다고 나와 있군요. 축하합니다. 그리고 행운을 빌어요. 엘윈 숲을 지키는 건 쉬운 일이 아니죠... 군대 대부분이 누구를 위해 무슨 일을 하는지, 또 누구를 위해서 하는지 알 수가 없으니까요! 요즘 같은 암울한 시대에 정치판을 파악하는 건 정말 어려운 일입니다..."}}
+quests[783]={enTitle="A Threat Within",title="내부의 위협",description={"I hope you strapped your belt on tight, young $c, because there is work to do here in Northshire.$B$BAnd I don't mean farming.$B$BThe Stormwind guards are hard pressed to keep the peace here, with so many of us in distant lands and so many threats pressing close.  And so we're enlisting the aid of anyone willing to defend their home.  And their alliance.$B$BIf you're here to answer the call, then speak with my superior, Marshal McBride.  He's inside the abbey behind me.","젊은 $C|1이여;여;. 노스샤이어에 오신 것을 환영합니다. 이곳에서 해야 할 임무가 있으니 각오를 단단히 하셔야 할 겁니다.$B$B스톰윈드 경비대는 노스샤이어의 평화를 지키기 위해 밤낮으로 노력하고 있습니다. 하지만 지금은 병사들이 변방으로 파견된 상황이고 수많은 크고 작은 위협들이 다가오고 있어 평화를 유지하기가 쉬운 일이 아닙니다. 그래서 현재는 고향과 자신의 동맹국을 지키려는 뜻이 있는 자라면 누구든지 지원자로 받아들이고 있습니다.$B$B이러한 부름에 응하고자 이곳에 오셨다면 제 상관이신 치안대장 맥브라이드님을 만나 보시기 바랍니다. 그분은 뒤로 보이는 수도원 안에 계십니다."},objectives={{27,1057637025},"치안대장 맥브라이드와 대화해야 합니다."},completion={"Ah, good.  Another volunteer.  We're getting a lot of you these days.$B$BI hope it's enough.$B$BThe human lands are threatened from without, and so many of our forces have been marshaled abroad.  This, in turn, leaves room for corrupt and lawless groups to thrive within our borders.$B$BIt is a many-fronted battle we wage, $N.  Gird yourself for a long campaign.","오, 좋아. 지원자가 또 한 명 늘었군. 요즘 들어 지원자가 많아지고 있네. 이 병력으로 충분해야 할 텐데...$B$B대부분의 병사들이 타지역으로 소집되어 가는 바람에 노스샤이어는 치안이 거의 무방비 상태라고 할 수 있네. 그 결과, 타락한 무법자들이 우리 영토 안에서 활개를 치고 있네.$B$B우리가 치르고 있는 전쟁에는 전후방이 따로 없으니 이제부터 기나긴 전투를 각오해야 할 걸세."}}

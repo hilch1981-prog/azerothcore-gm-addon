@@ -3,7 +3,8 @@
 ## Title-koKR: 리치왕 한글 퀘스트
 ## Notes: Client-side Korean quest text for WoW 3.3.5a
 ## Notes-koKR: 등록된 퀘스트의 한글 안내를 함께 표시합니다.
-## Version: 0.1.0
+## Version: 0.2.0
+## OptionalDeps: TooltipKOR-wotlk
 
 QuestData.lua
 Core.lua
